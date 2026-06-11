@@ -219,6 +219,7 @@
       <button class="nav-tab" onclick="switchTab('intransit')">🚚 <span data-i18n="tab_intransit">In Transit</span></button>
       <button class="nav-tab" onclick="switchTab('ledger')">📋 <span data-i18n="tab_ledger">Stock Ledger</span></button>
       <button class="nav-tab" onclick="switchTab('analisis')">📈 <span data-i18n="tab_analisis">Analisis Stok</span></button>
+      <button class="nav-tab" onclick="switchTab('sales')">🛒 <span>Sales Analytics</span></button>
 
     </nav>
     <div class="lang-selector">
@@ -339,7 +340,7 @@
   </div>
   <div class="right-panel">
     <div class="filter-row">
-      <input type="text" id="in-search" placeholder="🔍 Cari SKU / Nama..." onkeyup="tampilkanStockIn()" style="flex:2">
+      <input type="text" id="in-search" placeholder="🔍 Cari SKU / Nama / No. Ref..." onkeyup="tampilkanStockIn()" style="flex:2">
       <div style="display:flex;flex-direction:column;gap:1px">
         <label style="font-size:10px;color:#718096" data-i18n="dari_tanggal">Dari Tanggal</label>
         <input type="date" id="in-filter-from" onchange="tampilkanStockIn()" style="flex:1">
@@ -443,7 +444,7 @@
   </div>
   <div class="right-panel">
     <div class="filter-row">
-      <input type="text" id="out-search" placeholder="🔍 Cari SKU / Nama..." onkeyup="tampilkanStockOut()" style="flex:2">
+      <input type="text" id="out-search" placeholder="🔍 Cari SKU / Nama / Keterangan..." onkeyup="tampilkanStockOut()" style="flex:2">
       <div style="display:flex;flex-direction:column;gap:1px">
         <label style="font-size:10px;color:#718096" data-i18n="dari_tanggal">Dari Tanggal</label>
         <input type="date" id="out-filter-from" onchange="tampilkanStockOut()" style="flex:1">
@@ -565,7 +566,7 @@
   </div>
   <div class="right-panel">
     <div class="filter-row">
-      <input type="text" id="tr-search" placeholder="🔍 Cari SKU / Nama..." onkeyup="tampilkanTransfer()" style="flex:2">
+      <input type="text" id="tr-search" placeholder="🔍 Cari SKU / Nama / Keterangan..." onkeyup="tampilkanTransfer()" style="flex:2">
       <div style="display:flex;flex-direction:column;gap:1px">
         <label style="font-size:10px;color:#718096" data-i18n="dari_tanggal">Dari Tanggal</label>
         <input type="date" id="tr-filter-from" onchange="tampilkanTransfer()" style="flex:1">
@@ -866,6 +867,8 @@
           <th data-i18n="stok_saat_ini">Stok Saat Ini</th><th>InTransit</th><th data-i18n="th_konversi">Konversi</th>
           <th data-i18n="total_out_periode">Total Out (periode)</th>
           <th data-i18n="avg_out">Avg Out/Hari</th>
+          <th>Avg/Bulan (30hr)</th>
+          <th>Avg 3 Bulan (90hr)</th>
           <th data-i18n="kategori_moving">Kategori Moving</th>
           <th data-i18n="ketahanan_stok">Ketahanan Stok</th>
           <th style="min-width:80px;text-align:center">Planning PO</th>
@@ -876,6 +879,74 @@
   </div>
 </div>
 
+
+<!-- ===================== TAB 7: SALES ANALYTICS ===================== -->
+<div id="tab-sales" class="page-full">
+  <!-- Summary Cards -->
+  <div class="summary-grid" style="grid-template-columns:repeat(5,1fr)">
+    <div class="summary-card"><div class="s-label">📦 Total Item Terjual</div><div class="s-val s-blue" id="sa-total-item">0</div></div>
+    <div class="summary-card"><div class="s-label">📤 Total Qty Keluar</div><div class="s-val s-red" id="sa-total-qty">0 pcs</div></div>
+    <div class="summary-card"><div class="s-label">💰 Total Nilai Penjualan</div><div class="s-val s-green" id="sa-total-nilai">Rp 0</div></div>
+    <div class="summary-card"><div class="s-label">🛍️ SKU Terlaris</div><div class="s-val" id="sa-top-sku" style="font-size:12px;color:#7c3aed">-</div></div>
+    <div class="summary-card"><div class="s-label">📊 Avg Penjualan/Hari</div><div class="s-val s-purple" id="sa-avg-day">0 pcs</div></div>
+  </div>
+  <!-- Filters -->
+  <div class="analisis-filters">
+    <div class="fgrp" style="flex:2">
+      <label>🔍 Cari SKU / Nama Barang</label>
+      <input type="text" id="sa-search" placeholder="Ketik SKU atau nama barang..." onkeyup="tampilkanSales()">
+    </div>
+    <div class="fgrp">
+      <label>Warehouse</label>
+      <select id="sa-wh" onchange="tampilkanSales()">
+        <option value="All">All Warehouse</option>
+        <option>Bintaro</option><option>Gunsin</option><option>MAJ</option><option>Bosco</option>
+      </select>
+    </div>
+    <div class="fgrp">
+      <label>Dari Tanggal</label>
+      <input type="date" id="sa-from" onchange="tampilkanSales()">
+    </div>
+    <div class="fgrp">
+      <label>Sampai Tanggal</label>
+      <input type="date" id="sa-to" onchange="tampilkanSales()">
+    </div>
+    <div class="fgrp">
+      <label>Tipe</label>
+      <select id="sa-tipe" onchange="tampilkanSales()">
+        <option value="All">Semua Tipe</option>
+        <option value="Stock Out">📤 Stock Out</option>
+        <option value="Expired">⚠️ Expired</option>
+        <option value="Damage">💥 Damage</option>
+      </select>
+    </div>
+    <div class="fgrp">
+      <label>Tampilan</label>
+      <select id="sa-view" onchange="tampilkanSales()">
+        <option value="detail">📋 Per Transaksi</option>
+        <option value="rekap">📊 Rekap per Barang</option>
+      </select>
+    </div>
+    <div style="display:flex;gap:4px;align-items:flex-end">
+      <button class="btn btn-export" onclick="exportSales()">⬇️ Export</button>
+    </div>
+  </div>
+  <div style="flex:1;background:white;border-radius:6px;padding:10px;box-shadow:0 1px 3px rgba(0,0,0,.06);display:flex;flex-direction:column;overflow:hidden">
+    <div class="table-container" style="flex:1">
+      <table id="sa-table">
+        <thead id="sa-thead">
+          <tr>
+            <th>No</th><th>Tanggal</th><th>Tipe</th><th>SKU</th><th>Nama Barang</th>
+            <th>Gudang</th><th>Qty Keluar</th><th>Konversi</th><th>Harga Satuan</th><th>Total Nilai</th><th>Keterangan</th>
+          </tr>
+        </thead>
+        <tbody id="tabelSales"></tbody>
+      </table>
+    </div>
+  </div>
+</div>
+
+<!-- END SALES ANALYTICS -->
 
 <script>
 // =========================================================================
@@ -1333,6 +1404,7 @@ function renderTab(name){
   else if(name==="ledger")   tampilkanLedger();
   else if(name==="analisis") tampilkanAnalisis();
   else if(name==="intransit") tampilkanIntransit();
+  else if(name==="sales") tampilkanSales();
 }
 
 // Hanya render tab aktif saat load — Firebase listener akan isi data
@@ -2143,7 +2215,7 @@ function tampilkanStockIn(){
   let wh=document.getElementById("in-filter-wh").value;
   tbody.innerHTML="";
   let hasil=stockInLog.filter(r=>{
-    let matchK=r.sku.toLowerCase().includes(keyword)||r.nama.toLowerCase().includes(keyword);
+    let matchK=r.sku.toLowerCase().includes(keyword)||r.nama.toLowerCase().includes(keyword)||(r.ref||"").toLowerCase().includes(keyword);
     let matchF=!from||r.tanggal>=from;
     let matchT=!to||r.tanggal<=to;
     let matchW=wh==="All"||(r.warehouse||"Bintaro").toUpperCase()===wh.toUpperCase();
@@ -2346,7 +2418,7 @@ function tampilkanStockOut(){
   let tipeF=document.getElementById("out-filter-tipe").value;
   tbody.innerHTML="";
   let hasil=stockOutLog.filter(r=>{
-    let matchK=r.sku.toLowerCase().includes(keyword)||r.nama.toLowerCase().includes(keyword);
+    let matchK=r.sku.toLowerCase().includes(keyword)||r.nama.toLowerCase().includes(keyword)||(r.ref||"").toLowerCase().includes(keyword);
     let matchF=!from||r.tanggal>=from;
     let matchT=!to||r.tanggal<=to;
     let matchW=wh==="All"||(r.warehouse||"Bintaro").toUpperCase()===wh.toUpperCase();
@@ -2526,7 +2598,7 @@ function tampilkanTransfer(){
   let wh=document.getElementById("tr-filter-wh").value;
   tbody.innerHTML="";
   let hasil=transferLog.filter(r=>{
-    let matchK=r.sku.toLowerCase().includes(keyword)||r.nama.toLowerCase().includes(keyword);
+    let matchK=r.sku.toLowerCase().includes(keyword)||r.nama.toLowerCase().includes(keyword)||(r.ref||"").toLowerCase().includes(keyword);
     let matchF=!from||r.tanggal>=from;
     let matchT=!to||r.tanggal<=to;
     let matchW=wh==="All"||r.fromWh.toUpperCase()===wh.toUpperCase()||r.toWh.toUpperCase()===wh.toUpperCase();
@@ -2863,7 +2935,7 @@ function tampilkanAnalisis(){
     });
   }
   let tbody=document.getElementById("tabelAnalisis");
-  if(hasil.length===0){ tbody.innerHTML="<tr><td colspan='11' class='kosong'>Tidak ada data</td></tr>"; return; }
+  if(hasil.length===0){ tbody.innerHTML="<tr><td colspan='13' class='kosong'>Tidak ada data</td></tr>"; return; }
   hasil.sort((a,b)=>{
     let aA=hitungAvgOut(a.sku,a.warehouse||"Bintaro",periode).avgPerHari;
     let bA=hitungAvgOut(b.sku,b.warehouse||"Bintaro",periode).avgPerHari;
@@ -2872,6 +2944,8 @@ function tampilkanAnalisis(){
   tbody.innerHTML="";
   hasil.forEach(function(b,i){
     let {totalQty,avgPerHari}=hitungAvgOut(b.sku, b.warehouse||"Bintaro", periode);
+    let avg1Bln=hitungAvgOut(b.sku, b.warehouse||"Bintaro", 30).avgPerHari;
+    let avg3Bln=hitungAvgOut(b.sku, b.warehouse||"Bintaro", 90).avgPerHari;
     let cat=getMovingCategory(avgPerHari);
     let badgeHtml=cat==="Fast"?"<span class='badge-fast'>🚀 Fast</span>":
                   cat==="Medium"?"<span class='badge-medium'>🔄 Medium</span>":
@@ -2880,10 +2954,12 @@ function tampilkanAnalisis(){
     let stokAktual=Number(b.totalPcs);
     let stokIT=getIntransitStok(b.sku);
     let stokDraft=getDraftStok(b.sku);
-    let totalStok=stokAktual+stokIT; // Draft tidak dihitung ke ketahanan aktual
+    let totalStok=stokAktual+stokIT;
     let uom=hitungUOM(stokAktual,Number(b.isiKarton));
     let itCell=stokIT>0?"<span style='font-size:10px;color:#92400e;font-weight:600'>+"+stokIT+" pcs</span>":"<span style='font-size:10px;color:#a0aec0'>-</span>";
     if(stokDraft>0) itCell+="<br><span style='font-size:10px;color:#2b6cb0'>📝 "+stokDraft+" pcs (draft)</span>";
+    let avg1BlnCell=avg1Bln>0?"<span style='color:#2b6cb0;font-weight:600'>"+(avg1Bln*30).toFixed(0)+" pcs</span><br><span style='font-size:10px;color:#718096'>"+avg1Bln.toFixed(2)+"/hr</span>":"<span style='color:#a0aec0;font-size:10px'>-</span>";
+    let avg3BlnCell=avg3Bln>0?"<span style='color:#553c9a;font-weight:600'>"+(avg3Bln*90).toFixed(0)+" pcs</span><br><span style='font-size:10px;color:#718096'>"+avg3Bln.toFixed(2)+"/hr</span>":"<span style='color:#a0aec0;font-size:10px'>-</span>";
     tbody.innerHTML+="<tr>"+
       "<td>"+(i+1)+"</td>"+
       "<td title='"+b.sku+"' style='font-size:10px'>"+b.sku+"</td>"+
@@ -2894,6 +2970,8 @@ function tampilkanAnalisis(){
       "<td><strong>"+uom+"</strong></td>"+
       "<td>"+totalQty+" pcs</td>"+
       "<td><strong>"+avgPerHari.toFixed(2)+" pcs</strong></td>"+
+      "<td>"+avg1BlnCell+"</td>"+
+      "<td>"+avg3BlnCell+"</td>"+
       "<td>"+badgeHtml+"</td>"+
       "<td>"+durBadge(avgPerHari, totalStok)+"</td>"+
       "<td style='text-align:center'><button class='btn-action btn-edit' onclick='bukaAnPOPanel(\""+b.sku+"\",\""+b.nama+"\","+(b.totalPcs)+","+(b.isiKarton||0)+","+avgPerHari.toFixed(4)+",\""+encodeURIComponent(b.warehouse||"Bintaro")+"\")'>📦 Input PO</button></td>"+
@@ -3240,6 +3318,152 @@ function hapusSemuaIntransit(){
   fbSave("barang", daftarBarang);
   tampilkanIntransit();
   markDirty("monitor","in","ledger","analisis");
+}
+
+// =========================================================================
+// SALES ANALYTICS
+// =========================================================================
+function tampilkanSales(){
+  let keyword=document.getElementById("sa-search").value.toLowerCase();
+  let wh=document.getElementById("sa-wh").value;
+  let from=document.getElementById("sa-from").value;
+  let to=document.getElementById("sa-to").value;
+  let tipeF=document.getElementById("sa-tipe").value;
+  let viewMode=document.getElementById("sa-view").value;
+
+  let hasil=stockOutLog.filter(r=>{
+    let matchK=r.sku.toLowerCase().includes(keyword)||r.nama.toLowerCase().includes(keyword);
+    let matchW=wh==="All"||(r.warehouse||"Bintaro").toUpperCase()===wh.toUpperCase();
+    let matchF=!from||r.tanggal>=from;
+    let matchT=!to||r.tanggal<=to;
+    let matchTipe=tipeF==="All"||(r.tipe||"Stock Out")===tipeF;
+    return matchK&&matchW&&matchF&&matchT&&matchTipe;
+  }).sort((a,b)=>b.tanggal.localeCompare(a.tanggal));
+
+  // Summary cards
+  let totalQtyAll=hasil.reduce((s,r)=>s+r.qty,0);
+  let totalNilaiAll=hasil.reduce((s,r)=>s+(r.qty*r.harga),0);
+  document.getElementById("sa-total-item").innerText=hasil.length;
+  document.getElementById("sa-total-qty").innerText=totalQtyAll.toLocaleString("id-ID")+" pcs";
+  document.getElementById("sa-total-nilai").innerText=rpFormat(totalNilaiAll);
+
+  // Top SKU
+  let skuMap={};
+  hasil.forEach(r=>{ skuMap[r.sku]=(skuMap[r.sku]||0)+r.qty; });
+  let topSku=Object.entries(skuMap).sort((a,b)=>b[1]-a[1])[0];
+  document.getElementById("sa-top-sku").innerText=topSku?topSku[0]+" ("+topSku[1]+" pcs)":"-";
+
+  // Avg per day
+  if(hasil.length>0){
+    let dates=hasil.map(r=>r.tanggal).sort();
+    let d1=new Date(dates[dates.length-1]), d2=new Date(dates[0]);
+    let diffDays=Math.ceil((d2-d1)/(1000*60*60*24))||1;
+    document.getElementById("sa-avg-day").innerText=(totalQtyAll/diffDays).toFixed(1)+" pcs";
+  } else {
+    document.getElementById("sa-avg-day").innerText="0 pcs";
+  }
+
+  let tbody=document.getElementById("tabelSales");
+  let thead=document.getElementById("sa-thead");
+
+  if(viewMode==="rekap"){
+    // Group by SKU
+    thead.innerHTML="<tr><th>No</th><th>SKU</th><th>Nama Barang</th><th>Gudang</th><th>Total Transaksi</th><th>Total Qty Keluar</th><th>Konversi</th><th>Total Nilai</th><th>Avg/Hari</th><th>Tgl Pertama</th><th>Tgl Terakhir</th></tr>";
+    let grouped={};
+    hasil.forEach(r=>{
+      let key=r.sku.toUpperCase()+"__"+(r.warehouse||"Bintaro");
+      if(!grouped[key]){
+        grouped[key]={sku:r.sku,nama:r.nama,warehouse:r.warehouse||"Bintaro",isiKarton:r.isiKarton||0,transaksi:0,qty:0,nilai:0,tglArr:[]};
+      }
+      grouped[key].transaksi++;
+      grouped[key].qty+=r.qty;
+      grouped[key].nilai+=r.qty*r.harga;
+      grouped[key].tglArr.push(r.tanggal);
+    });
+    let rows=Object.values(grouped).sort((a,b)=>b.qty-a.qty);
+    if(rows.length===0){ tbody.innerHTML="<tr><td colspan='11' class='kosong'>Tidak ada data penjualan</td></tr>"; return; }
+    tbody.innerHTML="";
+    rows.forEach(function(g,i){
+      let tglArr=g.tglArr.sort();
+      let tglFirst=tglArr[0], tglLast=tglArr[tglArr.length-1];
+      let d1=new Date(tglFirst), d2=new Date(tglLast);
+      let diffDays=Math.ceil((d2-d1)/(1000*60*60*24))||1;
+      let avgHari=(g.qty/diffDays).toFixed(2);
+      let uom=hitungUOM(g.qty,g.isiKarton);
+      tbody.innerHTML+="<tr>"+
+        "<td>"+(i+1)+"</td>"+
+        "<td style='font-size:10px' title='"+g.sku+"'>"+g.sku+"</td>"+
+        "<td title='"+g.nama+"'>"+g.nama+"</td>"+
+        "<td><span class='badge badge-gudang'>"+g.warehouse+"</span></td>"+
+        "<td style='text-align:center'>"+g.transaksi+"x</td>"+
+        "<td><span class='badge badge-out'>"+g.qty+" pcs</span></td>"+
+        "<td><strong>"+uom+"</strong></td>"+
+        "<td><strong>"+rpFormat(g.nilai)+"</strong></td>"+
+        "<td style='font-weight:600;color:#2b6cb0'>"+avgHari+" pcs</td>"+
+        "<td style='font-size:10px'>"+tglFirst+"</td>"+
+        "<td style='font-size:10px'>"+tglLast+"</td>"+
+      "</tr>";
+    });
+  } else {
+    // Detail per transaksi
+    thead.innerHTML="<tr><th>No</th><th>Tanggal</th><th>Tipe</th><th>SKU</th><th>Nama Barang</th><th>Gudang</th><th>Qty Keluar</th><th>Konversi</th><th>Harga Satuan</th><th>Total Nilai</th><th>Keterangan</th></tr>";
+    if(hasil.length===0){ tbody.innerHTML="<tr><td colspan='11' class='kosong'>Tidak ada data penjualan</td></tr>"; return; }
+    tbody.innerHTML="";
+    hasil.forEach(function(r,i){
+      let uom=hitungUOM(r.qty,r.isiKarton||0);
+      let nilai=r.qty*r.harga;
+      let tipe=r.tipe||"Stock Out";
+      let tipeBadge=tipe==="Expired"
+        ?"<span class='badge' style='background:#fef3c7;color:#92400e'>⚠️ Expired</span>"
+        :tipe==="Damage"
+        ?"<span class='badge' style='background:#f3e8ff;color:#6b21a8'>💥 Damage</span>"
+        :"<span class='badge badge-out'>📤 Stock Out</span>";
+      tbody.innerHTML+="<tr>"+
+        "<td>"+(i+1)+"</td><td>"+r.tanggal+"</td>"+
+        "<td>"+tipeBadge+"</td>"+
+        "<td style='font-size:10px' title='"+r.sku+"'>"+r.sku+"</td>"+
+        "<td title='"+r.nama+"'>"+r.nama+"</td>"+
+        "<td><span class='badge badge-gudang'>"+(r.warehouse||"Bintaro")+"</span></td>"+
+        "<td><span class='badge badge-out'>"+r.qty+" pcs</span></td>"+
+        "<td><strong>"+uom+"</strong></td>"+
+        "<td>"+rpFormat(r.harga)+"</td>"+
+        "<td><strong>"+rpFormat(nilai)+"</strong></td>"+
+        "<td title='"+(r.ref||"")+"'>"+(r.ref||"-")+"</td>"+
+      "</tr>";
+    });
+  }
+}
+
+function exportSales(){
+  let keyword=document.getElementById("sa-search").value.toLowerCase();
+  let wh=document.getElementById("sa-wh").value;
+  let from=document.getElementById("sa-from").value;
+  let to=document.getElementById("sa-to").value;
+  let tipeF=document.getElementById("sa-tipe").value;
+  let viewMode=document.getElementById("sa-view").value;
+  let hasil=stockOutLog.filter(r=>{
+    let matchK=r.sku.toLowerCase().includes(keyword)||r.nama.toLowerCase().includes(keyword);
+    let matchW=wh==="All"||(r.warehouse||"Bintaro").toUpperCase()===wh.toUpperCase();
+    let matchF=!from||r.tanggal>=from; let matchT=!to||r.tanggal<=to;
+    let matchTipe=tipeF==="All"||(r.tipe||"Stock Out")===tipeF;
+    return matchK&&matchW&&matchF&&matchT&&matchTipe;
+  }).sort((a,b)=>b.tanggal.localeCompare(a.tanggal));
+  let rows;
+  if(viewMode==="rekap"){
+    let grouped={};
+    hasil.forEach(r=>{
+      let key=r.sku.toUpperCase()+"__"+(r.warehouse||"Bintaro");
+      if(!grouped[key]) grouped[key]={sku:r.sku,nama:r.nama,warehouse:r.warehouse||"Bintaro",transaksi:0,qty:0,nilai:0};
+      grouped[key].transaksi++; grouped[key].qty+=r.qty; grouped[key].nilai+=r.qty*r.harga;
+    });
+    rows=[["SKU","Nama Barang","Gudang","Total Transaksi","Total Qty Keluar","Total Nilai"]];
+    Object.values(grouped).sort((a,b)=>b.qty-a.qty).forEach(g=>rows.push([g.sku,g.nama,g.warehouse,g.transaksi,g.qty,g.nilai]));
+  } else {
+    rows=[["Tanggal","Tipe","SKU","Nama Barang","Gudang","Qty Keluar","Harga Satuan","Total Nilai","Keterangan"]];
+    hasil.forEach(r=>rows.push([r.tanggal,r.tipe||"Stock Out",r.sku,r.nama,r.warehouse||"Bintaro",r.qty,r.harga,r.qty*r.harga,r.ref||"-"]));
+  }
+  let wb=XLSX.utils.book_new(); let ws=XLSX.utils.aoa_to_sheet(rows);
+  XLSX.utils.book_append_sheet(wb,ws,"Sales Analytics"); XLSX.writeFile(wb,"Sales_Analytics_Export.xlsx");
 }
 
 // Close dropdowns when clicking outside
