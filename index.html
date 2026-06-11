@@ -275,9 +275,9 @@
   <div class="left-panel" id="panel-stock-in-left">
     <div class="card">
       <h2>⚡ <span data-i18n="fast_inbound">Fast Inbound / Upload</span></h2>
-      <div style="font-size:11px;color:#718096;margin-bottom:6px">Upload Excel untuk import stok massal ke gudang.</div>
+      <div style="font-size:11px;color:#718096;margin-bottom:6px">Upload Excel untuk import stok massal ke gudang. Kolom <b>Tanggal</b> di template akan dibaca per baris — jika kosong, gunakan tanggal default di bawah.</div>
       <div style="margin-bottom:5px">
-        <label style="font-size:11px;font-weight:600;color:#4a5568;display:block;margin-bottom:2px">Tanggal Upload:</label>
+        <label style="font-size:11px;font-weight:600;color:#4a5568;display:block;margin-bottom:2px">Tanggal Default (fallback jika kolom Tanggal kosong):</label>
         <input type="date" id="uploadTanggal" style="width:100%;padding:5px 7px;font-size:12px;border:1px solid #cbd5e0;border-radius:4px;outline:none">
       </div>
       <div class="upload-row">
@@ -430,9 +430,9 @@
     </div>
     <div class="card">
       <h2>📁 <span data-i18n="upload_stockout_template">Upload Template Stock Out</span></h2>
-      <div style="font-size:11px;color:#718096;margin-bottom:6px" data-i18n="upload_stockout_hint">Header: Item Code, Qty, Warehouse, Keterangan</div>
+      <div style="font-size:11px;color:#718096;margin-bottom:6px" data-i18n="upload_stockout_hint">Header: <b>Tanggal</b>, Item Code, Qty, Warehouse, Keterangan — Tanggal dibaca per baris.</div>
       <div style="margin-bottom:5px">
-        <label style="font-size:11px;font-weight:600;color:#4a5568;display:block;margin-bottom:2px">Tanggal Upload:</label>
+        <label style="font-size:11px;font-weight:600;color:#4a5568;display:block;margin-bottom:2px">Tanggal Default (fallback jika kolom Tanggal kosong):</label>
         <input type="date" id="out-upload-tanggal" style="width:100%;padding:5px 7px;font-size:12px;border:1px solid #cbd5e0;border-radius:4px;outline:none">
       </div>
       <div style="display:flex;gap:6px;align-items:center;flex-wrap:wrap">
@@ -542,9 +542,9 @@
     </div>
     <div class="card">
       <h2>📁 Upload Template Transfer</h2>
-      <div style="font-size:11px;color:#718096;margin-bottom:6px">Header: Item Code, Nama Barang, Item Group, Actual Qty, Isi/Ctn, Harga, Keterangan</div>
+      <div style="font-size:11px;color:#718096;margin-bottom:6px">Header: <b>Tanggal</b>, Item Code, Nama Barang, Item Group, Actual Qty, Isi/Ctn, Harga, Keterangan — Tanggal dibaca per baris.</div>
       <div style="margin-bottom:5px">
-        <label style="font-size:11px;font-weight:600;color:#4a5568;display:block;margin-bottom:2px">Tanggal Transfer:</label>
+        <label style="font-size:11px;font-weight:600;color:#4a5568;display:block;margin-bottom:2px">Tanggal Default (fallback jika kolom Tanggal kosong):</label>
         <input type="date" id="tr-upload-tanggal" style="width:100%;padding:5px 7px;font-size:12px;border:1px solid #cbd5e0;border-radius:4px;outline:none">
       </div>
       <div style="display:flex;gap:6px;margin-bottom:6px">
@@ -618,7 +618,7 @@
     <button class="btn btn-export" onclick="exportIntransit()">⬇️ Export</button>
     <button class="btn btn-orange" onclick="downloadTemplateIntransit()">📥 Template</button>
     <div style="display:flex;flex-direction:column;gap:1px">
-      <label style="font-size:10px;color:#718096;font-weight:600">Tgl. Upload Intransit</label>
+      <label style="font-size:10px;color:#718096;font-weight:600">Tgl. Default (fallback)</label>
       <input type="date" id="it-upload-tanggal" style="padding:4px 7px;font-size:12px;border:1px solid #cbd5e0;border-radius:4px;outline:none">
     </div>
     <label for="fileIntransit" class="btn btn-blue" style="margin:0;cursor:pointer">📁 Upload</label>
@@ -1444,24 +1444,61 @@ function rpFormat(n){ return "Rp "+Number(n).toLocaleString("id-ID"); }
 // =========================================================================
 // TEMPLATE DOWNLOAD
 // =========================================================================
+// =========================================================================
+// HELPER: Parse tanggal dari Excel (berbagai format) → "YYYY-MM-DD"
+// =========================================================================
+function parseTanggalExcel(val, fallback){
+  if(!val) return fallback;
+  // Jika berupa angka serial Excel (misal: 46023)
+  if(typeof val === "number"){
+    let d = new Date(Math.round((val - 25569)*86400*1000));
+    if(!isNaN(d)) return d.toISOString().split("T")[0];
+    return fallback;
+  }
+  let s = val.toString().trim();
+  if(!s) return fallback;
+  // Already YYYY-MM-DD
+  if(/^\d{4}-\d{2}-\d{2}$/.test(s)) return s;
+  // DD/MM/YYYY or DD-MM-YYYY
+  let m1 = s.match(/^(\d{1,2})[\/\-](\d{1,2})[\/\-](\d{2,4})$/);
+  if(m1){
+    let dd=m1[1].padStart(2,"0"), mm=m1[2].padStart(2,"0"), yy=m1[3];
+    if(yy.length===2) yy="20"+yy;
+    return yy+"-"+mm+"-"+dd;
+  }
+  // DD-Mon-YY or DD-Mon-YYYY (e.g. 02-Jan-26, 05-Feb-2026)
+  let m2 = s.match(/^(\d{1,2})[-\/\s]([A-Za-z]{3})[-\/\s](\d{2,4})$/);
+  if(m2){
+    let months={jan:"01",feb:"02",mar:"03",apr:"04",may:"05",jun:"06",jul:"07",aug:"08",sep:"09",oct:"10",nov:"11",dec:"12"};
+    let dd=m2[1].padStart(2,"0"), mm=months[m2[2].toLowerCase()]||"01", yy=m2[3];
+    if(yy.length===2) yy="20"+yy;
+    return yy+"-"+mm+"-"+dd;
+  }
+  // Try native Date parse as last resort
+  let d = new Date(s);
+  if(!isNaN(d)) return d.toISOString().split("T")[0];
+  return fallback;
+}
+
 function downloadTemplateSistem(){
-  let headerRow=[["Item Code","Item Group","Item Name","Actual Qty","Harga","Qty/Ctn"]];
-  let contoh=["ABC JELLY STRAWS - ASSORTED 300G","Import - Kids","ABC JELLY STRAW ASSORTED 300/30",150,12956,30];
-  headerRow.push(contoh);
+  let headerRow=[["Tanggal","Item Code","Item Group","Item Name","Actual Qty","Harga","Qty/Ctn"]];
+  let contoh=["02-Jan-26","ABC JELLY STRAWS - ASSORTED 300G","Import - Kids","ABC JELLY STRAW ASSORTED 300/30",150,12956,30];
+  let contoh2=["05-Jan-26","ABC JELLY STRAWS - ASSORTED 300G","Import - Kids","ABC JELLY STRAW ASSORTED 300/30",50,12956,30];
+  headerRow.push(contoh, contoh2);
   let wb=XLSX.utils.book_new();
   let ws=XLSX.utils.aoa_to_sheet(headerRow);
-  ws['!cols']=[{wch:35},{wch:20},{wch:35},{wch:12},{wch:12},{wch:12}];
+  ws['!cols']=[{wch:14},{wch:35},{wch:20},{wch:35},{wch:12},{wch:12},{wch:12}];
   XLSX.utils.book_append_sheet(wb,ws,"Template");
   XLSX.writeFile(wb,"Template_Inventory_Tian.xlsx");
 }
 
 function downloadTemplateStockOut(){
-  let rows=[["Item Code","Qty","Warehouse","Keterangan"],
-            ["STC00093",50,"Bintaro","Customer ABC"],
-            ["STC00195",100,"Gunsin","Toko XYZ"]];
+  let rows=[["Tanggal","Item Code","Qty","Warehouse","Keterangan"],
+            ["02-Jan-26","STC00093",50,"Bintaro","Customer ABC"],
+            ["05-Jan-26","STC00195",100,"Gunsin","Toko XYZ"]];
   let wb=XLSX.utils.book_new();
   let ws=XLSX.utils.aoa_to_sheet(rows);
-  ws['!cols']=[{wch:35},{wch:10},{wch:15},{wch:30}];
+  ws['!cols']=[{wch:14},{wch:35},{wch:10},{wch:15},{wch:30}];
   XLSX.utils.book_append_sheet(wb,ws,"Template Stock Out");
   XLSX.writeFile(wb,"Template_StockOut.xlsx");
 }
@@ -1486,25 +1523,27 @@ function buatHeaderKuning(ws, jumlahKolom){
 }
 
 function downloadTemplateTransfer(){
-  let headers=[["Item Code","Nama Barang","Item Group","Actual Qty","Isi/Ctn","Harga","Keterangan"]];
-  let contoh=["STC00093","BUL RAMEN STIR-FRIED CARBONARA 135GR","Dry - 면류(Noodle)",100,40,11338,"Transfer ke Gunsin"];
-  headers.push(contoh);
+  let headers=[["Tanggal","Item Code","Nama Barang","Item Group","Actual Qty","Isi/Ctn","Harga","Keterangan"]];
+  let contoh=["02-Jan-26","STC00093","BUL RAMEN STIR-FRIED CARBONARA 135GR","Dry - 면류(Noodle)",100,40,11338,"Transfer ke Gunsin"];
+  let contoh2=["05-Jan-26","STC00200","SAMYANG HOT CHICKEN 140GR","Dry - 면류(Noodle)",50,40,9500,"Transfer ke Gunsin"];
+  headers.push(contoh, contoh2);
   let wb=XLSX.utils.book_new();
   let ws=XLSX.utils.aoa_to_sheet(headers);
-  ws['!cols']=[{wch:30},{wch:38},{wch:25},{wch:12},{wch:10},{wch:12},{wch:30}];
-  buatHeaderKuning(ws,7);
+  ws['!cols']=[{wch:14},{wch:30},{wch:38},{wch:25},{wch:12},{wch:10},{wch:12},{wch:30}];
+  buatHeaderKuning(ws,8);
   XLSX.utils.book_append_sheet(wb,ws,"Template Transfer");
   XLSX.writeFile(wb,"Template_Transfer_Stok.xlsx",{cellStyles:true});
 }
 
 function downloadTemplateIntransit(){
-  let headers=[["Item Code","Nama Barang","Item Group","Actual Qty","Isi/Ctn","Harga","Keterangan"]];
-  let contoh=["STC00093","BUL RAMEN STIR-FRIED CARBONARA 135GR","Dry - 면류(Noodle)",100,40,11338,"Pengiriman dari Bintaro"];
-  headers.push(contoh);
+  let headers=[["Tanggal","Item Code","Nama Barang","Item Group","Actual Qty","Isi/Ctn","Harga","Keterangan"]];
+  let contoh=["02-Jan-26","STC00093","BUL RAMEN STIR-FRIED CARBONARA 135GR","Dry - 면류(Noodle)",100,40,11338,"Pengiriman dari Bintaro"];
+  let contoh2=["05-Jan-26","STC00200","SAMYANG HOT CHICKEN 140GR","Dry - 면류(Noodle)",50,40,9500,"Pengiriman dari Bintaro"];
+  headers.push(contoh, contoh2);
   let wb=XLSX.utils.book_new();
   let ws=XLSX.utils.aoa_to_sheet(headers);
-  ws['!cols']=[{wch:30},{wch:38},{wch:25},{wch:12},{wch:10},{wch:12},{wch:30}];
-  buatHeaderKuning(ws,7);
+  ws['!cols']=[{wch:14},{wch:30},{wch:38},{wch:25},{wch:12},{wch:10},{wch:12},{wch:30}];
+  buatHeaderKuning(ws,8);
   XLSX.utils.book_append_sheet(wb,ws,"Template InTransit");
   XLSX.writeFile(wb,"Template_InTransit.xlsx",{cellStyles:true});
 }
@@ -1529,7 +1568,10 @@ function prosesUploadExcel(element){
     dataJson.forEach(function(row){
       let rawSku=row["Item Code"], rawKat=row["Item Group"]||"General", rawNama=row["Item Name"];
       let rawQty=row["Actual Qty"]||0, rawHarga=row["Harga"]||0, rawQtyCtn=row["Qty/Ctn"]||0;
+      let rawTgl=row["Tanggal"];
       if(!rawSku||!rawNama) return;
+      // Gunakan tanggal dari kolom, fallback ke uploadTgl jika kosong
+      let tglBaris=parseTanggalExcel(rawTgl, uploadTgl);
       let skuF=rawSku.toString().trim();
       let skuU=skuF.toUpperCase();
       let namaF=rawNama.toString().trim();
@@ -1576,7 +1618,7 @@ function prosesUploadExcel(element){
         let existing=daftarBarang.find(b=>b.sku.toUpperCase()===skuU&&(b.warehouse||"Bintaro").toUpperCase()===targetWarehouse.toUpperCase());
         if(existing){ existing.totalPcs=Number(existing.totalPcs)+qtyF; existing.harga=finalHarga; existing.isiKarton=finalIsi; }
         else { daftarBarang.push({sku:existingMaster.sku||skuF,kategori:existingMaster.kategori||katF,nama:existingMaster.bintaro||namaF,isiKarton:finalIsi,warehouse:targetWarehouse,totalPcs:qtyF,harga:finalHarga}); }
-        let today=uploadTgl;
+        let today=tglBaris;
         stockInLog.push({id:Date.now()+Math.random(),tanggal:today,sku:existingMaster.sku||skuF,kategori:existingMaster.kategori||katF,nama:existingMaster.bintaro||namaF,isiKarton:finalIsi,warehouse:targetWarehouse,qty:qtyF,harga:finalHarga,ref:"Upload Excel"});
         cS++;
       }
@@ -1614,7 +1656,9 @@ function prosesUploadStockOut(element){
     let semuaMaster=dapatkanSemuaMasterData();
     dataJson.forEach(function(row){
       let rawSku=row["Item Code"], rawQty=row["Qty"], rawWh=row["Warehouse"]||"Bintaro", rawKet=row["Keterangan"]||"-";
+      let rawTgl=row["Tanggal"];
       if(!rawSku||!rawQty) return;
+      let tglBaris=parseTanggalExcel(rawTgl, today);
       let skuF=rawSku.toString().trim().toUpperCase();
       let qtyF=Math.max(0,parseInt(rawQty)||0);
       let whF=rawWh.toString().trim();
@@ -1628,7 +1672,7 @@ function prosesUploadStockOut(element){
       if(stokSaat<qtyF){
         cWarn.push(match.bintaro+" @ "+whF+": stok "+stokSaat+", request "+qtyF);
       }
-      let entry={id:Date.now()+Math.random(),tanggal:today,sku:match.sku,kategori:match.kategori,nama:match.bintaro,isiKarton:match.qtyCtn,warehouse:whF,qty:qtyF,harga:match.harga||0,ref:rawKet.toString().trim()||"-"};
+      let entry={id:Date.now()+Math.random(),tanggal:tglBaris,sku:match.sku,kategori:match.kategori,nama:match.bintaro,isiKarton:match.qtyCtn,warehouse:whF,qty:qtyF,harga:match.harga||0,ref:rawKet.toString().trim()||"-"};
       stockOutLog.push(entry);
       if(existing){ existing.totalPcs=Number(existing.totalPcs)-qtyF; }
       cOK++;
@@ -1671,7 +1715,9 @@ function prosesUploadTransfer(element){
     dataJson.forEach(function(row){
       let rawSku=row["Item Code"], rawNama=row["Nama Barang"], rawKat=row["Item Group"]||"General";
       let rawQty=row["Actual Qty"], rawIsi=row["Isi/Ctn"]||0, rawHarga=row["Harga"]||0, rawKet=row["Keterangan"]||"-";
+      let rawTgl=row["Tanggal"];
       if(!rawSku||!rawQty) return;
+      let tglBaris=parseTanggalExcel(rawTgl, today);
       let skuF=rawSku.toString().trim().toUpperCase();
       let qtyF=Math.max(0,parseInt(rawQty)||0);
       let isiF=Math.max(0,parseInt(rawIsi)||0);
@@ -1704,7 +1750,7 @@ function prosesUploadTransfer(element){
       let stokSaat=srcItem?Number(srcItem.totalPcs):0;
       if(stokSaat<qtyF) cWarn.push(match.bintaro+" @ "+fromWh+": stok "+stokSaat+", request "+qtyF);
       // Transfer: kurangi dari asal, tambahkan ke tujuan
-      let entry={id:Date.now()+Math.random(),tanggal:today,sku:match.sku,kategori:match.kategori,nama:match.bintaro,isiKarton:match.qtyCtn,harga:match.harga||0,fromWh:fromWh,toWh:toWh,qty:qtyF,ref:rawKet.toString().trim()||"-"};
+      let entry={id:Date.now()+Math.random(),tanggal:tglBaris,sku:match.sku,kategori:match.kategori,nama:match.bintaro,isiKarton:match.qtyCtn,harga:match.harga||0,fromWh:fromWh,toWh:toWh,qty:qtyF,ref:rawKet.toString().trim()||"-"};
       transferLog.push(entry);
       if(srcItem){ srcItem.totalPcs=Number(srcItem.totalPcs)-qtyF; }
       let dstItem=daftarBarang.find(b=>b.sku.toUpperCase()===skuF&&(b.warehouse||"Bintaro").toUpperCase()===toWh.toUpperCase());
@@ -1746,7 +1792,9 @@ function prosesUploadIntransit(element){
     dataJson.forEach(function(row){
       let rawSku=row["Item Code"], rawNama=row["Nama Barang"], rawKat=row["Item Group"]||"General";
       let rawQty=row["Actual Qty"], rawIsi=row["Isi/Ctn"]||0, rawHarga=row["Harga"]||0, rawKet=row["Keterangan"]||"-";
+      let rawTgl=row["Tanggal"];
       if(!rawSku) return;
+      let tglBaris=parseTanggalExcel(rawTgl, today);
       let skuF=rawSku.toString().trim().toUpperCase();
       let qtyF=Math.max(0,parseInt(rawQty)||0);
       let isiF=Math.max(0,parseInt(rawIsi)||0);
@@ -1779,7 +1827,7 @@ function prosesUploadIntransit(element){
       }
       // Tambah record baru jika qty > 0
       if(qtyF<=0){ cSkip++; return; }
-      let entry={id:Date.now()+Math.random(),tanggal:today,sku:match.sku,nama:match.bintaro,qty:qtyF,isiKarton:match.qtyCtn,harga:match.harga||0,keterangan:ketF,status:"InTransit",warehouse:"",tglComplete:""};
+      let entry={id:Date.now()+Math.random(),tanggal:tglBaris,sku:match.sku,nama:match.bintaro,qty:qtyF,isiKarton:match.qtyCtn,harga:match.harga||0,keterangan:ketF,status:"InTransit",warehouse:"",tglComplete:""};
       intransitLog.push(entry); cOK++;
     });
     fbSave("customMasterData", customMasterData);
