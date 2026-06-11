@@ -2333,6 +2333,8 @@ function simpanStockOut(){
       let oldItem=daftarBarang.find(b=>b.sku.toUpperCase()===old.sku.toUpperCase()&&(b.warehouse||"Bintaro").toUpperCase()===old.warehouse.toUpperCase());
       if(oldItem) oldItem.totalPcs=Number(oldItem.totalPcs)+old.qty; // restore old qty
       stockOutLog.splice(oldIdx,1);
+    }
+    editingOutId=null;
     updateOutTipe();
     document.getElementById("out-tombol-batal").style.display="none";
   }
