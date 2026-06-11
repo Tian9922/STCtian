@@ -245,7 +245,7 @@
       <input type="text" class="search-box" id="search" placeholder="🔍 Cari nama / SKU..." onkeyup="tampilkanTabel()">
       <select id="filterWarehouse" onchange="tampilkanTabel()">
         <option value="All">🏢 All Warehouse</option>
-        <option>Bintaro</option><option>Gunsin</option><option>MAJ</option><option>Bosco</option>
+        <option>Bintaro</option><option>Gunsin</option><option>MAJ</option><option>Bosco</option><option>K-Mart</option><option>Happy Wonder</option><option>Hero Supermarket</option><option>Consignment</option><option>K-Seafood</option>
       </select>
       <button class="btn btn-export" onclick="exportMonitorStok()">⬇️ Export</button>
       <button id="btn-hapus-semua-monitor" class="btn btn-danger" onclick="hapusSemuaBarang()">🗑️ <span data-i18n="btn_delete_all">Hapus Semua</span></button>
@@ -266,7 +266,7 @@
 <div style="display:none">
   <input type="text" id="sku"><input type="text" id="nama"><input type="text" id="kategori">
   <input type="number" id="isiKarton"><input type="number" id="harga"><input type="number" id="totalPcs">
-  <select id="warehouse"><option>Bintaro</option><option>Gunsin</option><option>MAJ</option><option>Bosco</option></select>
+  <select id="warehouse"><option>Bintaro</option><option>Gunsin</option><option>MAJ</option><option>Bosco</option><option>K-Mart</option><option>Happy Wonder</option><option>Hero Supermarket</option><option>Consignment</option><option>K-Seafood</option></select>
   <div id="skuAlert"></div><div id="sku-dd"></div>
 </div>
 
@@ -282,7 +282,7 @@
       </div>
       <div class="upload-row">
         <select id="uploadWarehouse" style="flex:1">
-          <option>Bintaro</option><option>Gunsin</option><option>MAJ</option><option>Bosco</option>
+          <option>Bintaro</option><option>Gunsin</option><option>MAJ</option><option>Bosco</option><option>K-Mart</option><option>Happy Wonder</option><option>Hero Supermarket</option><option>Consignment</option><option>K-Seafood</option>
         </select>
         <label for="fileExcel" class="btn btn-blue">📁 <span data-i18n="upload">Upload</span></label>
         <input type="file" id="fileExcel" accept=".xlsx,.xls,.csv" onchange="prosesUploadExcel(this)">
@@ -320,7 +320,7 @@
         <div>
           <label data-i18n="label_warehouse">Warehouse:</label>
           <select id="in-warehouse">
-            <option>Bintaro</option><option>Gunsin</option><option>MAJ</option><option>Bosco</option>
+            <option>Bintaro</option><option>Gunsin</option><option>MAJ</option><option>Bosco</option><option>K-Mart</option><option>Happy Wonder</option><option>Hero Supermarket</option><option>Consignment</option><option>K-Seafood</option>
           </select>
         </div>
         <div>
@@ -351,7 +351,7 @@
       </div>
       <select id="in-filter-wh" onchange="tampilkanStockIn()" style="flex:1">
         <option value="All">🏢 All Warehouse</option>
-        <option>Bintaro</option><option>Gunsin</option><option>MAJ</option><option>Bosco</option>
+        <option>Bintaro</option><option>Gunsin</option><option>MAJ</option><option>Bosco</option><option>K-Mart</option><option>Happy Wonder</option><option>Hero Supermarket</option><option>Consignment</option><option>K-Seafood</option>
       </select>
       <button class="btn btn-export" onclick="exportStockIn()">⬇️ Export</button>
       <button id="btn-in-delete-all" class="btn btn-danger" onclick="hapusSemuaStockIn()">🗑️ <span data-i18n="btn_delete_all">Hapus Semua</span></button>
@@ -411,7 +411,7 @@
         <div>
           <label data-i18n="label_warehouse">Warehouse:</label>
           <select id="out-warehouse">
-            <option>Bintaro</option><option>Gunsin</option><option>MAJ</option><option>Bosco</option>
+            <option>Bintaro</option><option>Gunsin</option><option>MAJ</option><option>Bosco</option><option>K-Mart</option><option>Happy Wonder</option><option>Hero Supermarket</option><option>Consignment</option><option>K-Seafood</option>
           </select>
         </div>
         <div>
@@ -455,7 +455,7 @@
       </div>
       <select id="out-filter-wh" onchange="tampilkanStockOut()" style="flex:1">
         <option value="All">🏢 All Warehouse</option>
-        <option>Bintaro</option><option>Gunsin</option><option>MAJ</option><option>Bosco</option>
+        <option>Bintaro</option><option>Gunsin</option><option>MAJ</option><option>Bosco</option><option>K-Mart</option><option>Happy Wonder</option><option>Hero Supermarket</option><option>Consignment</option><option>K-Seafood</option>
       </select>
       <select id="out-filter-tipe" onchange="tampilkanStockOut()" style="flex:1">
         <option value="All">🔄 Semua Tipe</option>
@@ -513,13 +513,13 @@
         <div>
           <label data-i18n="label_dari_gudang">Dari Gudang:</label>
           <select id="tr-from-wh" onchange="updateTrStok()">
-            <option>Bintaro</option><option>Gunsin</option><option>MAJ</option><option>Bosco</option>
+            <option>Bintaro</option><option>Gunsin</option><option>MAJ</option><option>Bosco</option><option>K-Mart</option><option>Happy Wonder</option><option>Hero Supermarket</option><option>Consignment</option><option>K-Seafood</option>
           </select>
         </div>
         <div>
           <label data-i18n="label_ke_gudang">Ke Gudang:</label>
           <select id="tr-to-wh">
-            <option>Gunsin</option><option>Bintaro</option><option>MAJ</option><option>Bosco</option>
+            <option>Gunsin</option><option>Bintaro</option><option>MAJ</option><option>Bosco</option><option>K-Mart</option><option>Happy Wonder</option><option>Hero Supermarket</option><option>Consignment</option><option>K-Seafood</option>
           </select>
         </div>
         <div class="form-group-full">
@@ -550,11 +550,11 @@
       <div style="display:flex;gap:6px;margin-bottom:6px">
         <select id="tr-upload-from-wh" style="flex:1">
           <option value="">-- Dari Gudang --</option>
-          <option>Bintaro</option><option>Gunsin</option><option>MAJ</option><option>Bosco</option>
+          <option>Bintaro</option><option>Gunsin</option><option>MAJ</option><option>Bosco</option><option>K-Mart</option><option>Happy Wonder</option><option>Hero Supermarket</option><option>Consignment</option><option>K-Seafood</option>
         </select>
         <select id="tr-upload-to-wh" style="flex:1">
           <option value="">-- Ke Gudang --</option>
-          <option>Bintaro</option><option>Gunsin</option><option>MAJ</option><option>Bosco</option>
+          <option>Bintaro</option><option>Gunsin</option><option>MAJ</option><option>Bosco</option><option>K-Mart</option><option>Happy Wonder</option><option>Hero Supermarket</option><option>Consignment</option><option>K-Seafood</option>
         </select>
       </div>
       <div style="display:flex;gap:6px">
@@ -577,7 +577,7 @@
       </div>
       <select id="tr-filter-wh" onchange="tampilkanTransfer()" style="flex:1">
         <option value="All">🏢 All Warehouse</option>
-        <option>Bintaro</option><option>Gunsin</option><option>MAJ</option><option>Bosco</option>
+        <option>Bintaro</option><option>Gunsin</option><option>MAJ</option><option>Bosco</option><option>K-Mart</option><option>Happy Wonder</option><option>Hero Supermarket</option><option>Consignment</option><option>K-Seafood</option>
       </select>
       <button class="btn btn-export" onclick="exportTransfer()">⬇️ Export</button>
       <button id="btn-transfer-delete-all" class="btn btn-danger" onclick="hapusSemuaTransfer()">🗑️ <span data-i18n="btn_delete_all">Hapus Semua</span></button>
@@ -689,7 +689,7 @@
       <div class="form-group-full" id="it-wh-group" style="display:none">
         <label>Warehouse Tujuan (saat Complete):</label>
         <select id="it-warehouse">
-          <option>Bintaro</option><option>Gunsin</option><option>MAJ</option><option>Bosco</option>
+          <option>Bintaro</option><option>Gunsin</option><option>MAJ</option><option>Bosco</option><option>K-Mart</option><option>Happy Wonder</option><option>Hero Supermarket</option><option>Consignment</option><option>K-Seafood</option>
         </select>
       </div>
     </div>
@@ -725,7 +725,7 @@
       <label data-i18n="label_warehouse">Warehouse</label>
       <select id="led-wh" onchange="tampilkanLedger()">
         <option value="All">All Warehouse</option>
-        <option>Bintaro</option><option>Gunsin</option><option>MAJ</option><option>Bosco</option>
+        <option>Bintaro</option><option>Gunsin</option><option>MAJ</option><option>Bosco</option><option>K-Mart</option><option>Happy Wonder</option><option>Hero Supermarket</option><option>Consignment</option><option>K-Seafood</option>
       </select>
     </div>
     <div class="fgrp">
@@ -822,7 +822,7 @@
       <label>Warehouse</label>
       <select id="an-wh" onchange="tampilkanAnalisis()">
         <option value="All">All Warehouse</option>
-        <option>Bintaro</option><option>Gunsin</option><option>MAJ</option><option>Bosco</option>
+        <option>Bintaro</option><option>Gunsin</option><option>MAJ</option><option>Bosco</option><option>K-Mart</option><option>Happy Wonder</option><option>Hero Supermarket</option><option>Consignment</option><option>K-Seafood</option>
       </select>
     </div>
     <div class="fgrp">
@@ -900,7 +900,7 @@
       <label>Warehouse</label>
       <select id="sa-wh" onchange="tampilkanSales()">
         <option value="All">All Warehouse</option>
-        <option>Bintaro</option><option>Gunsin</option><option>MAJ</option><option>Bosco</option>
+        <option>Bintaro</option><option>Gunsin</option><option>MAJ</option><option>Bosco</option><option>K-Mart</option><option>Happy Wonder</option><option>Hero Supermarket</option><option>Consignment</option><option>K-Seafood</option>
       </select>
     </div>
     <div class="fgrp">
@@ -3499,7 +3499,7 @@ document.addEventListener("click",function(e){
       <div>
         <label>Warehouse:</label>
         <select id="eb-warehouse">
-          <option>Bintaro</option><option>Gunsin</option><option>MAJ</option><option>Bosco</option>
+          <option>Bintaro</option><option>Gunsin</option><option>MAJ</option><option>Bosco</option><option>K-Mart</option><option>Happy Wonder</option><option>Hero Supermarket</option><option>Consignment</option><option>K-Seafood</option>
         </select>
       </div>
       <div>
