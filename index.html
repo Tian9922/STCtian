@@ -126,6 +126,10 @@
     .btn-export{background:#6366f1;color:white;font-size:11px;padding:5px 10px}
     .btn-export:hover{background:#4f46e5}
     input[type=file]{display:none}
+    /* ===== PAGINATION ===== */
+    [id^="pg-"]{background:white;border-top:1px solid #e2e8f0;padding:6px 8px;border-radius:0 0 4px 4px}
+    [id^="pg-"] button{transition:background .15s;font-weight:600}
+    [id^="pg-"] button:hover:not(:disabled){background:#edf2f7!important;color:#2c3e50!important}
     .badge-fast{background:#d1fae5;color:#065f46;padding:2px 7px;border-radius:3px;font-size:10px;font-weight:700}
     .badge-slow{background:#fee2e2;color:#991b1b;padding:2px 7px;border-radius:3px;font-size:10px;font-weight:700}
     .badge-medium{background:#fef3c7;color:#92400e;padding:2px 7px;border-radius:3px;font-size:10px;font-weight:700}
@@ -242,7 +246,7 @@
       <div class="asset-summary-value" id="assetValue">Rp 0</div>
     </div>
     <div class="filter-row">
-      <input type="text" class="search-box" id="search" placeholder="🔍 Cari nama / SKU..." onkeyup="tampilkanTabel()">
+      <input type="text" class="search-box" id="search" placeholder="🔍 Cari nama / SKU..." oninput="debounce('monitor',tampilkanTabel,250)">
       <select id="filterWarehouse" onchange="tampilkanTabel()">
         <option value="All">🏢 All Warehouse</option>
         <option>Bintaro</option><option>Gunsin</option><option>MAJ</option><option>Bosco</option><option>K-Mart</option><option>Happy Wonder</option><option>Hero Supermarket</option><option>Consignment</option><option>K-Seafood</option>
@@ -344,7 +348,7 @@
   </div>
   <div class="right-panel">
     <div class="filter-row">
-      <input type="text" id="in-search" placeholder="🔍 Cari SKU / Nama / No. Ref..." onkeyup="tampilkanStockIn()" style="flex:2">
+      <input type="text" id="in-search" placeholder="🔍 Cari SKU / Nama / No. Ref..." oninput="debounce('in',tampilkanStockIn,250)" style="flex:2">
       <div style="display:flex;flex-direction:column;gap:1px">
         <label style="font-size:10px;color:#718096" data-i18n="dari_tanggal">Dari Tanggal</label>
         <input type="date" id="in-filter-from" onchange="tampilkanStockIn()" style="flex:1">
@@ -448,7 +452,7 @@
   </div>
   <div class="right-panel">
     <div class="filter-row">
-      <input type="text" id="out-search" placeholder="🔍 Cari SKU / Nama / Keterangan..." onkeyup="tampilkanStockOut()" style="flex:2">
+      <input type="text" id="out-search" placeholder="🔍 Cari SKU / Nama / Keterangan..." oninput="debounce('out',tampilkanStockOut,250)" style="flex:2">
       <div style="display:flex;flex-direction:column;gap:1px">
         <label style="font-size:10px;color:#718096" data-i18n="dari_tanggal">Dari Tanggal</label>
         <input type="date" id="out-filter-from" onchange="tampilkanStockOut()" style="flex:1">
@@ -570,7 +574,7 @@
   </div>
   <div class="right-panel">
     <div class="filter-row">
-      <input type="text" id="tr-search" placeholder="🔍 Cari SKU / Nama / Keterangan..." onkeyup="tampilkanTransfer()" style="flex:2">
+      <input type="text" id="tr-search" placeholder="🔍 Cari SKU / Nama / Keterangan..." oninput="debounce('tr',tampilkanTransfer,250)" style="flex:2">
       <div style="display:flex;flex-direction:column;gap:1px">
         <label style="font-size:10px;color:#718096" data-i18n="dari_tanggal">Dari Tanggal</label>
         <input type="date" id="tr-filter-from" onchange="tampilkanTransfer()" style="flex:1">
@@ -715,7 +719,7 @@
   <div class="ledger-filters">
     <div class="fgrp">
       <label data-i18n="cari_sku">Cari SKU / Nama</label>
-      <input type="text" id="led-search" placeholder="🔍 Ketik SKU atau nama..." onkeyup="tampilkanLedger()">
+      <input type="text" id="led-search" placeholder="🔍 Ketik SKU atau nama..." oninput="debounce('led',tampilkanLedger,250)">
     </div>
     <div class="fgrp">
       <label data-i18n="dari_tanggal">Dari Tanggal</label>
@@ -820,7 +824,7 @@
   <div class="analisis-filters">
     <div class="fgrp">
       <label data-i18n="cari_sku">Cari SKU / Nama</label>
-      <input type="text" id="an-search" placeholder="🔍 Ketik..." onkeyup="tampilkanAnalisis()">
+      <input type="text" id="an-search" placeholder="🔍 Ketik..." oninput="debounce('an',tampilkanAnalisis,250)">
     </div>
     <div class="fgrp">
       <label>Warehouse</label>
@@ -898,7 +902,7 @@
   <div class="analisis-filters">
     <div class="fgrp" style="flex:2">
       <label>🔍 Cari SKU / Nama Barang</label>
-      <input type="text" id="sa-search" placeholder="Ketik SKU atau nama barang..." onkeyup="tampilkanSales()">
+      <input type="text" id="sa-search" placeholder="Ketik SKU atau nama barang..." oninput="debounce('sa',tampilkanSales,250)">
     </div>
     <div class="fgrp">
       <label>Warehouse</label>
@@ -3540,6 +3544,280 @@ document.addEventListener("click",function(e){
     if(!dd.parentElement.contains(e.target)) dd.style.display="none";
   });
 });
+
+// =========================================================================
+// ⚡ PERFORMANCE OPTIMIZATIONS
+// =========================================================================
+
+// --- 1. DEBOUNCE UTILITY ---
+const _debounceTimers = {};
+function debounce(key, fn, delay){
+  clearTimeout(_debounceTimers[key]);
+  _debounceTimers[key] = setTimeout(fn, delay);
+}
+
+// --- 2. THROTTLED FIREBASE SAVE ---
+const _fbSaveTimers = {};
+const _origFbSave = fbSave;
+window.fbSave = function(key, data){
+  clearTimeout(_fbSaveTimers[key]);
+  _fbSaveTimers[key] = setTimeout(()=>{ _origFbSave(key, data); }, 800);
+};
+
+// --- 3. PAGINATION STATE ---
+const PAGE_SIZE = 50;
+const _pageState = { monitor:1, in:1, out:1, tr:1, led:1, an:1, sa:1, it:1 };
+
+// Reset halaman ke 1 saat filter berubah
+const _origMarkDirty = markDirty;
+window.markDirty = function(...tabs){
+  tabs.forEach(t=>{
+    if(t==="monitor") _pageState.monitor=1;
+    else if(t==="in") _pageState.in=1;
+    else if(t==="out") _pageState.out=1;
+    else if(t==="transfer") _pageState.tr=1;
+    else if(t==="ledger") _pageState.led=1;
+    else if(t==="analisis") _pageState.an=1;
+    else if(t==="sales") _pageState.sa=1;
+    else if(t==="intransit") _pageState.it=1;
+  });
+  _origMarkDirty(...tabs);
+};
+
+// --- 4. PAGINATION RENDERER ---
+function renderPagination(containerId, total, page, pageSize, onPageChange){
+  let old = document.getElementById(containerId);
+  if(old) old.remove();
+  if(total <= pageSize) return;
+  let totalPages = Math.ceil(total/pageSize);
+  let div = document.createElement("div");
+  div.id = containerId;
+  div.style.cssText = "display:flex;gap:4px;align-items:center;justify-content:flex-end;padding:6px 4px;flex-wrap:wrap;font-size:12px";
+  let info = document.createElement("span");
+  info.style.cssText = "color:#718096;margin-right:4px";
+  info.textContent = "Hal "+page+" / "+totalPages+" ("+total+" data)";
+  div.appendChild(info);
+  let makeBtn = (label, pg, disabled, active)=>{
+    let b = document.createElement("button");
+    b.textContent = label;
+    b.disabled = disabled;
+    b.style.cssText = "padding:3px 8px;font-size:11px;border-radius:4px;border:1px solid #cbd5e0;cursor:pointer;background:"+(active?"#2c3e50":"white")+";color:"+(active?"white":"#4a5568");
+    b.onclick = ()=>{ onPageChange(pg); };
+    return b;
+  };
+  div.appendChild(makeBtn("«", 1, page===1, false));
+  div.appendChild(makeBtn("‹", page-1, page===1, false));
+  let start = Math.max(1, page-2), end = Math.min(totalPages, page+2);
+  for(let p=start; p<=end; p++) div.appendChild(makeBtn(p, p, false, p===page));
+  div.appendChild(makeBtn("›", page+1, page===totalPages, false));
+  div.appendChild(makeBtn("»", totalPages, page===totalPages, false));
+  return div;
+}
+
+function attachPagination(tbodyEl, containerId, total, page, pageSize, onPageChange){
+  let tableContainer = tbodyEl.closest(".table-container");
+  if(!tableContainer) return;
+  let pgDiv = renderPagination(containerId, total, page, pageSize, onPageChange);
+  if(pgDiv){
+    let existing = document.getElementById(containerId);
+    if(existing) existing.remove();
+    tableContainer.parentElement.insertBefore(pgDiv, tableContainer.nextSibling);
+  } else {
+    let existing = document.getElementById(containerId);
+    if(existing) existing.remove();
+  }
+}
+
+// --- 5. FAST DOM BUILDER (DocumentFragment) ---
+function buildRows(rowsHTML){
+  let t = document.createElement("tbody");
+  t.innerHTML = rowsHTML.join("");
+  let frag = document.createDocumentFragment();
+  while(t.firstChild) frag.appendChild(t.firstChild);
+  return frag;
+}
+
+// --- 6. OVERRIDE tampilkanTabel (Monitor Stok) ---
+window.tampilkanTabel = function(){
+  let tabel = document.getElementById("tabelBarang");
+  let keyword = document.getElementById("search").value.toLowerCase();
+  let selWH = document.getElementById("filterWarehouse").value;
+  document.getElementById("assetTitle").innerText = selWH==="All"?"💰 Total Nilai Barang (All Warehouse):":"🏢 Total Nilai Barang (Gudang "+selWH+"):";
+  let hasil = daftarBarang.filter(b=>{
+    let wh = b.warehouse||"Bintaro";
+    return (selWH==="All"||wh.toUpperCase()===selWH.toUpperCase()) &&
+           (b.nama.toLowerCase().includes(keyword)||b.sku.toLowerCase().includes(keyword));
+  });
+  let total = 0;
+  hasil.forEach(b=>{ total+=Number(b.totalPcs)*Number(b.harga); });
+  document.getElementById("assetValue").innerText = rpFormat(total);
+  if(hasil.length===0){ tabel.innerHTML="<tr><td colspan='10' class='kosong'>Tidak ada data</td></tr>"; attachPagination(tabel,"pg-monitor",0,1,PAGE_SIZE,()=>{}); return; }
+  let page = _pageState.monitor;
+  let sliced = hasil.slice((page-1)*PAGE_SIZE, page*PAGE_SIZE);
+  let rows = sliced.map(function(b,ii){
+    let i = (page-1)*PAGE_SIZE+ii;
+    let idx = daftarBarang.indexOf(b);
+    let pcs = Number(b.totalPcs);
+    let uom = hitungUOM(pcs,Number(b.isiKarton));
+    let nilaiB = pcs*Number(b.harga);
+    let isNeg = pcs<0;
+    let stokCell = isNeg
+      ? "<span style='color:#c53030;font-weight:700;background:#fff5f5;padding:2px 6px;border-radius:4px;border:1px solid #fc8181'>⚠️ "+pcs+" pcs (selisih)</span>"
+      : pcs+" pcs";
+    return "<tr style='"+(isNeg?"background:#fff5f5":"")+"'><td>"+(i+1)+"</td><td title='"+b.sku+"'>"+b.sku+"</td><td title='"+b.nama+"'>"+b.nama+"</td><td title='"+b.kategori+"'>"+b.kategori+"</td><td><span class='badge badge-gudang'>"+(b.warehouse||"Bintaro")+"</span></td><td>"+stokCell+"</td><td><strong>"+uom+"</strong></td><td>"+rpFormat(b.harga)+"</td><td><strong>"+rpFormat(nilaiB)+"</strong></td><td style='text-align:center'>"+(isAdmin()?"<button class='btn-action btn-edit' onclick='editBarang("+idx+")'>Edit</button> <button class='btn-action btn-hapus' onclick='hapusBarang("+idx+")'>Hapus</button>":"<span style='color:#a0aec0;font-size:10px'>-</span>")+"</td></tr>";
+  });
+  tabel.innerHTML = "";
+  tabel.appendChild(buildRows(rows));
+  attachPagination(tabel,"pg-monitor",hasil.length,page,PAGE_SIZE,function(pg){ _pageState.monitor=pg; window.tampilkanTabel(); });
+};
+
+// --- 7. OVERRIDE tampilkanStockIn ---
+window.tampilkanStockIn = function(){
+  let tbody = document.getElementById("tabelStockIn");
+  let keyword = document.getElementById("in-search").value.toLowerCase();
+  let from = document.getElementById("in-filter-from").value;
+  let to = document.getElementById("in-filter-to").value;
+  let wh = document.getElementById("in-filter-wh").value;
+  let hasil = stockInLog.filter(r=>{
+    return (r.sku.toLowerCase().includes(keyword)||r.nama.toLowerCase().includes(keyword)||(r.ref||"").toLowerCase().includes(keyword)) &&
+           (!from||r.tanggal>=from) && (!to||r.tanggal<=to) &&
+           (wh==="All"||(r.warehouse||"Bintaro").toUpperCase()===wh.toUpperCase());
+  }).sort((a,b)=>b.tanggal.localeCompare(a.tanggal));
+  if(hasil.length===0){ tbody.innerHTML="<tr><td colspan='12' class='kosong'>"+t("no_data_in")+"</td></tr>"; attachPagination(tbody,"pg-in",0,1,PAGE_SIZE,()=>{}); return; }
+  let page = _pageState.in;
+  let sliced = hasil.slice((page-1)*PAGE_SIZE, page*PAGE_SIZE);
+  let rows = sliced.map(function(r,ii){
+    let i = (page-1)*PAGE_SIZE+ii;
+    let uom = hitungUOM(r.qty,r.isiKarton);
+    let nilai = r.qty*r.harga;
+    return "<tr><td>"+(i+1)+"</td><td>"+r.tanggal+"</td><td title='"+r.sku+"'>"+r.sku+"</td><td title='"+r.nama+"'>"+r.nama+"</td><td><span class='badge badge-gudang'>"+r.warehouse+"</span></td><td><span class='badge badge-in'>+"+r.qty+" pcs</span></td><td><strong>"+uom+"</strong></td><td>"+rpFormat(r.harga)+"</td><td><strong>"+rpFormat(nilai)+"</strong></td><td title='"+r.ref+"'>"+r.ref+"</td><td title='"+(r.keterangan||"-")+"'>"+(r.keterangan||"-")+"</td><td style='text-align:center'>"+(isAdmin()?"<button class='btn-action btn-edit' onclick='editStockIn(\""+r.id+"\")'>Edit</button> <button class='btn-action btn-hapus' onclick='hapusStockIn(\""+r.id+"\")'>Hapus</button>":"<span style='color:#a0aec0;font-size:10px'>-</span>")+"</td></tr>";
+  });
+  tbody.innerHTML = "";
+  tbody.appendChild(buildRows(rows));
+  attachPagination(tbody,"pg-in",hasil.length,page,PAGE_SIZE,function(pg){ _pageState.in=pg; window.tampilkanStockIn(); });
+};
+
+// --- 8. OVERRIDE tampilkanStockOut ---
+window.tampilkanStockOut = function(){
+  let tbody = document.getElementById("tabelStockOut");
+  let keyword = document.getElementById("out-search").value.toLowerCase();
+  let from = document.getElementById("out-filter-from").value;
+  let to = document.getElementById("out-filter-to").value;
+  let wh = document.getElementById("out-filter-wh").value;
+  let tipeF = document.getElementById("out-filter-tipe").value;
+  let hasil = stockOutLog.filter(r=>{
+    return (r.sku.toLowerCase().includes(keyword)||r.nama.toLowerCase().includes(keyword)||(r.ref||"").toLowerCase().includes(keyword)) &&
+           (!from||r.tanggal>=from) && (!to||r.tanggal<=to) &&
+           (wh==="All"||(r.warehouse||"Bintaro").toUpperCase()===wh.toUpperCase()) &&
+           (tipeF==="All"||(r.tipe||"Stock Out")===tipeF);
+  }).sort((a,b)=>b.tanggal.localeCompare(a.tanggal));
+  if(hasil.length===0){ tbody.innerHTML="<tr><td colspan='12' class='kosong'>"+t("no_data_out")+"</td></tr>"; attachPagination(tbody,"pg-out",0,1,PAGE_SIZE,()=>{}); return; }
+  let page = _pageState.out;
+  let sliced = hasil.slice((page-1)*PAGE_SIZE, page*PAGE_SIZE);
+  let rows = sliced.map(function(r,ii){
+    let i = (page-1)*PAGE_SIZE+ii;
+    let uom = hitungUOM(r.qty,r.isiKarton);
+    let nilai = r.qty*r.harga;
+    let tipe = r.tipe||"Stock Out";
+    let tipeBadge = tipe==="Expired"?"<span class='badge' style='background:#fef3c7;color:#92400e'>⚠️ Expired</span>":tipe==="Damage"?"<span class='badge' style='background:#f3e8ff;color:#6b21a8'>💥 Damage</span>":"<span class='badge badge-out'>📤 Stock Out</span>";
+    return "<tr><td>"+(i+1)+"</td><td>"+r.tanggal+"</td><td>"+tipeBadge+"</td><td title='"+r.sku+"'>"+r.sku+"</td><td title='"+r.nama+"'>"+r.nama+"</td><td><span class='badge badge-gudang'>"+r.warehouse+"</span></td><td><span class='badge badge-out'>-"+r.qty+" pcs</span></td><td><strong>"+uom+"</strong></td><td>"+rpFormat(r.harga)+"</td><td><strong>"+rpFormat(nilai)+"</strong></td><td title='"+r.ref+"'>"+r.ref+"</td><td style='text-align:center'>"+(isAdmin()?"<button class='btn-action btn-edit' onclick='editStockOut(\""+r.id+"\")'>Edit</button> <button class='btn-action btn-hapus' onclick='hapusStockOut(\""+r.id+"\")'>Hapus</button>":"<span style='color:#a0aec0;font-size:10px'>-</span>")+"</td></tr>";
+  });
+  tbody.innerHTML = "";
+  tbody.appendChild(buildRows(rows));
+  attachPagination(tbody,"pg-out",hasil.length,page,PAGE_SIZE,function(pg){ _pageState.out=pg; window.tampilkanStockOut(); });
+};
+
+// --- 9. OVERRIDE tampilkanTransfer ---
+window.tampilkanTransfer = function(){
+  let tbody = document.getElementById("tabelTransfer");
+  let keyword = document.getElementById("tr-search").value.toLowerCase();
+  let from = document.getElementById("tr-filter-from").value;
+  let to = document.getElementById("tr-filter-to").value;
+  let wh = document.getElementById("tr-filter-wh").value;
+  let hasil = transferLog.filter(r=>{
+    return (r.sku.toLowerCase().includes(keyword)||r.nama.toLowerCase().includes(keyword)||(r.ref||"").toLowerCase().includes(keyword)) &&
+           (!from||r.tanggal>=from) && (!to||r.tanggal<=to) &&
+           (wh==="All"||r.fromWh.toUpperCase()===wh.toUpperCase()||r.toWh.toUpperCase()===wh.toUpperCase());
+  }).sort((a,b)=>b.tanggal.localeCompare(a.tanggal));
+  if(hasil.length===0){ tbody.innerHTML="<tr><td colspan='11' class='kosong'>"+t("no_data_transfer")+"</td></tr>"; attachPagination(tbody,"pg-tr",0,1,PAGE_SIZE,()=>{}); return; }
+  let page = _pageState.tr;
+  let sliced = hasil.slice((page-1)*PAGE_SIZE, page*PAGE_SIZE);
+  let rows = sliced.map(function(r,ii){
+    let i = (page-1)*PAGE_SIZE+ii;
+    let uom = hitungUOM(r.qty,r.isiKarton);
+    return "<tr><td>"+(i+1)+"</td><td>"+r.tanggal+"</td><td title='"+r.sku+"'>"+r.sku+"</td><td title='"+r.nama+"'>"+r.nama+"</td><td><span class='badge badge-gudang'>"+r.fromWh+"</span></td><td style='text-align:center;color:#7c3aed;font-weight:700'>→</td><td><span class='badge badge-gudang' style='background:#553c9a'>"+r.toWh+"</span></td><td><span class='badge badge-transfer'>"+r.qty+" pcs</span></td><td><strong>"+uom+"</strong></td><td title='"+r.ref+"'>"+r.ref+"</td><td style='text-align:center'>"+(isAdmin()?"<button class='btn-action btn-edit' onclick='editTransfer(\""+r.id+"\")'>Edit</button> <button class='btn-action btn-hapus' onclick='hapusTransfer(\""+r.id+"\")'>Hapus</button>":"<span style='color:#a0aec0;font-size:10px'>-</span>")+"</td></tr>";
+  });
+  tbody.innerHTML = "";
+  tbody.appendChild(buildRows(rows));
+  attachPagination(tbody,"pg-tr",hasil.length,page,PAGE_SIZE,function(pg){ _pageState.tr=pg; window.tampilkanTransfer(); });
+};
+
+// --- 10. OVERRIDE tampilkanLedger dengan pagination ---
+const _origTampilkanLedger = tampilkanLedger;
+window.tampilkanLedger = function(){
+  let tbody = document.getElementById("tabelLedger");
+  let keyword = document.getElementById("led-search").value.toLowerCase().trim();
+  let from = document.getElementById("led-from").value;
+  let to = document.getElementById("led-to").value;
+  let wh = document.getElementById("led-wh").value;
+  let type = document.getElementById("led-type").value;
+
+  let inData    = stockInLog.map(r=>({...r,tipe:"IN",warehouse:r.warehouse||"Bintaro"}));
+  let outData   = stockOutLog.map(r=>({...r,tipe:"OUT",warehouse:r.warehouse||"Bintaro"}));
+  let trOutData = transferLog.map(r=>({...r,tipe:"TRANSFER_OUT",warehouse:r.fromWh,ref:"Transfer → "+r.toWh+(r.ref&&r.ref!=="-"?" | "+r.ref:"")}));
+  let trInData  = transferLog.map(r=>({...r,tipe:"TRANSFER_IN",warehouse:r.toWh,ref:"Transfer ← "+r.fromWh+(r.ref&&r.ref!=="-"?" | "+r.ref:"")}));
+  let semua = [...inData,...outData,...trOutData,...trInData];
+
+  semua.sort((a,b)=>{ let d=a.tanggal.localeCompare(b.tanggal); return d!==0?d:(Number(a.id)||0)-(Number(b.id)||0); });
+
+  let runBalance = {};
+  semua.forEach(r=>{
+    let key = (r.sku||"").toUpperCase()+"|||"+(r.warehouse||"").toUpperCase();
+    if(!runBalance[key]) runBalance[key]=0;
+    if(r.tipe==="IN"||r.tipe==="TRANSFER_IN") runBalance[key]+=(r.qty||0);
+    else runBalance[key]-=(r.qty||0);
+    r._runBal = runBalance[key];
+  });
+
+  let hasil = semua.filter(r=>{
+    return (keyword===""||((r.sku&&r.sku.toLowerCase().includes(keyword))||(r.nama&&r.nama.toLowerCase().includes(keyword)))) &&
+           (!from||r.tanggal>=from) && (!to||r.tanggal<=to) &&
+           (wh==="All"||(r.warehouse||"").toUpperCase()===wh.toUpperCase()) &&
+           (type==="All"||r.tipe===type);
+  }).sort((a,b)=>{ let d=b.tanggal.localeCompare(a.tanggal); return d!==0?d:(Number(b.id)||0)-(Number(a.id)||0); });
+
+  let totalIn  = stockInLog.filter(r=>wh==="All"||(r.warehouse||"Bintaro").toUpperCase()===wh.toUpperCase()).reduce((s,r)=>s+(r.qty||0)*(r.harga||0),0);
+  let totalOut = stockOutLog.filter(r=>wh==="All"||(r.warehouse||"Bintaro").toUpperCase()===wh.toUpperCase()).reduce((s,r)=>s+(r.qty||0)*(r.harga||0),0);
+  let totalStok = daftarBarang.filter(b=>wh==="All"||(b.warehouse||"Bintaro").toUpperCase()===wh.toUpperCase()).reduce((s,b)=>s+(Number(b.totalPcs)||0)*(Number(b.harga)||0),0);
+  document.getElementById("led-total-stok").innerText = rpFormat(totalStok);
+  document.getElementById("led-total-in").innerText = rpFormat(totalIn);
+  document.getElementById("led-total-out").innerText = rpFormat(totalOut);
+  document.getElementById("led-total-trx").innerText = hasil.length;
+
+  if(hasil.length===0){ tbody.innerHTML="<tr><td colspan='11' class='kosong'>"+t("no_data_ledger")+"</td></tr>"; attachPagination(tbody,"pg-led",0,1,PAGE_SIZE,()=>{}); return; }
+
+  let page = _pageState.led;
+  let sliced = hasil.slice((page-1)*PAGE_SIZE, page*PAGE_SIZE);
+  let rows = sliced.map(function(r,ii){
+    let i = (page-1)*PAGE_SIZE+ii;
+    let uomTrx = hitungUOM(r.qty||0,r.isiKarton||0);
+    let sisaPcs = r._runBal||0;
+    let sisaUom = hitungUOM(sisaPcs,r.isiKarton||0);
+    let badge,qtyTxt;
+    if(r.tipe==="IN"){ badge="<span class='badge badge-in'>📥 IN</span>"; qtyTxt="<span style='color:#065f46;font-weight:700'>+"+(r.qty||0)+" pcs</span>"; }
+    else if(r.tipe==="OUT"){ badge="<span class='badge badge-out'>📤 OUT</span>"; qtyTxt="<span style='color:#991b1b;font-weight:700'>-"+(r.qty||0)+" pcs</span>"; }
+    else if(r.tipe==="TRANSFER_OUT"){ badge="<span class='badge badge-transfer'>🔄 TRF OUT</span>"; qtyTxt="<span style='color:#3730a3;font-weight:700'>-"+(r.qty||0)+" pcs</span>"; }
+    else { badge="<span class='badge badge-transfer' style='background:#d1fae5;color:#065f46'>🔄 TRF IN</span>"; qtyTxt="<span style='color:#065f46;font-weight:700'>+"+(r.qty||0)+" pcs</span>"; }
+    let sisaColor = sisaPcs<0?"color:#c53030":"color:#2c3e50";
+    let nilai = (r.qty||0)*(r.harga||0);
+    return "<tr><td>"+(i+1)+"</td><td>"+(r.tanggal||"-")+"</td><td>"+badge+"</td><td title='"+(r.sku||"-")+"'>"+(r.sku||"-")+"</td><td title='"+(r.nama||"-")+"'>"+(r.nama||"-")+"</td><td><span class='badge badge-gudang'>"+(r.warehouse||"-")+"</span></td><td>"+qtyTxt+"</td><td><strong>"+uomTrx+"</strong></td><td>"+rpFormat(nilai)+"</td><td style='"+sisaColor+";font-weight:700'>"+sisaPcs+" pcs</td><td>"+sisaUom+"</td></tr>";
+  });
+  tbody.innerHTML = "";
+  tbody.appendChild(buildRows(rows));
+  attachPagination(tbody,"pg-led",hasil.length,page,PAGE_SIZE,function(pg){ _pageState.led=pg; window.tampilkanLedger(); });
+};
+
+console.log("⚡ Performance optimizations loaded: debounce, pagination, DocumentFragment, throttled Firebase save");
 
 </script>
 <!-- MODAL EDIT BARANG (Monitor Stok) -->
