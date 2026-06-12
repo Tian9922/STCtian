@@ -275,7 +275,7 @@
   <div class="left-panel" id="panel-stock-in-left">
     <div class="card">
       <h2>⚡ <span data-i18n="fast_inbound">Fast Inbound / Upload</span></h2>
-      <div style="font-size:11px;color:#718096;margin-bottom:6px">Upload Excel untuk import stok massal ke gudang. Kolom <b>Tanggal</b> di template akan dibaca per baris — jika kosong, gunakan tanggal default di bawah.</div>
+      <div style="font-size:11px;color:#718096;margin-bottom:6px">Upload Excel untuk import stok massal ke gudang. Kolom <b>Tanggal</b> di template akan dibaca per baris — jika kosong, gunakan tanggal default di bawah. Kolom <b>Keterangan</b> juga dibaca otomatis.</div>
       <div style="margin-bottom:5px">
         <label style="font-size:11px;font-weight:600;color:#4a5568;display:block;margin-bottom:2px">Tanggal Default (fallback jika kolom Tanggal kosong):</label>
         <input type="date" id="uploadTanggal" style="width:100%;padding:5px 7px;font-size:12px;border:1px solid #cbd5e0;border-radius:4px;outline:none">
@@ -328,8 +328,12 @@
           <input type="number" id="in-qty" min="1" placeholder="Pcs">
         </div>
         <div class="form-group-full">
-          <label data-i18n="label_ref">No. Referensi / Keterangan:</label>
+          <label data-i18n="label_ref">No. Referensi:</label>
           <input type="text" id="in-ref" placeholder="No. PO, surat jalan, dll...">
+        </div>
+        <div class="form-group-full">
+          <label>Keterangan:</label>
+          <input type="text" id="in-keterangan" placeholder="Keterangan tambahan...">
         </div>
       </div>
       <div style="display:flex;gap:5px">
@@ -359,7 +363,7 @@
     <div class="table-container">
       <table>
         <thead><tr><th>No</th><th data-i18n="th_tanggal">Tanggal</th><th data-i18n="th_sku">SKU</th><th data-i18n="th_nama">Nama Barang</th>
-          <th data-i18n="th_gudang">Gudang</th><th data-i18n="th_qty_masuk">Qty Masuk</th><th data-i18n="th_konversi">Konversi</th><th data-i18n="th_harga">Harga</th><th data-i18n="th_total_nilai">Total Nilai</th><th data-i18n="th_ref">Referensi</th>
+          <th data-i18n="th_gudang">Gudang</th><th data-i18n="th_qty_masuk">Qty Masuk</th><th data-i18n="th_konversi">Konversi</th><th data-i18n="th_harga">Harga</th><th data-i18n="th_total_nilai">Total Nilai</th><th data-i18n="th_ref">Referensi</th><th data-i18n="th_keterangan">Keterangan</th>
           <th style="width:60px;text-align:center" data-i18n="th_aksi">Aksi</th>
         </tr></thead>
         <tbody id="tabelStockIn"></tbody>
@@ -1481,13 +1485,13 @@ function parseTanggalExcel(val, fallback){
 }
 
 function downloadTemplateSistem(){
-  let headerRow=[["Tanggal","Item Code","Item Group","Item Name","Actual Qty","Harga","Qty/Ctn"]];
-  let contoh=["02-Jan-26","ABC JELLY STRAWS - ASSORTED 300G","Import - Kids","ABC JELLY STRAW ASSORTED 300/30",150,12956,30];
-  let contoh2=["05-Jan-26","ABC JELLY STRAWS - ASSORTED 300G","Import - Kids","ABC JELLY STRAW ASSORTED 300/30",50,12956,30];
+  let headerRow=[["Tanggal","Item Code","Item Group","Item Name","Actual Qty","Harga","Qty/Ctn","Keterangan"]];
+  let contoh=["02-Jan-26","ABC JELLY STRAWS - ASSORTED 300G","Import - Kids","ABC JELLY STRAW ASSORTED 300/30",150,12956,30,"PO-001"];
+  let contoh2=["05-Jan-26","ABC JELLY STRAWS - ASSORTED 300G","Import - Kids","ABC JELLY STRAW ASSORTED 300/30",50,12956,30,"PO-002"];
   headerRow.push(contoh, contoh2);
   let wb=XLSX.utils.book_new();
   let ws=XLSX.utils.aoa_to_sheet(headerRow);
-  ws['!cols']=[{wch:14},{wch:35},{wch:20},{wch:35},{wch:12},{wch:12},{wch:12}];
+  ws['!cols']=[{wch:14},{wch:35},{wch:20},{wch:35},{wch:12},{wch:12},{wch:12},{wch:25}];
   XLSX.utils.book_append_sheet(wb,ws,"Template");
   XLSX.writeFile(wb,"Template_Inventory_Tian.xlsx");
 }
@@ -1568,7 +1572,7 @@ function prosesUploadExcel(element){
     dataJson.forEach(function(row){
       let rawSku=row["Item Code"], rawKat=row["Item Group"]||"General", rawNama=row["Item Name"];
       let rawQty=row["Actual Qty"]||0, rawHarga=row["Harga"]||0, rawQtyCtn=row["Qty/Ctn"]||0;
-      let rawTgl=row["Tanggal"];
+      let rawTgl=row["Tanggal"], rawKet=row["Keterangan"]||"";
       if(!rawSku||!rawNama) return;
       // Gunakan tanggal dari kolom, fallback ke uploadTgl jika kosong
       let tglBaris=parseTanggalExcel(rawTgl, uploadTgl);
@@ -1619,7 +1623,7 @@ function prosesUploadExcel(element){
         if(existing){ existing.totalPcs=Number(existing.totalPcs)+qtyF; existing.harga=finalHarga; existing.isiKarton=finalIsi; }
         else { daftarBarang.push({sku:existingMaster.sku||skuF,kategori:existingMaster.kategori||katF,nama:existingMaster.bintaro||namaF,isiKarton:finalIsi,warehouse:targetWarehouse,totalPcs:qtyF,harga:finalHarga}); }
         let today=tglBaris;
-        stockInLog.push({id:Date.now()+Math.random(),tanggal:today,sku:existingMaster.sku||skuF,kategori:existingMaster.kategori||katF,nama:existingMaster.bintaro||namaF,isiKarton:finalIsi,warehouse:targetWarehouse,qty:qtyF,harga:finalHarga,ref:"Upload Excel"});
+        stockInLog.push({id:Date.now()+Math.random(),tanggal:today,sku:existingMaster.sku||skuF,kategori:existingMaster.kategori||katF,nama:existingMaster.bintaro||namaF,isiKarton:finalIsi,warehouse:targetWarehouse,qty:qtyF,harga:finalHarga,ref:"Upload Excel",keterangan:rawKet.toString().trim()||"-"});
         cS++;
       }
     });
@@ -2207,6 +2211,7 @@ function simpanStockIn(){
   let warehouse=document.getElementById("in-warehouse").value;
   let qty=document.getElementById("in-qty").value;
   let ref=document.getElementById("in-ref").value.trim();
+  let keterangan=document.getElementById("in-keterangan").value.trim();
   if(!tanggal||!skuRaw||!nama||!qty||Number(qty)<=0){ alert(t("alert_fill_all")); return; }
   let skuFinal=fullSku||skuRaw.toUpperCase();
 
@@ -2223,7 +2228,7 @@ function simpanStockIn(){
     document.getElementById("in-tombol-batal").style.display="none";
   }
 
-  let entry={id:Date.now()+Math.random(),tanggal,sku:skuFinal,kategori,nama,isiKarton:Number(isiKarton)||0,warehouse,qty:Number(qty),harga:Number(harga)||0,ref:ref||"-"};
+  let entry={id:Date.now()+Math.random(),tanggal,sku:skuFinal,kategori,nama,isiKarton:Number(isiKarton)||0,warehouse,qty:Number(qty),harga:Number(harga)||0,ref:ref||"-",keterangan:keterangan||"-"};
   stockInLog.push(entry);
   let existing=daftarBarang.find(b=>b.sku.toUpperCase()===skuFinal.toUpperCase()&&(b.warehouse||"Bintaro").toUpperCase()===warehouse.toUpperCase());
   if(existing){ existing.totalPcs=Number(existing.totalPcs)+Number(qty); }
@@ -2233,7 +2238,7 @@ function simpanStockIn(){
   markDirty("in","monitor","ledger","analisis");
   document.getElementById("in-sku").value="";
   document.getElementById("in-sku").removeAttribute("data-full-sku");
-  ["in-nama","in-kategori","in-isiKarton","in-harga","in-qty","in-ref"].forEach(id=>{ document.getElementById(id).value=""; });
+  ["in-nama","in-kategori","in-isiKarton","in-harga","in-qty","in-ref","in-keterangan"].forEach(id=>{ document.getElementById(id).value=""; });
   document.getElementById("in-skuAlert").style.display="none";
   alert(t("alert_ok"));
 }
@@ -2252,6 +2257,7 @@ function editStockIn(id){
   document.getElementById("in-warehouse").value=r.warehouse;
   document.getElementById("in-qty").value=r.qty;
   document.getElementById("in-ref").value=r.ref;
+  document.getElementById("in-keterangan").value=r.keterangan||"";
   document.getElementById("in-tombol-aksi").innerText="💾 Simpan Edit";
   document.getElementById("in-tombol-batal").style.display="inline-block";
   document.getElementById("tab-in").scrollIntoView();
@@ -2261,7 +2267,7 @@ function batalEditIn(){
   editingInId=null;
   document.getElementById("in-tombol-aksi").innerText="✅ Simpan Stock In";
   document.getElementById("in-tombol-batal").style.display="none";
-  ["in-sku","in-nama","in-kategori","in-isiKarton","in-harga","in-qty","in-ref"].forEach(id=>{ document.getElementById(id).value=""; });
+  ["in-sku","in-nama","in-kategori","in-isiKarton","in-harga","in-qty","in-ref","in-keterangan"].forEach(id=>{ document.getElementById(id).value=""; });
   document.getElementById("in-sku").removeAttribute("data-full-sku");
 }
 
@@ -2279,7 +2285,7 @@ function tampilkanStockIn(){
     let matchW=wh==="All"||(r.warehouse||"Bintaro").toUpperCase()===wh.toUpperCase();
     return matchK&&matchF&&matchT&&matchW;
   }).sort((a,b)=>b.tanggal.localeCompare(a.tanggal));
-  if(hasil.length===0){ tbody.innerHTML="<tr><td colspan='11' class='kosong'>"+t("no_data_in")+"</td></tr>"; return; }
+  if(hasil.length===0){ tbody.innerHTML="<tr><td colspan='12' class='kosong'>"+t("no_data_in")+"</td></tr>"; return; }
   hasil.forEach(function(r,i){
     let uom=hitungUOM(r.qty,r.isiKarton);
     let nilai=r.qty*r.harga;
@@ -2289,6 +2295,7 @@ function tampilkanStockIn(){
       "<td><span class='badge badge-in'>+"+r.qty+" pcs</span></td>"+
       "<td><strong>"+uom+"</strong></td><td>"+rpFormat(r.harga)+"</td><td><strong>"+rpFormat(nilai)+"</strong></td>"+
       "<td title='"+r.ref+"'>"+r.ref+"</td>"+
+      "<td title='"+(r.keterangan||"-")+"'>"+(r.keterangan||"-")+"</td>"+
       "<td style='text-align:center'>"+(isAdmin()?"<button class='btn-action btn-edit' onclick='editStockIn(\""+r.id+"\")'>Edit</button> <button class='btn-action btn-hapus' onclick='hapusStockIn(\""+r.id+"\")'>Hapus</button>":"<span style='color:#a0aec0;font-size:10px'>-</span>")+"</td>"+
     "</tr>";
   });
@@ -2336,8 +2343,8 @@ function exportStockIn(){
     let matchW=wh==="All"||(r.warehouse||"Bintaro").toUpperCase()===wh.toUpperCase();
     return matchK&&matchF&&matchT&&matchW;
   }).sort((a,b)=>b.tanggal.localeCompare(a.tanggal));
-  let rows=[["Tanggal","SKU","Nama Barang","Kategori","Gudang","Qty Masuk","Harga Satuan","Total Nilai","Referensi"]];
-  hasil.forEach(r=>rows.push([r.tanggal,r.sku,r.nama,r.kategori,r.warehouse,r.qty,r.harga,r.qty*r.harga,r.ref]));
+  let rows=[["Tanggal","SKU","Nama Barang","Kategori","Gudang","Qty Masuk","Harga Satuan","Total Nilai","Referensi","Keterangan"]];
+  hasil.forEach(r=>rows.push([r.tanggal,r.sku,r.nama,r.kategori,r.warehouse,r.qty,r.harga,r.qty*r.harga,r.ref,r.keterangan||"-"]));
   let wb=XLSX.utils.book_new(); let ws=XLSX.utils.aoa_to_sheet(rows);
   XLSX.utils.book_append_sheet(wb,ws,"Stock In"); XLSX.writeFile(wb,"Stock_In_Export.xlsx");
 }
