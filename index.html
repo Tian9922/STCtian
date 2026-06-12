@@ -872,7 +872,6 @@
           <th data-i18n="th_sku">SKU</th><th data-i18n="th_nama">Nama Barang</th><th data-i18n="th_gudang">Gudang</th>
           <th data-i18n="stok_saat_ini">Stok Saat Ini</th><th>InTransit</th><th data-i18n="th_konversi">Konversi</th>
           <th data-i18n="total_out_periode">Total Out (periode)</th>
-          <th data-i18n="avg_out">Avg Out/Hari</th>
           <th>Avg/Bulan (30hr)</th>
           <th>Avg 3 Bulan (90hr)</th>
           <th data-i18n="kategori_moving">Kategori Moving</th>
@@ -895,6 +894,8 @@
     <div class="summary-card"><div class="s-label">💰 Total Nilai Penjualan</div><div class="s-val s-green" id="sa-total-nilai">Rp 0</div></div>
     <div class="summary-card"><div class="s-label">🛍️ SKU Terlaris</div><div class="s-val" id="sa-top-sku" style="font-size:12px;color:#7c3aed">-</div></div>
     <div class="summary-card"><div class="s-label">📊 Avg Penjualan/Hari</div><div class="s-val s-purple" id="sa-avg-day">0 pcs</div></div>
+    <div class="summary-card"><div class="s-label">📅 Avg Penjualan/Bulan (30hr)</div><div class="s-val s-blue" id="sa-avg-month">0 pcs</div></div>
+    <div class="summary-card"><div class="s-label">📆 Avg 3 Bulan (90hr)</div><div class="s-val" style="color:#553c9a;font-size:16px;font-weight:700" id="sa-avg-3month">0 pcs</div></div>
   </div>
   <!-- Filters -->
   <div class="analisis-filters">
@@ -3427,9 +3428,14 @@ function tampilkanSales(){
     let dates=hasil.map(r=>r.tanggal).sort();
     let d1=new Date(dates[dates.length-1]), d2=new Date(dates[0]);
     let diffDays=Math.ceil((d2-d1)/(1000*60*60*24))||1;
-    document.getElementById("sa-avg-day").innerText=(totalQtyAll/diffDays).toFixed(1)+" pcs";
+    let avgDay=totalQtyAll/diffDays;
+    document.getElementById("sa-avg-day").innerText=avgDay.toFixed(1)+" pcs";
+    document.getElementById("sa-avg-month").innerText=(avgDay*30).toFixed(0)+" pcs";
+    document.getElementById("sa-avg-3month").innerText=(avgDay*90).toFixed(0)+" pcs";
   } else {
     document.getElementById("sa-avg-day").innerText="0 pcs";
+    document.getElementById("sa-avg-month").innerText="0 pcs";
+    document.getElementById("sa-avg-3month").innerText="0 pcs";
   }
 
   let tbody=document.getElementById("tabelSales");
@@ -3437,7 +3443,7 @@ function tampilkanSales(){
 
   if(viewMode==="rekap"){
     // Group by SKU
-    thead.innerHTML="<tr><th>No</th><th>SKU</th><th>Nama Barang</th><th>Gudang</th><th>Total Transaksi</th><th>Total Qty Keluar</th><th>Konversi</th><th>Total Nilai</th><th>Avg/Hari</th><th>Tgl Pertama</th><th>Tgl Terakhir</th></tr>";
+    thead.innerHTML="<tr><th>No</th><th>SKU</th><th>Nama Barang</th><th>Gudang</th><th>Total Transaksi</th><th>Total Qty Keluar</th><th>Konversi</th><th>Total Nilai</th><th>Tgl Pertama</th><th>Tgl Terakhir</th></tr>";
     let grouped={};
     hasil.forEach(r=>{
       let key=r.sku.toUpperCase()+"__"+(r.warehouse||"Bintaro");
@@ -3450,14 +3456,11 @@ function tampilkanSales(){
       grouped[key].tglArr.push(r.tanggal);
     });
     let rows=Object.values(grouped).sort((a,b)=>b.qty-a.qty);
-    if(rows.length===0){ tbody.innerHTML="<tr><td colspan='11' class='kosong'>Tidak ada data penjualan</td></tr>"; return; }
+    if(rows.length===0){ tbody.innerHTML="<tr><td colspan='10' class='kosong'>Tidak ada data penjualan</td></tr>"; return; }
     tbody.innerHTML="";
     rows.forEach(function(g,i){
       let tglArr=g.tglArr.sort();
       let tglFirst=tglArr[0], tglLast=tglArr[tglArr.length-1];
-      let d1=new Date(tglFirst), d2=new Date(tglLast);
-      let diffDays=Math.ceil((d2-d1)/(1000*60*60*24))||1;
-      let avgHari=(g.qty/diffDays).toFixed(2);
       let uom=hitungUOM(g.qty,g.isiKarton);
       tbody.innerHTML+="<tr>"+
         "<td>"+(i+1)+"</td>"+
@@ -3468,7 +3471,6 @@ function tampilkanSales(){
         "<td><span class='badge badge-out'>"+g.qty+" pcs</span></td>"+
         "<td><strong>"+uom+"</strong></td>"+
         "<td><strong>"+rpFormat(g.nilai)+"</strong></td>"+
-        "<td style='font-weight:600;color:#2b6cb0'>"+avgHari+" pcs</td>"+
         "<td style='font-size:10px'>"+tglFirst+"</td>"+
         "<td style='font-size:10px'>"+tglLast+"</td>"+
       "</tr>";
