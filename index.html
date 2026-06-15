@@ -3118,7 +3118,7 @@ function tampilkanAnalisis(){
       "<td>"+avg3BlnCell+"</td>"+
       "<td>"+badgeHtml+"</td>"+
       "<td>"+durBadge(avgPerHari, totalStok)+"</td>"+
-      "<td style='text-align:center'><button class='btn-action btn-edit' onclick='bukaAnPOPanel(\""+b.sku+"\",\""+b.nama+"\"," +(b.totalPcs)+","+(b.isiKarton||0)+","+avgPerHari.toFixed(4)+",\""+encodeURIComponent(wh2)+"\")'">📦 Input PO</button></td>"+
+      "<td style='text-align:center'><button class='btn-action btn-edit' onclick=\"bukaAnPOPanel('"+b.sku+"','"+b.nama+"',"+b.totalPcs+","+(b.isiKarton||0)+","+avgPerHari.toFixed(4)+",'"+encodeURIComponent(wh2)+"')\">📦 Input PO</button></td>"+
     "</tr>";
   });
   tbody.innerHTML="";
