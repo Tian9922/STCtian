@@ -3040,111 +3040,179 @@ function getDraftStok(sku){
                      .reduce((s,r)=>s+Number(r.qty),0);
 }
 
-function tampilkanAnalisis(){
-  let katSel=document.getElementById("an-kategori");
-  if(katSel.options.length<=1){
-    let kats=[...new Set(daftarBarang.map(b=>b.kategori).filter(Boolean))].sort();
-    kats.forEach(k=>{ let o=document.createElement("option"); o.value=k; o.text=k; katSel.appendChild(o); });
-  }
-  let keyword=document.getElementById("an-search").value.toLowerCase();
-  let wh=document.getElementById("an-wh").value;
-  let kat=document.getElementById("an-kategori").value;
-  let movFilter=document.getElementById("an-moving").value;
-  let periode=parseInt(document.getElementById("an-periode").value)||0;
-  let seen={}; let items=[];
-  daftarBarang.forEach(b=>{
-    let key=b.sku.toUpperCase()+"__"+(b.warehouse||"Bintaro").toUpperCase();
-    if(!seen[key]){ seen[key]=true; items.push(b); }
-  });
-  let hasil=items.filter(b=>{
-    let matchK=b.sku.toLowerCase().includes(keyword)||b.nama.toLowerCase().includes(keyword);
-    let matchW=wh==="All"||(b.warehouse||"Bintaro").toUpperCase()===wh.toUpperCase();
-    let matchKat=kat==="All"||b.kategori===kat;
-    return matchK&&matchW&&matchKat;
-  });
-  // ── Cache hitungAvgOut: hitung sekali per (sku, wh, periode) ──
-  let _cacheAvg={};
-  function cachedAvg(sku, w, p){
-    let k=sku+"||"+w+"||"+p;
-    if(!_cacheAvg[k]) _cacheAvg[k]=hitungAvgOut(sku, w, p);
-    return _cacheAvg[k];
-  }
-  let cF=0,cM=0,cS=0,cN=0;
-  hasil.forEach(b=>{
-    let cat=getMovingCategory(cachedAvg(b.sku,b.warehouse||"Bintaro",periode).avgPerHari);
-    if(cat==="Fast") cF++; else if(cat==="Medium") cM++; else if(cat==="Slow") cS++; else cN++;
-  });
-  document.getElementById("cnt-fast").innerText=cF;
-  document.getElementById("cnt-med").innerText=cM;
-  document.getElementById("cnt-slow").innerText=cS;
-  document.getElementById("cnt-nd").innerText=cN;
-  if(movFilter!=="All"){
-    hasil=hasil.filter(b=>getMovingCategory(cachedAvg(b.sku,b.warehouse||"Bintaro",periode).avgPerHari)===movFilter);
-  }
-  let tbody=document.getElementById("tabelAnalisis");
-  if(hasil.length===0){ tbody.innerHTML="<tr><td colspan='13' class='kosong'>Tidak ada data</td></tr>"; return; }
-  hasil.sort((a,b)=>cachedAvg(b.sku,b.warehouse||"Bintaro",periode).avgPerHari - cachedAvg(a.sku,a.warehouse||"Bintaro",periode).avgPerHari);
-  // ── Render semua row sekaligus via DocumentFragment ──
-  let rows=hasil.map(function(b,i){
-    let wh2=b.warehouse||"Bintaro";
-    let {totalQty,avgPerHari}=cachedAvg(b.sku,wh2,periode);
-    let avg1Bln=cachedAvg(b.sku,wh2,30).avgPerHari;
-    let avg3Bln=cachedAvg(b.sku,wh2,90).avgPerHari;
-    let cat=getMovingCategory(avgPerHari);
-    let badgeHtml=cat==="Fast"?"<span class='badge-fast'>🚀 Fast</span>":
-                  cat==="Medium"?"<span class='badge-medium'>🔄 Medium</span>":
-                  cat==="Slow"?"<span class='badge-slow'>🐢 Slow</span>":
-                  "<span class='badge-nodata'>⚪ No Data</span>";
-    let stokAktual=Number(b.totalPcs);
-    let stokIT=getIntransitStok(b.sku);
-    let stokDraft=getDraftStok(b.sku);
-    let totalStok=stokAktual+stokIT;
-    let uom=hitungUOM(stokAktual,Number(b.isiKarton));
-    let itCell=stokIT>0?"<span style='font-size:10px;color:#92400e;font-weight:600'>+"+stokIT+" pcs</span>":"<span style='font-size:10px;color:#a0aec0'>-</span>";
-    if(stokDraft>0) itCell+="<br><span style='font-size:10px;color:#2b6cb0'>📝 "+stokDraft+" pcs (draft)</span>";
-    let avg1BlnCell=avg1Bln>0?"<span style='color:#2b6cb0;font-weight:600'>"+(avg1Bln*30).toFixed(0)+" pcs</span><br><span style='font-size:10px;color:#718096'>"+avg1Bln.toFixed(2)+"/hr</span>":"<span style='color:#a0aec0;font-size:10px'>-</span>";
-    let avg3BlnCell=avg3Bln>0?"<span style='color:#553c9a;font-weight:600'>"+(avg3Bln*90).toFixed(0)+" pcs</span><br><span style='font-size:10px;color:#718096'>"+avg3Bln.toFixed(2)+"/hr</span>":"<span style='color:#a0aec0;font-size:10px'>-</span>";
-    return "<tr>"+
-      "<td>"+(i+1)+"</td>"+
-      "<td title='"+b.sku+"' style='font-size:10px'>"+b.sku+"</td>"+
-      "<td title='"+b.nama+"'>"+b.nama+"</td>"+
-      "<td><span class='badge badge-gudang'>"+wh2+"</span></td>"+
-      "<td>"+stokAktual+" pcs</td>"+
-      "<td>"+itCell+"</td>"+
-      "<td><strong>"+uom+"</strong></td>"+
-      "<td>"+totalQty+" pcs</td>"+
-      "<td><strong>"+avgPerHari.toFixed(2)+" pcs</strong></td>"+
-      "<td>"+avg1BlnCell+"</td>"+
-      "<td>"+avg3BlnCell+"</td>"+
-      "<td>"+badgeHtml+"</td>"+
-      "<td>"+durBadge(avgPerHari, totalStok)+"</td>"+
-      "<td style='text-align:center'><button class='btn-action btn-edit' onclick=\"bukaAnPOPanel('"+b.sku+"','"+b.nama+"',"+b.totalPcs+","+(b.isiKarton||0)+","+avgPerHari.toFixed(4)+",'"+encodeURIComponent(wh2)+"')\">📦 Input PO</button></td>"+
-    "</tr>";
-  });
-  tbody.innerHTML="";
-  tbody.appendChild(buildRows(rows));
+// ==================== FUNGSI HELPER BARU (TAMBAHKAN) ====================
+function hitungKarton(totalPcs, isiKarton) {
+    if (!isiKarton || isiKarton <= 0) return 0;
+    return totalPcs / isiKarton;
 }
 
-function exportAnalisis(){
-  let periode=parseInt(document.getElementById("an-periode").value)||0;
-  let wh=document.getElementById("an-wh").value;
-  let seen={}; let items=[];
-  daftarBarang.forEach(b=>{
-    let key=b.sku.toUpperCase()+"__"+(b.warehouse||"Bintaro").toUpperCase();
-    if(!seen[key]){ seen[key]=true; items.push(b); }
-  });
-  let rows=[["SKU","Nama Barang","Gudang","Stok Pcs","Stok Karton","Total Out Periode","Avg Out/Hari","Kategori Moving","Ketahanan (hari)","Ketahanan (bulan)"]];
-  items.filter(b=>wh==="All"||(b.warehouse||"Bintaro").toUpperCase()===wh.toUpperCase()).forEach(b=>{
-    let {totalQty,avgPerHari}=hitungAvgOut(b.sku,b.warehouse||"Bintaro",periode);
-    let cat=getMovingCategory(avgPerHari);
-    let isiK=Number(b.isiKarton)||1;
-    let ctn=Math.floor(Number(b.totalPcs)/isiK);
-    let hari=avgPerHari>0?Number(b.totalPcs)/avgPerHari:Infinity;
-    let bln=hari===Infinity?"-":(hari/30).toFixed(1);
-    rows.push([b.sku,b.nama,b.warehouse||"Bintaro",b.totalPcs,ctn,totalQty,avgPerHari.toFixed(2),cat,hari===Infinity?"∞":Math.round(hari),bln]);
-  });
-  let wb=XLSX.utils.book_new(); let ws=XLSX.utils.aoa_to_sheet(rows);
-  XLSX.utils.book_append_sheet(wb,ws,"Analisis Stok"); XLSX.writeFile(wb,"Analisis_StokMoving.xlsx");
+function hitungAvgOutKarton(sku, warehouse, periodeHari) {
+    let cutoff = periodeHari > 0 ? getDateNDaysAgo(periodeHari) : "0000-00-00";
+    let filtered = stockOutLog.filter(r => {
+        let matchSku = r.sku.toUpperCase() === sku.toUpperCase();
+        let matchWh = warehouse === "All" || (r.warehouse || "Bintaro").toUpperCase() === warehouse.toUpperCase();
+        let matchDate = r.tanggal >= cutoff;
+        return matchSku && matchWh && matchDate;
+    });
+    let totalQtyPcs = filtered.reduce((s, r) => s + r.qty, 0);
+    // Cari isiKarton dari master data
+    let semuaMaster = dapatkanSemuaMasterData();
+    let master = semuaMaster.find(m => m.sku.toUpperCase() === sku.toUpperCase());
+    let isiKarton = master ? (master.qtyCtn || 1) : 1;
+    let totalQtyCtn = totalQtyPcs / isiKarton;
+    let hari = periodeHari > 0 ? periodeHari : (() => {
+        if (stockOutLog.length === 0) return 1;
+        let dates = stockOutLog.map(r => r.tanggal).sort();
+        let d1 = new Date(dates[0]), d2 = new Date();
+        let diff = Math.ceil((d2 - d1) / (1000 * 60 * 60 * 24));
+        return Math.max(diff, 1);
+    })();
+    return { totalQtyPcs, totalQtyCtn, avgPerHariCtn: hari > 0 ? totalQtyCtn / hari : 0, hari };
+}
+
+// ==================== FUNGSI TAMPILKAN ANALISIS (REPLACE) ====================
+function tampilkanAnalisis() {
+    let katSel = document.getElementById("an-kategori");
+    if (katSel.options.length <= 1) {
+        let kats = [...new Set(daftarBarang.map(b => b.kategori).filter(Boolean))].sort();
+        kats.forEach(k => { let o = document.createElement("option"); o.value = k; o.text = k; katSel.appendChild(o); });
+    }
+    let keyword = document.getElementById("an-search").value.toLowerCase();
+    let wh = document.getElementById("an-wh").value;
+    let kat = document.getElementById("an-kategori").value;
+    let movFilter = document.getElementById("an-moving").value;
+    let periode = parseInt(document.getElementById("an-periode").value) || 0;
+    let seen = {}; let items = [];
+    daftarBarang.forEach(b => {
+        let key = b.sku.toUpperCase() + "__" + (b.warehouse || "Bintaro").toUpperCase();
+        if (!seen[key]) { seen[key] = true; items.push(b); }
+    });
+    let hasil = items.filter(b => {
+        let matchK = b.sku.toLowerCase().includes(keyword) || b.nama.toLowerCase().includes(keyword);
+        let matchW = wh === "All" || (b.warehouse || "Bintaro").toUpperCase() === wh.toUpperCase();
+        let matchKat = kat === "All" || b.kategori === kat;
+        return matchK && matchW && matchKat;
+    });
+    
+    // Cache untuk perhitungan
+    let _cacheAvg = {};
+    function cachedAvg(sku, w, p) {
+        let k = sku + "||" + w + "||" + p;
+        if (!_cacheAvg[k]) _cacheAvg[k] = hitungAvgOutKarton(sku, w, p);
+        return _cacheAvg[k];
+    }
+
+    // Update summary cards (tetap hitung berdasarkan PCS untuk konsistensi kategori)
+    let cF = 0, cM = 0, cS = 0, cN = 0;
+    hasil.forEach(b => {
+        let avgPcs = hitungAvgOut(b.sku, b.warehouse || "Bintaro", periode).avgPerHari;
+        let cat = getMovingCategory(avgPcs);
+        if (cat === "Fast") cF++; else if (cat === "Medium") cM++; else if (cat === "Slow") cS++; else cN++;
+    });
+    document.getElementById("cnt-fast").innerText = cF;
+    document.getElementById("cnt-med").innerText = cM;
+    document.getElementById("cnt-slow").innerText = cS;
+    document.getElementById("cnt-nd").innerText = cN;
+
+    if (movFilter !== "All") {
+        hasil = hasil.filter(b => {
+            let avgPcs = hitungAvgOut(b.sku, b.warehouse || "Bintaro", periode).avgPerHari;
+            return getMovingCategory(avgPcs) === movFilter;
+        });
+    }
+
+    let tbody = document.getElementById("tabelAnalisis");
+    if (hasil.length === 0) { tbody.innerHTML = "<tr><td colspan='13' class='kosong'>Tidak ada data</td></tr>"; return; }
+    
+    // Sort berdasarkan avg keluar per hari (dalam KARTON)
+    hasil.sort((a, b) => cachedAvg(b.sku, b.warehouse || "Bintaro", periode).avgPerHariCtn - cachedAvg(a.sku, a.warehouse || "Bintaro", periode).avgPerHariCtn);
+
+    let rows = hasil.map(function (b, i) {
+        let wh2 = b.warehouse || "Bintaro";
+        let { totalQtyPcs, totalQtyCtn, avgPerHariCtn } = cachedAvg(b.sku, wh2, periode);
+        let avg1Bln = cachedAvg(b.sku, wh2, 30).avgPerHariCtn;
+        let avg3Bln = cachedAvg(b.sku, wh2, 90).avgPerHariCtn;
+        let avgPcsPerHari = hitungAvgOut(b.sku, wh2, periode).avgPerHari;
+        let cat = getMovingCategory(avgPcsPerHari);
+        let badgeHtml = cat === "Fast" ? "<span class='badge-fast'>🚀 Fast</span>" :
+                        cat === "Medium" ? "<span class='badge-medium'>🔄 Medium</span>" :
+                        cat === "Slow" ? "<span class='badge-slow'>🐢 Slow</span>" :
+                        "<span class='badge-nodata'>⚪ No Data</span>";
+        
+        let stokAktualPcs = Number(b.totalPcs);
+        let isiKarton = Number(b.isiKarton) || 1;
+        let stokAktualCtn = stokAktualPcs / isiKarton;
+        let stokIT = getIntransitStok(b.sku); // dalam PCS
+        let stokITCtn = stokIT / isiKarton;
+        let stokDraft = getDraftStok(b.sku);
+        let stokDraftCtn = stokDraft / isiKarton;
+        let totalStokCtn = stokAktualCtn + stokITCtn;
+        
+        let uomPcs = hitungUOM(stokAktualPcs, isiKarton);
+        let itCell = stokIT > 0 ? "<span style='font-size:10px;color:#92400e;font-weight:600'>+" + stokITCtn.toFixed(1) + " ctn</span>" : "<span style='font-size:10px;color:#a0aec0'>-</span>";
+        if (stokDraft > 0) itCell += "<br><span style='font-size:10px;color:#2b6cb0'>📝 " + stokDraftCtn.toFixed(1) + " ctn (draft)</span>";
+        
+        // Avg per Bulan (30hr) dalam KARTON
+        let avg1BlnCtn = avg1Bln > 0 ? "<span style='color:#2b6cb0;font-weight:600'>" + (avg1Bln * 30).toFixed(1) + " ctn</span><br><span style='font-size:10px;color:#718096'>" + avg1Bln.toFixed(2) + " ctn/hr</span>" : "<span style='color:#a0aec0;font-size:10px'>-</span>";
+        let avg3BlnCtn = avg3Bln > 0 ? "<span style='color:#553c9a;font-weight:600'>" + (avg3Bln * 90).toFixed(1) + " ctn</span><br><span style='font-size:10px;color:#718096'>" + avg3Bln.toFixed(2) + " ctn/hr</span>" : "<span style='color:#a0aec0;font-size:10px'>-</span>";
+        
+        // Ketahanan Stok dalam BULAN (berdasarkan KARTON)
+        let durasiBulan = "-";
+        if (avgPerHariCtn > 0) {
+            let hari = totalStokCtn / avgPerHariCtn;
+            let bln = hari / 30;
+            let warna = bln >= 3 ? "#38a169" : bln >= 1 ? "#d69e2e" : "#e53e3e";
+            durasiBulan = "<span style='font-weight:700;color:" + warna + "'>" + bln.toFixed(1) + " bln <span style='font-weight:400;font-size:10px;color:#718096'>(" + Math.round(hari) + " hr)</span></span>";
+        } else {
+            durasiBulan = "<span style='color:#a0aec0;font-size:11px'>∞</span>";
+        }
+
+        return "<tr>" +
+            "<td>" + (i + 1) + "</td>" +
+            "<td title='" + b.sku + "' style='font-size:10px'>" + b.sku + "</td>" +
+            "<td title='" + b.nama + "'>" + b.nama + "</td>" +
+            "<td><span class='badge badge-gudang'>" + wh2 + "</span></td>" +
+            "<td><strong>" + stokAktualCtn.toFixed(1) + " ctn</strong><br><span style='font-size:9px;color:#718096'>(" + stokAktualPcs + " pcs)</span></td>" +
+            "<td>" + itCell + "</td>" +
+            "<td><strong>" + uomPcs + "</strong></td>" +
+            "<td><strong>" + totalQtyCtn.toFixed(1) + " ctn</strong><br><span style='font-size:9px;color:#718096'>(" + totalQtyPcs + " pcs)</span></td>" +
+            "<td><strong>" + avgPerHariCtn.toFixed(2) + " ctn</strong></td>" +
+            "<td>" + avg1BlnCtn + "</td>" +
+            "<td>" + avg3BlnCtn + "</td>" +
+            "<td>" + badgeHtml + "</td>" +
+            "<td>" + durasiBulan + "</td>" +
+            "<td style='text-align:center'><button class='btn-action btn-edit' onclick=\"bukaAnPOPanel('" + b.sku + "','" + b.nama + "'," + b.totalPcs + "," + (b.isiKarton || 0) + "," + avgPcsPerHari.toFixed(4) + ",'" + encodeURIComponent(wh2) + "')\">📦 Input PO</button></td>" +
+            "</tr>";
+    });
+    tbody.innerHTML = "";
+    tbody.appendChild(buildRows(rows));
+}
+
+// ==================== FUNGSI EXPORT ANALISIS (REPLACE) ====================
+function exportAnalisis() {
+    let periode = parseInt(document.getElementById("an-periode").value) || 0;
+    let wh = document.getElementById("an-wh").value;
+    let seen = {}; let items = [];
+    daftarBarang.forEach(b => {
+        let key = b.sku.toUpperCase() + "__" + (b.warehouse || "Bintaro").toUpperCase();
+        if (!seen[key]) { seen[key] = true; items.push(b); }
+    });
+    let rows = [["SKU", "Nama Barang", "Gudang", "Stok (Karton)", "Stok (Pcs)", "Total Out Periode (Karton)", "Total Out Periode (Pcs)", "Avg Out/Hari (Karton)", "Kategori Moving", "Ketahanan (Bulan)", "Ketahanan (Hari)"]];
+    
+    items.filter(b => wh === "All" || (b.warehouse || "Bintaro").toUpperCase() === wh.toUpperCase()).forEach(b => {
+        let isiK = Number(b.isiKarton) || 1;
+        let { totalQtyPcs, totalQtyCtn, avgPerHariCtn } = hitungAvgOutKarton(b.sku, b.warehouse || "Bintaro", periode);
+        let avgPcsPerHari = hitungAvgOut(b.sku, b.warehouse || "Bintaro", periode).avgPerHari;
+        let cat = getMovingCategory(avgPcsPerHari);
+        let stokCtn = Number(b.totalPcs) / isiK;
+        let hari = avgPerHariCtn > 0 ? stokCtn / avgPerHariCtn : Infinity;
+        let bln = hari === Infinity ? "-" : (hari / 30).toFixed(1);
+        rows.push([b.sku, b.nama, b.warehouse || "Bintaro", stokCtn.toFixed(1), b.totalPcs, totalQtyCtn.toFixed(1), totalQtyPcs, avgPerHariCtn.toFixed(2), cat, bln, hari === Infinity ? "∞" : Math.round(hari)]);
+    });
+    let wb = XLSX.utils.book_new();
+    let ws = XLSX.utils.aoa_to_sheet(rows);
+    XLSX.utils.book_append_sheet(wb, ws, "Analisis Stok (Karton)");
+    XLSX.writeFile(wb, "Analisis_StokMoving_Karton.xlsx");
 }
 
 // =========================================================================
