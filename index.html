@@ -761,7 +761,7 @@
       <table>
         <thead>
           <tr><th>No</th><th data-i18n="th_tanggal">Tanggal</th><th data-i18n="tipe_transaksi">Tipe</th><th data-i18n="th_sku">SKU</th><th data-i18n="th_nama">Nama Barang</th>
-          <th data-i18n="th_gudang">Gudang</th><th>Qty</th><th data-i18n="th_konversi">Konversi</th><th>Sisa Stok (pcs)</th><th>Sisa (Konversi)</th><th data-i18n="th_ref">Referensi</th>
+          <th data-i18n="th_gudang">Gudang</th><th>Qty</th><th data-i18n="th_konversi">Konversi (Ctn)</th><th>Sisa Stock (Pcs)</th><th>Sisa Stock (Ctn)</th>
         </tr></thead>
         <tbody id="tabelLedger"></tbody>
       </table>
@@ -3839,7 +3839,7 @@ window.tampilkanLedger = function(){
   document.getElementById("led-total-out").innerText = rpFormat(totalOut);
   document.getElementById("led-total-trx").innerText = hasil.length;
 
-  if(hasil.length===0){ tbody.innerHTML="<tr><td colspan='11' class='kosong'>"+t("no_data_ledger")+"</td></tr>"; attachPagination(tbody,"pg-led",0,1,PAGE_SIZE,()=>{}); return; }
+  if(hasil.length===0){ tbody.innerHTML="<tr><td colspan='10' class='kosong'>"+t("no_data_ledger")+"</td></tr>"; attachPagination(tbody,"pg-led",0,1,PAGE_SIZE,()=>{}); return; }
 
   let page = _pageState.led;
   let sliced = hasil.slice((page-1)*PAGE_SIZE, page*PAGE_SIZE);
@@ -3855,7 +3855,7 @@ window.tampilkanLedger = function(){
     else { badge="<span class='badge badge-transfer' style='background:#d1fae5;color:#065f46'>🔄 TRF IN</span>"; qtyTxt="<span style='color:#065f46;font-weight:700'>+"+(r.qty||0)+" pcs</span>"; }
     let sisaColor = sisaPcs<0?"color:#c53030":"color:#2c3e50";
     let nilai = (r.qty||0)*(r.harga||0);
-    return "<tr><td>"+(i+1)+"</td><td>"+(r.tanggal||"-")+"</td><td>"+badge+"</td><td title='"+(r.sku||"-")+"'>"+(r.sku||"-")+"</td><td title='"+(r.nama||"-")+"'>"+(r.nama||"-")+"</td><td><span class='badge badge-gudang'>"+(r.warehouse||"-")+"</span></td><td>"+qtyTxt+"</td><td><strong>"+uomTrx+"</strong></td><td>"+rpFormat(nilai)+"</td><td style='"+sisaColor+";font-weight:700'>"+sisaPcs+" pcs</td><td>"+sisaUom+"</td></tr>";
+    return "<tr><td>"+(i+1)+"</td><td>"+(r.tanggal||"-")+"</td><td>"+badge+"</td><td title='"+(r.sku||"-")+"'>"+(r.sku||"-")+"</td><td title='"+(r.nama||"-")+"'>"+(r.nama||"-")+"</td><td><span class='badge badge-gudang'>"+(r.warehouse||"-")+"</span></td><td>"+qtyTxt+"</td><td><strong>"+uomTrx+"</strong></td><td style='"+sisaColor+";font-weight:700'>"+sisaPcs+" pcs</td><td>"+sisaUom+"</td></tr>";
   });
   tbody.innerHTML = "";
   tbody.appendChild(buildRows(rows));
