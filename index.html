@@ -3604,7 +3604,7 @@ function tampilkanSales(){
         "<td><strong>"+uom+"</strong></td>"+
         "<td>"+rpFormat(r.harga)+"</td>"+
         "<td><strong>"+rpFormat(nilai)+"</strong></td>"+
-        "<td title='"+(r.ref||"")+"'">"+(r.ref||"-")+"</td>"+
+        "<td title=\""+(r.ref||"").replace(/"/g, '&quot;')+"\">"+(r.ref||"-")+"</td>"+
       "</tr>";
     });
   }
