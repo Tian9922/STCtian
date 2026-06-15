@@ -1500,7 +1500,8 @@ function switchTab(name){
   if(el){ el.classList.add("active"); }
   let tt = document.getElementById("topbar-page-name");
   if(tt) tt.textContent = (_tabTitles[name]||name);
-  renderTab(name);
+  // Render setelah browser paint tab baru (terasa instan)
+  requestAnimationFrame(function(){ requestAnimationFrame(function(){ renderTab(name); }); });
 }
 
 // =========================================================================
@@ -3060,10 +3061,16 @@ function tampilkanAnalisis(){
     let matchKat=kat==="All"||b.kategori===kat;
     return matchK&&matchW&&matchKat;
   });
+  // ── Cache hitungAvgOut: hitung sekali per (sku, wh, periode) ──
+  let _cacheAvg={};
+  function cachedAvg(sku, w, p){
+    let k=sku+"||"+w+"||"+p;
+    if(!_cacheAvg[k]) _cacheAvg[k]=hitungAvgOut(sku, w, p);
+    return _cacheAvg[k];
+  }
   let cF=0,cM=0,cS=0,cN=0;
   hasil.forEach(b=>{
-    let {avgPerHari}=hitungAvgOut(b.sku, b.warehouse||"Bintaro", periode);
-    let cat=getMovingCategory(avgPerHari);
+    let cat=getMovingCategory(cachedAvg(b.sku,b.warehouse||"Bintaro",periode).avgPerHari);
     if(cat==="Fast") cF++; else if(cat==="Medium") cM++; else if(cat==="Slow") cS++; else cN++;
   });
   document.getElementById("cnt-fast").innerText=cF;
@@ -3071,23 +3078,17 @@ function tampilkanAnalisis(){
   document.getElementById("cnt-slow").innerText=cS;
   document.getElementById("cnt-nd").innerText=cN;
   if(movFilter!=="All"){
-    hasil=hasil.filter(b=>{
-      let {avgPerHari}=hitungAvgOut(b.sku, b.warehouse||"Bintaro", periode);
-      return getMovingCategory(avgPerHari)===movFilter;
-    });
+    hasil=hasil.filter(b=>getMovingCategory(cachedAvg(b.sku,b.warehouse||"Bintaro",periode).avgPerHari)===movFilter);
   }
   let tbody=document.getElementById("tabelAnalisis");
   if(hasil.length===0){ tbody.innerHTML="<tr><td colspan='13' class='kosong'>Tidak ada data</td></tr>"; return; }
-  hasil.sort((a,b)=>{
-    let aA=hitungAvgOut(a.sku,a.warehouse||"Bintaro",periode).avgPerHari;
-    let bA=hitungAvgOut(b.sku,b.warehouse||"Bintaro",periode).avgPerHari;
-    return bA-aA;
-  });
-  tbody.innerHTML="";
-  hasil.forEach(function(b,i){
-    let {totalQty,avgPerHari}=hitungAvgOut(b.sku, b.warehouse||"Bintaro", periode);
-    let avg1Bln=hitungAvgOut(b.sku, b.warehouse||"Bintaro", 30).avgPerHari;
-    let avg3Bln=hitungAvgOut(b.sku, b.warehouse||"Bintaro", 90).avgPerHari;
+  hasil.sort((a,b)=>cachedAvg(b.sku,b.warehouse||"Bintaro",periode).avgPerHari - cachedAvg(a.sku,a.warehouse||"Bintaro",periode).avgPerHari);
+  // ── Render semua row sekaligus via DocumentFragment ──
+  let rows=hasil.map(function(b,i){
+    let wh2=b.warehouse||"Bintaro";
+    let {totalQty,avgPerHari}=cachedAvg(b.sku,wh2,periode);
+    let avg1Bln=cachedAvg(b.sku,wh2,30).avgPerHari;
+    let avg3Bln=cachedAvg(b.sku,wh2,90).avgPerHari;
     let cat=getMovingCategory(avgPerHari);
     let badgeHtml=cat==="Fast"?"<span class='badge-fast'>🚀 Fast</span>":
                   cat==="Medium"?"<span class='badge-medium'>🔄 Medium</span>":
@@ -3102,11 +3103,11 @@ function tampilkanAnalisis(){
     if(stokDraft>0) itCell+="<br><span style='font-size:10px;color:#2b6cb0'>📝 "+stokDraft+" pcs (draft)</span>";
     let avg1BlnCell=avg1Bln>0?"<span style='color:#2b6cb0;font-weight:600'>"+(avg1Bln*30).toFixed(0)+" pcs</span><br><span style='font-size:10px;color:#718096'>"+avg1Bln.toFixed(2)+"/hr</span>":"<span style='color:#a0aec0;font-size:10px'>-</span>";
     let avg3BlnCell=avg3Bln>0?"<span style='color:#553c9a;font-weight:600'>"+(avg3Bln*90).toFixed(0)+" pcs</span><br><span style='font-size:10px;color:#718096'>"+avg3Bln.toFixed(2)+"/hr</span>":"<span style='color:#a0aec0;font-size:10px'>-</span>";
-    tbody.innerHTML+="<tr>"+
+    return "<tr>"+
       "<td>"+(i+1)+"</td>"+
       "<td title='"+b.sku+"' style='font-size:10px'>"+b.sku+"</td>"+
       "<td title='"+b.nama+"'>"+b.nama+"</td>"+
-      "<td><span class='badge badge-gudang'>"+(b.warehouse||"Bintaro")+"</span></td>"+
+      "<td><span class='badge badge-gudang'>"+wh2+"</span></td>"+
       "<td>"+stokAktual+" pcs</td>"+
       "<td>"+itCell+"</td>"+
       "<td><strong>"+uom+"</strong></td>"+
@@ -3116,9 +3117,11 @@ function tampilkanAnalisis(){
       "<td>"+avg3BlnCell+"</td>"+
       "<td>"+badgeHtml+"</td>"+
       "<td>"+durBadge(avgPerHari, totalStok)+"</td>"+
-      "<td style='text-align:center'><button class='btn-action btn-edit' onclick='bukaAnPOPanel(\""+b.sku+"\",\""+b.nama+"\","+(b.totalPcs)+","+(b.isiKarton||0)+","+avgPerHari.toFixed(4)+",\""+encodeURIComponent(b.warehouse||"Bintaro")+"\")'>📦 Input PO</button></td>"+
+      "<td style='text-align:center'><button class='btn-action btn-edit' onclick='bukaAnPOPanel(\""+b.sku+"\",\""+b.nama+"\"," +(b.totalPcs)+","+(b.isiKarton||0)+","+avgPerHari.toFixed(4)+",\""+encodeURIComponent(wh2)+"\")'">📦 Input PO</button></td>"+
     "</tr>";
   });
+  tbody.innerHTML="";
+  tbody.appendChild(buildRows(rows));
 }
 
 function exportAnalisis(){
@@ -3522,20 +3525,17 @@ function tampilkanSales(){
     return matchK&&matchW&&matchF&&matchT&&matchTipe;
   }).sort((a,b)=>b.tanggal.localeCompare(a.tanggal));
 
-  // Summary cards
   let totalQtyAll=hasil.reduce((s,r)=>s+r.qty,0);
   let totalNilaiAll=hasil.reduce((s,r)=>s+(r.qty*r.harga),0);
   document.getElementById("sa-total-item").innerText=hasil.length;
   document.getElementById("sa-total-qty").innerText=totalQtyAll.toLocaleString("id-ID")+" pcs";
   document.getElementById("sa-total-nilai").innerText=rpFormat(totalNilaiAll);
 
-  // Top SKU
   let skuMap={};
   hasil.forEach(r=>{ skuMap[r.sku]=(skuMap[r.sku]||0)+r.qty; });
   let topSku=Object.entries(skuMap).sort((a,b)=>b[1]-a[1])[0];
   document.getElementById("sa-top-sku").innerText=topSku?topSku[0]+" ("+topSku[1]+" pcs)":"-";
 
-  // Avg per day
   if(hasil.length>0){
     let dates=hasil.map(r=>r.tanggal).sort();
     let d1=new Date(dates[dates.length-1]), d2=new Date(dates[0]);
@@ -3545,36 +3545,30 @@ function tampilkanSales(){
     document.getElementById("sa-avg-month").innerText=(avgDay*30).toFixed(0)+" pcs";
     document.getElementById("sa-avg-3month").innerText=(avgDay*90).toFixed(0)+" pcs";
   } else {
-    document.getElementById("sa-avg-day").innerText="0 pcs";
-    document.getElementById("sa-avg-month").innerText="0 pcs";
-    document.getElementById("sa-avg-3month").innerText="0 pcs";
+    ["sa-avg-day","sa-avg-month","sa-avg-3month"].forEach(id=>document.getElementById(id).innerText="0 pcs");
   }
 
   let tbody=document.getElementById("tabelSales");
   let thead=document.getElementById("sa-thead");
+  let rows;
 
   if(viewMode==="rekap"){
-    // Group by SKU
     thead.innerHTML="<tr><th>No</th><th>SKU</th><th>Nama Barang</th><th>Gudang</th><th>Total Transaksi</th><th>Total Qty Keluar</th><th>Konversi</th><th>Total Nilai</th><th>Tgl Pertama</th><th>Tgl Terakhir</th></tr>";
     let grouped={};
     hasil.forEach(r=>{
       let key=r.sku.toUpperCase()+"__"+(r.warehouse||"Bintaro");
-      if(!grouped[key]){
-        grouped[key]={sku:r.sku,nama:r.nama,warehouse:r.warehouse||"Bintaro",isiKarton:r.isiKarton||0,transaksi:0,qty:0,nilai:0,tglArr:[]};
-      }
+      if(!grouped[key]){ grouped[key]={sku:r.sku,nama:r.nama,warehouse:r.warehouse||"Bintaro",isiKarton:r.isiKarton||0,transaksi:0,qty:0,nilai:0,tglArr:[]}; }
       grouped[key].transaksi++;
       grouped[key].qty+=r.qty;
       grouped[key].nilai+=r.qty*r.harga;
       grouped[key].tglArr.push(r.tanggal);
     });
-    let rows=Object.values(grouped).sort((a,b)=>b.qty-a.qty);
-    if(rows.length===0){ tbody.innerHTML="<tr><td colspan='10' class='kosong'>Tidak ada data penjualan</td></tr>"; return; }
-    tbody.innerHTML="";
-    rows.forEach(function(g,i){
+    let grpRows=Object.values(grouped).sort((a,b)=>b.qty-a.qty);
+    if(grpRows.length===0){ tbody.innerHTML="<tr><td colspan='10' class='kosong'>Tidak ada data penjualan</td></tr>"; return; }
+    rows=grpRows.map(function(g,i){
       let tglArr=g.tglArr.sort();
-      let tglFirst=tglArr[0], tglLast=tglArr[tglArr.length-1];
       let uom=hitungUOM(g.qty,g.isiKarton);
-      tbody.innerHTML+="<tr>"+
+      return "<tr>"+
         "<td>"+(i+1)+"</td>"+
         "<td style='font-size:10px' title='"+g.sku+"'>"+g.sku+"</td>"+
         "<td title='"+g.nama+"'>"+g.nama+"</td>"+
@@ -3583,16 +3577,14 @@ function tampilkanSales(){
         "<td><span class='badge badge-out'>"+g.qty+" pcs</span></td>"+
         "<td><strong>"+uom+"</strong></td>"+
         "<td><strong>"+rpFormat(g.nilai)+"</strong></td>"+
-        "<td style='font-size:10px'>"+tglFirst+"</td>"+
-        "<td style='font-size:10px'>"+tglLast+"</td>"+
+        "<td style='font-size:10px'>"+tglArr[0]+"</td>"+
+        "<td style='font-size:10px'>"+tglArr[tglArr.length-1]+"</td>"+
       "</tr>";
     });
   } else {
-    // Detail per transaksi
     thead.innerHTML="<tr><th>No</th><th>Tanggal</th><th>Tipe</th><th>SKU</th><th>Nama Barang</th><th>Gudang</th><th>Qty Keluar</th><th>Konversi</th><th>Harga Satuan</th><th>Total Nilai</th><th>Keterangan</th></tr>";
     if(hasil.length===0){ tbody.innerHTML="<tr><td colspan='11' class='kosong'>Tidak ada data penjualan</td></tr>"; return; }
-    tbody.innerHTML="";
-    hasil.forEach(function(r,i){
+    rows=hasil.map(function(r,i){
       let uom=hitungUOM(r.qty,r.isiKarton||0);
       let nilai=r.qty*r.harga;
       let tipe=r.tipe||"Stock Out";
@@ -3601,7 +3593,7 @@ function tampilkanSales(){
         :tipe==="Damage"
         ?"<span class='badge' style='background:#f3e8ff;color:#6b21a8'>💥 Damage</span>"
         :"<span class='badge badge-out'>📤 Stock Out</span>";
-      tbody.innerHTML+="<tr>"+
+      return "<tr>"+
         "<td>"+(i+1)+"</td><td>"+r.tanggal+"</td>"+
         "<td>"+tipeBadge+"</td>"+
         "<td style='font-size:10px' title='"+r.sku+"'>"+r.sku+"</td>"+
@@ -3611,10 +3603,12 @@ function tampilkanSales(){
         "<td><strong>"+uom+"</strong></td>"+
         "<td>"+rpFormat(r.harga)+"</td>"+
         "<td><strong>"+rpFormat(nilai)+"</strong></td>"+
-        "<td title='"+(r.ref||"")+"'>"+(r.ref||"-")+"</td>"+
+        "<td title='"+(r.ref||"")+"'">"+(r.ref||"-")+"</td>"+
       "</tr>";
     });
   }
+  tbody.innerHTML="";
+  tbody.appendChild(buildRows(rows));
 }
 
 function exportSales(){
