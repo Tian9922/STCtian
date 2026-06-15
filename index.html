@@ -1684,7 +1684,7 @@ function prosesUploadStockOut(element){
       if(stokSaat<qtyF){
         cWarn.push(match.bintaro+" @ "+whF+": stok "+stokSaat+", request "+qtyF);
       }
-      let entry={id:Date.now()+Math.random(),tanggal:tglBaris,sku:match.sku,kategori:match.kategori,nama:match.bintaro,isiKarton:match.qtyCtn,warehouse:whF,qty:qtyF,harga:match.harga||0,ref:rawKet.toString().trim()||"-"};
+      let entry={id:Date.now()+Math.random(),tanggal:tglBaris,sku:match.sku,kategori:match.kategori,nama:match.bintaro,isiKarton:match.qtyCtn,warehouse:whF,qty:qtyF,harga:match.harga||0,ref:rawKet.toString().trim()||"-",keterangan:rawKet.toString().trim()||"-"};
       stockOutLog.push(entry);
       if(existing){ existing.totalPcs=Number(existing.totalPcs)-qtyF; }
       cOK++;
@@ -1762,7 +1762,7 @@ function prosesUploadTransfer(element){
       let stokSaat=srcItem?Number(srcItem.totalPcs):0;
       if(stokSaat<qtyF) cWarn.push(match.bintaro+" @ "+fromWh+": stok "+stokSaat+", request "+qtyF);
       // Transfer: kurangi dari asal, tambahkan ke tujuan
-      let entry={id:Date.now()+Math.random(),tanggal:tglBaris,sku:match.sku,kategori:match.kategori,nama:match.bintaro,isiKarton:match.qtyCtn,harga:match.harga||0,fromWh:fromWh,toWh:toWh,qty:qtyF,ref:rawKet.toString().trim()||"-"};
+      let entry={id:Date.now()+Math.random(),tanggal:tglBaris,sku:match.sku,kategori:match.kategori,nama:match.bintaro,isiKarton:match.qtyCtn,harga:match.harga||0,fromWh:fromWh,toWh:toWh,qty:qtyF,ref:rawKet.toString().trim()||"-",keterangan:rawKet.toString().trim()||"-"};
       transferLog.push(entry);
       if(srcItem){ srcItem.totalPcs=Number(srcItem.totalPcs)-qtyF; }
       let dstItem=daftarBarang.find(b=>b.sku.toUpperCase()===skuF&&(b.warehouse||"Bintaro").toUpperCase()===toWh.toUpperCase());
@@ -2407,7 +2407,7 @@ function simpanStockOut(){
     let selisih=Number(qty)-stokSaat;
     if(!confirm((stokSaat<0?"⚠️ Stok sudah minus "+Math.abs(stokSaat)+" pcs! ":"⚠️ Stok tidak mencukupi! Stok tersedia: "+stokSaat+" pcs. ")+"Akan ada selisih "+selisih+" pcs yang tercatat sebagai hutang stok. Tetap lanjut?")){ return; }
   }
-  let entry={id:Date.now()+Math.random(),tanggal,tipe:tipe||"Stock Out",sku:skuFinal,kategori,nama,isiKarton:Number(isiKarton)||0,warehouse,qty:Number(qty),harga:Number(harga)||0,ref:ref||"-"};
+  let entry={id:Date.now()+Math.random(),tanggal,tipe:tipe||"Stock Out",sku:skuFinal,kategori,nama,isiKarton:Number(isiKarton)||0,warehouse,qty:Number(qty),harga:Number(harga)||0,ref:ref||"-",keterangan:ref||"-"};
   stockOutLog.push(entry);
   if(existing){ existing.totalPcs=Number(existing.totalPcs)-Number(qty); }
   // Note: totalPcs CAN go negative (selisih/hutang stok) - intentional by design
@@ -2582,7 +2582,7 @@ function simpanTransfer(){
     if(!confirm((stokSaat<0?"⚠️ Stok sudah minus "+Math.abs(stokSaat)+" pcs! ":"⚠️ Stok tidak mencukupi! Stok tersedia: "+stokSaat+" pcs. ")+"Akan ada selisih "+selisih+" pcs yang tercatat sebagai hutang stok. Tetap lanjut?")){ return; }
   }
 
-  let entry={id:Date.now()+Math.random(),tanggal,sku:skuFinal,kategori,nama,isiKarton:Number(isiKarton)||0,harga:Number(harga)||0,fromWh,toWh,qty:Number(qty),ref:ref||"-"};
+  let entry={id:Date.now()+Math.random(),tanggal,sku:skuFinal,kategori,nama,isiKarton:Number(isiKarton)||0,harga:Number(harga)||0,fromWh,toWh,qty:Number(qty),ref:ref||"-",keterangan:ref||"-"};
   transferLog.push(entry);
   // Reduce from source (allow negative - selisih stok)
   if(srcItem){ srcItem.totalPcs=Number(srcItem.totalPcs)-Number(qty); }
@@ -2725,10 +2725,10 @@ function tampilkanLedger(){
   tbody.innerHTML = "";
 
   // Gabungkan semua transaksi
-  let inData    = stockInLog.map(r => ({...r, tipe:"IN", warehouse: r.warehouse||"Bintaro", keterangan: r.keterangan||"-"}));
+  let inData    = stockInLog.map(r => ({...r, tipe:"IN", warehouse: r.warehouse||"Bintaro", keterangan: r.keterangan||r.ref||"-"}));
   let outData   = stockOutLog.map(r => ({...r, tipe:"OUT", warehouse: r.warehouse||"Bintaro", keterangan: r.keterangan||r.ref||"-"}));
-  let trOutData = transferLog.map(r => ({...r, tipe:"TRANSFER_OUT", warehouse: r.fromWh, keterangan: "→ "+r.toWh+(r.keterangan&&r.keterangan!=="-"?" | "+r.keterangan:"")}));
-  let trInData  = transferLog.map(r => ({...r, tipe:"TRANSFER_IN",  warehouse: r.toWh,   keterangan: "← "+r.fromWh+(r.keterangan&&r.keterangan!=="-"?" | "+r.keterangan:"")}));
+  let trOutData = transferLog.map(r => ({...r, tipe:"TRANSFER_OUT", warehouse: r.fromWh, keterangan: "→ "+r.toWh+(r.keterangan&&r.keterangan!=="-"?" | "+r.keterangan:r.ref&&r.ref!=="-"?" | "+r.ref:"")}));
+  let trInData  = transferLog.map(r => ({...r, tipe:"TRANSFER_IN",  warehouse: r.toWh,   keterangan: "← "+r.fromWh+(r.keterangan&&r.keterangan!=="-"?" | "+r.keterangan:r.ref&&r.ref!=="-"?" | "+r.ref:"")}));
   let semua = [...inData, ...outData, ...trOutData, ...trInData];
 
   // Urutkan ascending dulu (terlama ke terbaru) untuk hitung running balance
@@ -2889,10 +2889,10 @@ function exportLedger(){
   let to=document.getElementById("led-to").value;
   let wh=document.getElementById("led-wh").value;
   let type=document.getElementById("led-type").value;
-  let inData=stockInLog.map(r=>({...r,tipe:"IN",warehouse:r.warehouse||"Bintaro",keterangan:r.keterangan||"-"}));
+  let inData=stockInLog.map(r=>({...r,tipe:"IN",warehouse:r.warehouse||"Bintaro",keterangan:r.keterangan||r.ref||"-"}));
   let outData=stockOutLog.map(r=>({...r,tipe:"OUT",warehouse:r.warehouse||"Bintaro",keterangan:r.keterangan||r.ref||"-"}));
-  let trOutData=transferLog.map(r=>({...r,tipe:"TRANSFER_OUT",warehouse:r.fromWh,keterangan:"→ "+r.toWh+(r.keterangan&&r.keterangan!=="-"?" | "+r.keterangan:"")}));
-  let trInData=transferLog.map(r=>({...r,tipe:"TRANSFER_IN",warehouse:r.toWh,keterangan:"← "+r.fromWh+(r.keterangan&&r.keterangan!=="-"?" | "+r.keterangan:"")}));
+  let trOutData=transferLog.map(r=>({...r,tipe:"TRANSFER_OUT",warehouse:r.fromWh,keterangan:"→ "+r.toWh+(r.keterangan&&r.keterangan!=="-"?" | "+r.keterangan:r.ref&&r.ref!=="-"?" | "+r.ref:"")}));
+  let trInData=transferLog.map(r=>({...r,tipe:"TRANSFER_IN",warehouse:r.toWh,keterangan:"← "+r.fromWh+(r.keterangan&&r.keterangan!=="-"?" | "+r.keterangan:r.ref&&r.ref!=="-"?" | "+r.ref:"")}));
   let semua=[...inData,...outData,...trOutData,...trInData];
   semua.sort((a,b)=>{ let d=a.tanggal.localeCompare(b.tanggal); return d!==0?d:(Number(a.id)||0)-(Number(b.id)||0); });
   // Hitung running balance
