@@ -638,12 +638,13 @@
     <div class="summary-card"><div class="s-label">✅ Completed</div><div class="s-val s-green" id="it-cnt-done">0 item</div></div>
     <div class="summary-card"><div class="s-label">📦 Planning PO → Draft</div><div class="s-val" style="color:#92400e" id="it-cnt-planning">0 item</div></div>
   </div>
+  <div id="it-notif-banner" style="display:none;background:#fffbeb;border:1.5px solid #f6ad55;border-radius:6px;padding:10px 14px;margin-bottom:8px;font-size:12px;color:#92400e;line-height:1.8"></div>
   <div style="flex:1;background:white;border-radius:6px;padding:10px;box-shadow:0 1px 3px rgba(0,0,0,.06);display:flex;flex-direction:column;overflow:hidden">
     <div class="table-container" style="flex:1">
       <table>
         <thead><tr>
           <th>No</th><th>Tgl. Masuk</th><th>SKU</th><th>Nama Barang</th>
-          <th>Qty (pcs)</th><th>Konversi</th><th>Status</th><th>Keterangan</th>
+          <th>Qty (Ctn)</th><th>Qty (pcs)</th><th>Status</th><th>Keterangan</th>
           <th>Gudang Tujuan</th><th>Tgl. Complete</th>
           <th style="min-width:130px;text-align:center">Aksi</th>
         </tr></thead>
@@ -677,8 +678,12 @@
         <input type="number" id="it-isi-ctn" readonly style="background:#edf2f7">
       </div>
       <div>
-        <label>Qty (pcs):</label>
-        <input type="number" id="it-qty" min="1" placeholder="pcs">
+        <label>Qty (Ctn):</label>
+        <input type="number" id="it-qty-ctn" min="1" placeholder="karton" oninput="itHitungQtyPcs()">
+      </div>
+      <div>
+        <label>Qty (pcs) <span style="font-size:10px;color:#718096">— otomatis</span>:</label>
+        <input type="number" id="it-qty" min="1" placeholder="pcs" oninput="itHitungQtyCtn()">
       </div>
       <div class="form-group-full">
         <label>Keterangan:</label>
@@ -755,7 +760,7 @@
       <table>
         <thead>
           <tr><th>No</th><th data-i18n="th_tanggal">Tanggal</th><th data-i18n="tipe_transaksi">Tipe</th><th data-i18n="th_sku">SKU</th><th data-i18n="th_nama">Nama Barang</th>
-          <th data-i18n="th_gudang">Gudang</th><th>Qty</th><th data-i18n="th_konversi">Konversi</th><th>Sisa Stok (pcs)</th><th>Sisa (Konversi)</th><th data-i18n="th_ref">Referensi</th>
+          <th data-i18n="th_gudang">Gudang</th><th>Qty</th><th data-i18n="th_konversi">Konversi</th><th data-i18n="th_ref">Referensi</th>
         </tr></thead>
         <tbody id="tabelLedger"></tbody>
       </table>
@@ -2768,7 +2773,7 @@ function tampilkanLedger(){
   document.getElementById("led-total-trx").innerText  = hasil.length;
 
   if(hasil.length===0){
-    tbody.innerHTML=`<tr><td colspan='11' class='kosong'>${t("no_data_ledger")}</td></tr>`;
+    tbody.innerHTML=`<tr><td colspan='9' class='kosong'>${t("no_data_ledger")}</td></tr>`;
     return;
   }
 
@@ -2800,8 +2805,6 @@ function tampilkanLedger(){
       <td><span class='badge badge-gudang'>${r.warehouse||"-"}</span></td>
       <td>${qtyTxt}</td>
       <td><strong>${uomTrx}</strong></td>
-      <td><strong style='color:${sisaPcs<0?"#c53030":"#2b6cb0"}'>${sisaPcs<0?"⚠️ ":""}${sisaPcs} pcs${sisaPcs<0?" (selisih)":""}</strong></td>
-      <td><strong style='color:${sisaPcs<0?"#c53030":"#2b6cb0"}'>${sisaUom}</strong></td>
       <td title='${r.ref||"-"}'>${(r.ref||"-").substring(0,25)}${(r.ref||"").length>25?"...":""}</td>
     </tr>`;
   });
@@ -3198,6 +3201,7 @@ function bukaModalIntransit(id){
     document.getElementById("it-sku-input").value="";
     document.getElementById("it-nama").value="";
     document.getElementById("it-isi-ctn").value="";
+    document.getElementById("it-qty-ctn").value="";
     document.getElementById("it-qty").value="";
     document.getElementById("it-keterangan").value="";
     document.getElementById("it-status").value="Draft";
@@ -3214,6 +3218,7 @@ function bukaModalIntransit(id){
     document.getElementById("it-nama").value=r.nama;
     document.getElementById("it-isi-ctn").value=r.isiKarton||0;
     document.getElementById("it-qty").value=r.qty;
+    document.getElementById("it-qty-ctn").value=(r.isiKarton&&r.isiKarton>0)?Math.ceil(r.qty/(r.isiKarton)):"";
     document.getElementById("it-keterangan").value=r.keterangan||"";
     document.getElementById("it-status").value=r.status||"InTransit";
     if(r.warehouse) document.getElementById("it-warehouse").value=r.warehouse;
@@ -3227,6 +3232,17 @@ function tutupModalIntransit(e){
   if(e&&e.target!==document.getElementById("it-modal-overlay")) return;
   document.getElementById("it-modal-overlay").classList.remove("open");
   document.getElementById("it-sku-dd").style.display="none";
+}
+
+function itHitungQtyPcs(){
+  let ctn = parseInt(document.getElementById("it-qty-ctn").value)||0;
+  let isi = parseInt(document.getElementById("it-isi-ctn").value)||0;
+  if(ctn>0 && isi>0) document.getElementById("it-qty").value = ctn * isi;
+}
+function itHitungQtyCtn(){
+  let pcs = parseInt(document.getElementById("it-qty").value)||0;
+  let isi = parseInt(document.getElementById("it-isi-ctn").value)||0;
+  if(pcs>0 && isi>0) document.getElementById("it-qty-ctn").value = Math.ceil(pcs/isi);
 }
 
 function simpanIntransit(){
@@ -3325,23 +3341,53 @@ function tampilkanIntransit(){
   document.getElementById("it-cnt-done").innerText=intransitLog.filter(r=>r.status==="Complete").length+" item";
   document.getElementById("it-cnt-planning").innerText=intransitLog.filter(r=>r.status==="Draft"&&r.fromPlanning).length+" item";
 
-  if(hasil.length===0){ tbody.innerHTML="<tr><td colspan='11' class='kosong'>Tidak ada data intransit</td></tr>"; return; }
+  if(hasil.length===0){ tbody.innerHTML="<tr><td colspan='12' class='kosong'>Tidak ada data intransit</td></tr>"; document.getElementById("it-notif-banner").style.display="none"; return; }
+
+  // --- NOTIF REMINDER ---
+  let today=new Date().toISOString().split("T")[0];
+  let dueToday=intransitLog.filter(r=>(r.status==="InTransit"||r.status==="Draft")&&r.tanggal===today);
+  let overdue=intransitLog.filter(r=>(r.status==="InTransit"||r.status==="Draft")&&r.tanggal<today);
+  let banner=document.getElementById("it-notif-banner");
+  let bannerParts=[];
+  if(dueToday.length>0){
+    bannerParts.push("🔔 <strong>"+dueToday.length+" item tiba hari ini ("+today+"):</strong> "+dueToday.map(r=>r.nama+" ("+r.sku+") — "+r.qty+" pcs").join(" &nbsp;|&nbsp; "));
+  }
+  if(overdue.length>0){
+    bannerParts.push("⚠️ <strong>"+overdue.length+" item lewat jadwal & belum Complete:</strong> "+overdue.map(r=>r.nama+" ("+r.sku+") tgl "+r.tanggal).join(" &nbsp;|&nbsp; "));
+  }
+  if(bannerParts.length>0){
+    banner.style.display="block";
+    banner.innerHTML=bannerParts.join("<br>");
+  } else {
+    banner.style.display="none";
+  }
+
   tbody.innerHTML="";
   hasil.forEach(function(r,i){
     let status=r.status||"InTransit";
     let badgeSt=status==="Draft"?"<span class='badge-hold' style='background:#dbeafe;color:#1e40af'>📝 Draft</span>":
                 status==="InTransit"?"<span class='badge-intransit'>🚚 InTransit</span>":
                 "<span class='badge-complete'>✅ Complete</span>";
-    let uom=hitungUOM(r.qty,r.isiKarton||0);
+    let qtyCtn=(r.isiKarton&&r.isiKarton>0)?Math.ceil(r.qty/r.isiKarton):"-";
     let whTxt=status==="Complete"?("<span class='badge badge-gudang'>"+(r.warehouse||"-")+"</span>"):"<span style='color:#a0aec0;font-size:10px'>Belum</span>";
     let tglComp=r.tglComplete||"-";
-    tbody.innerHTML+="<tr>"+
+
+    // Highlight baris
+    let rowStyle="";
+    if(status!=="Complete"&&r.tanggal===today) rowStyle=" style='background:#fffbeb;border-left:3px solid #f6ad55'";
+    else if(status!=="Complete"&&r.tanggal<today) rowStyle=" style='background:#fff5f5;border-left:3px solid #fc8181'";
+
+    let tglCell=r.tanggal;
+    if(status!=="Complete"&&r.tanggal===today) tglCell="<strong style='color:#92400e'>"+r.tanggal+" 🔔</strong>";
+    else if(status!=="Complete"&&r.tanggal<today) tglCell="<strong style='color:#c53030'>"+r.tanggal+" ⚠️</strong>";
+
+    tbody.innerHTML+="<tr"+rowStyle+">"+
       "<td>"+(i+1)+"</td>"+
-      "<td>"+r.tanggal+"</td>"+
+      "<td>"+tglCell+"</td>"+
       "<td style='font-size:10px' title='"+r.sku+"'>"+r.sku+"</td>"+
       "<td title='"+r.nama+"'>"+r.nama+"</td>"+
+      "<td style='text-align:center;font-weight:600'>"+(qtyCtn!=="-"?qtyCtn+" ctn":"-")+"</td>"+
       "<td><span class='badge badge-in'>+"+r.qty+" pcs</span></td>"+
-      "<td><strong>"+uom+"</strong></td>"+
       "<td>"+badgeSt+"</td>"+
       "<td title='"+(r.keterangan||"")+"'>"+(r.keterangan||"-").substring(0,20)+((r.keterangan||"").length>20?"...":"")+"</td>"+
       "<td>"+whTxt+"</td>"+
@@ -3793,23 +3839,20 @@ window.tampilkanLedger = function(){
   document.getElementById("led-total-out").innerText = rpFormat(totalOut);
   document.getElementById("led-total-trx").innerText = hasil.length;
 
-  if(hasil.length===0){ tbody.innerHTML="<tr><td colspan='11' class='kosong'>"+t("no_data_ledger")+"</td></tr>"; attachPagination(tbody,"pg-led",0,1,PAGE_SIZE,()=>{}); return; }
+  if(hasil.length===0){ tbody.innerHTML="<tr><td colspan='9' class='kosong'>"+t("no_data_ledger")+"</td></tr>"; attachPagination(tbody,"pg-led",0,1,PAGE_SIZE,()=>{}); return; }
 
   let page = _pageState.led;
   let sliced = hasil.slice((page-1)*PAGE_SIZE, page*PAGE_SIZE);
   let rows = sliced.map(function(r,ii){
     let i = (page-1)*PAGE_SIZE+ii;
     let uomTrx = hitungUOM(r.qty||0,r.isiKarton||0);
-    let sisaPcs = r._runBal||0;
-    let sisaUom = hitungUOM(sisaPcs,r.isiKarton||0);
     let badge,qtyTxt;
     if(r.tipe==="IN"){ badge="<span class='badge badge-in'>📥 IN</span>"; qtyTxt="<span style='color:#065f46;font-weight:700'>+"+(r.qty||0)+" pcs</span>"; }
     else if(r.tipe==="OUT"){ badge="<span class='badge badge-out'>📤 OUT</span>"; qtyTxt="<span style='color:#991b1b;font-weight:700'>-"+(r.qty||0)+" pcs</span>"; }
     else if(r.tipe==="TRANSFER_OUT"){ badge="<span class='badge badge-transfer'>🔄 TRF OUT</span>"; qtyTxt="<span style='color:#3730a3;font-weight:700'>-"+(r.qty||0)+" pcs</span>"; }
     else { badge="<span class='badge badge-transfer' style='background:#d1fae5;color:#065f46'>🔄 TRF IN</span>"; qtyTxt="<span style='color:#065f46;font-weight:700'>+"+(r.qty||0)+" pcs</span>"; }
-    let sisaColor = sisaPcs<0?"color:#c53030":"color:#2c3e50";
     let nilai = (r.qty||0)*(r.harga||0);
-    return "<tr><td>"+(i+1)+"</td><td>"+(r.tanggal||"-")+"</td><td>"+badge+"</td><td title='"+(r.sku||"-")+"'>"+(r.sku||"-")+"</td><td title='"+(r.nama||"-")+"'>"+(r.nama||"-")+"</td><td><span class='badge badge-gudang'>"+(r.warehouse||"-")+"</span></td><td>"+qtyTxt+"</td><td><strong>"+uomTrx+"</strong></td><td>"+rpFormat(nilai)+"</td><td style='"+sisaColor+";font-weight:700'>"+sisaPcs+" pcs</td><td>"+sisaUom+"</td></tr>";
+    return "<tr><td>"+(i+1)+"</td><td>"+(r.tanggal||"-")+"</td><td>"+badge+"</td><td title='"+(r.sku||"-")+"'>"+(r.sku||"-")+"</td><td title='"+(r.nama||"-")+"'>"+(r.nama||"-")+"</td><td><span class='badge badge-gudang'>"+(r.warehouse||"-")+"</span></td><td>"+qtyTxt+"</td><td><strong>"+uomTrx+"</strong></td><td>"+rpFormat(nilai)+"</td><td title='"+(r.ref||"-")+"'>"+(r.ref||"-")+"</td></tr>";
   });
   tbody.innerHTML = "";
   tbody.appendChild(buildRows(rows));
