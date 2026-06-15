@@ -760,7 +760,7 @@
       <table>
         <thead>
           <tr><th>No</th><th data-i18n="th_tanggal">Tanggal</th><th data-i18n="tipe_transaksi">Tipe</th><th data-i18n="th_sku">SKU</th><th data-i18n="th_nama">Nama Barang</th>
-          <th data-i18n="th_gudang">Gudang</th><th>Qty</th><th data-i18n="th_konversi">Konversi</th><th data-i18n="th_ref">Referensi</th>
+          <th data-i18n="th_gudang">Gudang</th><th>Qty (pcs)</th><th>Konversi (ctn)</th><th>Sisa Stok (pcs)</th><th>Sisa Stok (ctn)</th><th>Keterangan</th>
         </tr></thead>
         <tbody id="tabelLedger"></tbody>
       </table>
@@ -2725,10 +2725,10 @@ function tampilkanLedger(){
   tbody.innerHTML = "";
 
   // Gabungkan semua transaksi
-  let inData    = stockInLog.map(r => ({...r, tipe:"IN", warehouse: r.warehouse||"Bintaro"}));
-  let outData   = stockOutLog.map(r => ({...r, tipe:"OUT", warehouse: r.warehouse||"Bintaro"}));
-  let trOutData = transferLog.map(r => ({...r, tipe:"TRANSFER_OUT", warehouse: r.fromWh, ref:"Transfer → "+r.toWh+(r.ref&&r.ref!=="-"?" | "+r.ref:"")}));
-  let trInData  = transferLog.map(r => ({...r, tipe:"TRANSFER_IN",  warehouse: r.toWh,   ref:"Transfer ← "+r.fromWh+(r.ref&&r.ref!=="-"?" | "+r.ref:"")}));
+  let inData    = stockInLog.map(r => ({...r, tipe:"IN", warehouse: r.warehouse||"Bintaro", keterangan: r.keterangan||"-"}));
+  let outData   = stockOutLog.map(r => ({...r, tipe:"OUT", warehouse: r.warehouse||"Bintaro", keterangan: r.keterangan||r.ref||"-"}));
+  let trOutData = transferLog.map(r => ({...r, tipe:"TRANSFER_OUT", warehouse: r.fromWh, keterangan: "→ "+r.toWh+(r.keterangan&&r.keterangan!=="-"?" | "+r.keterangan:"")}));
+  let trInData  = transferLog.map(r => ({...r, tipe:"TRANSFER_IN",  warehouse: r.toWh,   keterangan: "← "+r.fromWh+(r.keterangan&&r.keterangan!=="-"?" | "+r.keterangan:"")}));
   let semua = [...inData, ...outData, ...trOutData, ...trInData];
 
   // Urutkan ascending dulu (terlama ke terbaru) untuk hitung running balance
@@ -2773,28 +2773,31 @@ function tampilkanLedger(){
   document.getElementById("led-total-trx").innerText  = hasil.length;
 
   if(hasil.length===0){
-    tbody.innerHTML=`<tr><td colspan='9' class='kosong'>${t("no_data_ledger")}</td></tr>`;
+    tbody.innerHTML=`<tr><td colspan='11' class='kosong'>${t("no_data_ledger")}</td></tr>`;
     return;
   }
 
   hasil.forEach(function(r,i){
-    let uomTrx = hitungUOM(r.qty||0, r.isiKarton||0);
+    let qtyPcs = r.qty||0;
+    let konversiCtn = hitungUOM(qtyPcs, r.isiKarton||0);
     let sisaPcs = r._runBal !== undefined ? r._runBal : 0;
-    let sisaUom = hitungUOM(sisaPcs, r.isiKarton||0);
+    let sisaCtn = hitungUOM(sisaPcs, r.isiKarton||0);
+    let ket = (r.keterangan||"-").substring(0,30)+((r.keterangan||"").length>30?"...":"");
     let badge, qtyTxt;
     if(r.tipe==="IN"){
       badge   = `<span class='badge badge-in'>📥 IN</span>`;
-      qtyTxt  = `<span style='color:#065f46;font-weight:700'>+${r.qty||0} pcs</span>`;
+      qtyTxt  = `<span style='color:#065f46;font-weight:700'>+${qtyPcs} pcs</span>`;
     } else if(r.tipe==="OUT"){
       badge   = `<span class='badge badge-out'>📤 OUT</span>`;
-      qtyTxt  = `<span style='color:#991b1b;font-weight:700'>-${r.qty||0} pcs</span>`;
+      qtyTxt  = `<span style='color:#991b1b;font-weight:700'>-${qtyPcs} pcs</span>`;
     } else if(r.tipe==="TRANSFER_OUT"){
       badge   = `<span class='badge badge-transfer'>🔄 TRF OUT</span>`;
-      qtyTxt  = `<span style='color:#3730a3;font-weight:700'>-${r.qty||0} pcs</span>`;
+      qtyTxt  = `<span style='color:#3730a3;font-weight:700'>-${qtyPcs} pcs</span>`;
     } else {
       badge   = `<span class='badge badge-transfer' style='background:#d1fae5;color:#065f46'>🔄 TRF IN</span>`;
-      qtyTxt  = `<span style='color:#065f46;font-weight:700'>+${r.qty||0} pcs</span>`;
+      qtyTxt  = `<span style='color:#065f46;font-weight:700'>+${qtyPcs} pcs</span>`;
     }
+    let sisaColor = sisaPcs<0?"color:#c53030;font-weight:700":"color:#2c3e50;font-weight:700";
 
     tbody.innerHTML += `<tr>
       <td>${i+1}</td>
@@ -2804,8 +2807,10 @@ function tampilkanLedger(){
       <td title='${r.nama||"-"}'>${r.nama||"-"}</td>
       <td><span class='badge badge-gudang'>${r.warehouse||"-"}</span></td>
       <td>${qtyTxt}</td>
-      <td><strong>${uomTrx}</strong></td>
-      <td title='${r.ref||"-"}'>${(r.ref||"-").substring(0,25)}${(r.ref||"").length>25?"...":""}</td>
+      <td><strong>${konversiCtn}</strong></td>
+      <td style='${sisaColor}'>${sisaPcs<0?"⚠️ ":""}${sisaPcs} pcs</td>
+      <td style='${sisaColor}'>${sisaCtn}</td>
+      <td title='${r.keterangan||"-"}'>${ket}</td>
     </tr>`;
   });
 }
@@ -2884,10 +2889,10 @@ function exportLedger(){
   let to=document.getElementById("led-to").value;
   let wh=document.getElementById("led-wh").value;
   let type=document.getElementById("led-type").value;
-  let inData=stockInLog.map(r=>({...r,tipe:"IN",warehouse:r.warehouse||"Bintaro"}));
-  let outData=stockOutLog.map(r=>({...r,tipe:"OUT",warehouse:r.warehouse||"Bintaro"}));
-  let trOutData=transferLog.map(r=>({...r,tipe:"TRANSFER_OUT",warehouse:r.fromWh,ref:"Transfer → "+r.toWh+(r.ref&&r.ref!=="-"?" | "+r.ref:"")}));
-  let trInData=transferLog.map(r=>({...r,tipe:"TRANSFER_IN",warehouse:r.toWh,ref:"Transfer ← "+r.fromWh+(r.ref&&r.ref!=="-"?" | "+r.ref:"")}));
+  let inData=stockInLog.map(r=>({...r,tipe:"IN",warehouse:r.warehouse||"Bintaro",keterangan:r.keterangan||"-"}));
+  let outData=stockOutLog.map(r=>({...r,tipe:"OUT",warehouse:r.warehouse||"Bintaro",keterangan:r.keterangan||r.ref||"-"}));
+  let trOutData=transferLog.map(r=>({...r,tipe:"TRANSFER_OUT",warehouse:r.fromWh,keterangan:"→ "+r.toWh+(r.keterangan&&r.keterangan!=="-"?" | "+r.keterangan:"")}));
+  let trInData=transferLog.map(r=>({...r,tipe:"TRANSFER_IN",warehouse:r.toWh,keterangan:"← "+r.fromWh+(r.keterangan&&r.keterangan!=="-"?" | "+r.keterangan:"")}));
   let semua=[...inData,...outData,...trOutData,...trInData];
   semua.sort((a,b)=>{ let d=a.tanggal.localeCompare(b.tanggal); return d!==0?d:(Number(a.id)||0)-(Number(b.id)||0); });
   // Hitung running balance
@@ -3839,20 +3844,24 @@ window.tampilkanLedger = function(){
   document.getElementById("led-total-out").innerText = rpFormat(totalOut);
   document.getElementById("led-total-trx").innerText = hasil.length;
 
-  if(hasil.length===0){ tbody.innerHTML="<tr><td colspan='9' class='kosong'>"+t("no_data_ledger")+"</td></tr>"; attachPagination(tbody,"pg-led",0,1,PAGE_SIZE,()=>{}); return; }
+  if(hasil.length===0){ tbody.innerHTML="<tr><td colspan='11' class='kosong'>"+t("no_data_ledger")+"</td></tr>"; attachPagination(tbody,"pg-led",0,1,PAGE_SIZE,()=>{}); return; }
 
   let page = _pageState.led;
   let sliced = hasil.slice((page-1)*PAGE_SIZE, page*PAGE_SIZE);
   let rows = sliced.map(function(r,ii){
     let i = (page-1)*PAGE_SIZE+ii;
-    let uomTrx = hitungUOM(r.qty||0,r.isiKarton||0);
+    let qtyPcs = r.qty||0;
+    let konversiCtn = hitungUOM(qtyPcs, r.isiKarton||0);
+    let sisaPcs = r._runBal||0;
+    let sisaCtn = hitungUOM(sisaPcs, r.isiKarton||0);
+    let ket = (r.keterangan||"-").substring(0,30)+((r.keterangan||"").length>30?"...":"");
     let badge,qtyTxt;
-    if(r.tipe==="IN"){ badge="<span class='badge badge-in'>📥 IN</span>"; qtyTxt="<span style='color:#065f46;font-weight:700'>+"+(r.qty||0)+" pcs</span>"; }
-    else if(r.tipe==="OUT"){ badge="<span class='badge badge-out'>📤 OUT</span>"; qtyTxt="<span style='color:#991b1b;font-weight:700'>-"+(r.qty||0)+" pcs</span>"; }
-    else if(r.tipe==="TRANSFER_OUT"){ badge="<span class='badge badge-transfer'>🔄 TRF OUT</span>"; qtyTxt="<span style='color:#3730a3;font-weight:700'>-"+(r.qty||0)+" pcs</span>"; }
-    else { badge="<span class='badge badge-transfer' style='background:#d1fae5;color:#065f46'>🔄 TRF IN</span>"; qtyTxt="<span style='color:#065f46;font-weight:700'>+"+(r.qty||0)+" pcs</span>"; }
-    let nilai = (r.qty||0)*(r.harga||0);
-    return "<tr><td>"+(i+1)+"</td><td>"+(r.tanggal||"-")+"</td><td>"+badge+"</td><td title='"+(r.sku||"-")+"'>"+(r.sku||"-")+"</td><td title='"+(r.nama||"-")+"'>"+(r.nama||"-")+"</td><td><span class='badge badge-gudang'>"+(r.warehouse||"-")+"</span></td><td>"+qtyTxt+"</td><td><strong>"+uomTrx+"</strong></td><td>"+rpFormat(nilai)+"</td><td title='"+(r.ref||"-")+"'>"+(r.ref||"-")+"</td></tr>";
+    if(r.tipe==="IN"){ badge="<span class='badge badge-in'>📥 IN</span>"; qtyTxt="<span style='color:#065f46;font-weight:700'>+"+qtyPcs+" pcs</span>"; }
+    else if(r.tipe==="OUT"){ badge="<span class='badge badge-out'>📤 OUT</span>"; qtyTxt="<span style='color:#991b1b;font-weight:700'>-"+qtyPcs+" pcs</span>"; }
+    else if(r.tipe==="TRANSFER_OUT"){ badge="<span class='badge badge-transfer'>🔄 TRF OUT</span>"; qtyTxt="<span style='color:#3730a3;font-weight:700'>-"+qtyPcs+" pcs</span>"; }
+    else { badge="<span class='badge badge-transfer' style='background:#d1fae5;color:#065f46'>🔄 TRF IN</span>"; qtyTxt="<span style='color:#065f46;font-weight:700'>+"+qtyPcs+" pcs</span>"; }
+    let sisaColor = sisaPcs<0?"color:#c53030;font-weight:700":"color:#2c3e50;font-weight:700";
+    return "<tr><td>"+(i+1)+"</td><td>"+(r.tanggal||"-")+"</td><td>"+badge+"</td><td title='"+(r.sku||"-")+"'>"+(r.sku||"-")+"</td><td title='"+(r.nama||"-")+"'>"+(r.nama||"-")+"</td><td><span class='badge badge-gudang'>"+(r.warehouse||"-")+"</span></td><td>"+qtyTxt+"</td><td><strong>"+konversiCtn+"</strong></td><td style='"+sisaColor+"'>"+(sisaPcs<0?"⚠️ ":"")+sisaPcs+" pcs</td><td style='"+sisaColor+"'>"+sisaCtn+"</td><td title='"+(r.keterangan||"-")+"'>"+ket+"</td></tr>";
   });
   tbody.innerHTML = "";
   tbody.appendChild(buildRows(rows));
