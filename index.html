@@ -48,13 +48,45 @@
     .viewer-hidden{display:none!important}
     .viewer-disabled{opacity:.45;pointer-events:none;user-select:none;position:relative}
     *{box-sizing:border-box;margin:0;padding:0;font-family:-apple-system,BlinkMacSystemFont,"Segoe UI",Roboto,Arial,sans-serif}
-    body{background:#f4f6f8;color:#333;padding:10px;height:100vh;display:flex;flex-direction:column}
-    header{display:flex;justify-content:space-between;align-items:center;padding:6px 10px;margin-bottom:8px;background:white;border-radius:6px;box-shadow:0 1px 3px rgba(0,0,0,.06)}
-    header h1{font-size:17px;color:#2c3e50;display:flex;align-items:center;gap:6px}
-    .nav-tabs{display:flex;gap:4px;flex-wrap:wrap}
-    .nav-tab{padding:6px 12px;font-size:12px;font-weight:600;border:none;border-radius:4px;cursor:pointer;background:#edf2f7;color:#4a5568;transition:all .15s}
-    .nav-tab.active{background:#2c3e50;color:white}
-    .nav-tab:hover:not(.active){background:#e2e8f0}
+    body{background:#f4f6f8;color:#333;height:100vh;display:flex;overflow:hidden}
+
+    /* ===== SIDEBAR ===== */
+    #sidebar{width:210px;min-width:210px;background:#0f172a;display:flex;flex-direction:column;height:100vh;position:relative;z-index:100}
+    #sidebar-brand{padding:14px 12px 10px;border-bottom:1px solid rgba(255,255,255,.08)}
+    #sidebar-brand .sb-logo{display:flex;align-items:center;gap:8px}
+    #sidebar-brand .sb-icon{width:32px;height:32px;background:#3b82f6;border-radius:8px;display:flex;align-items:center;justify-content:center;font-size:14px;font-weight:700;color:white;flex-shrink:0}
+    #sidebar-brand .sb-title{color:white;font-size:13px;font-weight:600;line-height:1.2}
+    #sidebar-brand .sb-sub{color:rgba(255,255,255,.35);font-size:10px}
+    .sb-section{padding:10px 10px 3px;color:rgba(255,255,255,.3);font-size:9px;font-weight:700;letter-spacing:.8px;text-transform:uppercase}
+    #sidebar-nav{flex:1;overflow-y:auto;padding:4px 8px}
+    .nav-tab{display:flex;align-items:center;gap:8px;padding:7px 10px;border-radius:7px;color:rgba(255,255,255,.55);cursor:pointer;margin-bottom:1px;transition:all .15s;font-size:12px;font-weight:500;border:none;background:none;width:100%;text-align:left}
+    .nav-tab span.tab-icon{font-size:15px;flex-shrink:0;width:18px;text-align:center}
+    .nav-tab:hover:not(.active){background:rgba(255,255,255,.07);color:rgba(255,255,255,.9)}
+    .nav-tab.active{background:#3b82f6;color:white}
+    #sidebar-footer{padding:8px 8px 10px;border-top:1px solid rgba(255,255,255,.08)}
+    .sb-lang{display:flex;gap:3px;padding:4px 2px 6px}
+    .lang-btn{flex:1;text-align:center;padding:4px;border-radius:5px;font-size:10px;font-weight:600;color:rgba(255,255,255,.4);cursor:pointer;border:1px solid rgba(255,255,255,.1);background:none}
+    .lang-btn.active{background:rgba(255,255,255,.12);color:white;border-color:rgba(255,255,255,.2)}
+    #sb-user-row{display:flex;align-items:center;gap:8px;padding:7px 10px;border-radius:7px;cursor:pointer}
+    #sb-user-row:hover{background:rgba(255,255,255,.07)}
+    #sb-avatar{width:28px;height:28px;border-radius:50%;background:#f59e0b;display:flex;align-items:center;justify-content:center;font-size:11px;font-weight:700;color:#1a1a1a;flex-shrink:0}
+    #sb-user-name{color:white;font-size:12px;font-weight:500}
+    #sb-user-role{color:rgba(255,255,255,.4);font-size:10px}
+    #sb-sync{font-size:10px;padding:3px 8px;border-radius:10px;background:#d1fae5;color:#065f46;font-weight:600;display:none;margin:0 10px 4px}
+    #sb-template-btn{display:flex;align-items:center;gap:6px;padding:6px 10px;border-radius:7px;color:rgba(255,255,255,.5);cursor:pointer;font-size:11px;background:none;border:none;width:100%;text-align:left}
+    #sb-template-btn:hover{background:rgba(255,255,255,.07);color:rgba(255,255,255,.85)}
+    #sb-logout-btn{display:flex;align-items:center;gap:6px;padding:6px 10px;border-radius:7px;color:rgba(255,255,255,.4);cursor:pointer;font-size:11px;background:none;border:none;width:100%;text-align:left}
+    #sb-logout-btn:hover{background:rgba(239,68,68,.15);color:#f87171}
+
+    /* ===== MAIN AREA ===== */
+    #main-area{flex:1;display:flex;flex-direction:column;overflow:hidden}
+    #topbar{background:white;padding:8px 14px;display:flex;align-items:center;justify-content:space-between;border-bottom:1px solid #e2e8f0;flex-shrink:0}
+    #topbar-title{font-size:14px;font-weight:600;color:#0f172a;display:flex;align-items:center;gap:6px}
+    #content-wrap{flex:1;overflow:hidden;display:flex;flex-direction:column;padding:10px;height:0}
+
+    /* hide old header */
+    header{display:none!important}
+
     .page{display:none;flex:1;overflow:hidden}
     .page.active{display:flex;gap:10px}
     .page-full{display:none;flex:1;overflow:hidden;flex-direction:column}
@@ -212,31 +244,53 @@
   <div style="color:#718096;font-size:11px;margin-top:18px">Inventory Christyan (IC) · v3</div>
 </div>
 
-<header>
-  <h1>🏪 Inventory Christyan (IC)</h1>
-  <div style="display:flex;gap:6px;align-items:center;flex-wrap:wrap">
-    <nav class="nav-tabs">
-      <button class="nav-tab active" onclick="switchTab('monitor')">📊 <span data-i18n="tab_monitor">Monitor Stok</span></button>
-      <button class="nav-tab" onclick="switchTab('in')">📥 <span data-i18n="tab_in">Stock In</span></button>
-      <button class="nav-tab" onclick="switchTab('out')">📤 <span data-i18n="tab_out">Stock Out</span></button>
-      <button class="nav-tab" onclick="switchTab('transfer')">🔄 <span data-i18n="tab_transfer">Transfer Stok</span></button>
-      <button class="nav-tab" onclick="switchTab('intransit')">🚚 <span data-i18n="tab_intransit">In Transit</span></button>
-      <button class="nav-tab" onclick="switchTab('ledger')">📋 <span data-i18n="tab_ledger">Stock Ledger</span></button>
-      <button class="nav-tab" onclick="switchTab('analisis')">📈 <span data-i18n="tab_analisis">Analisis Stok</span></button>
-      <button class="nav-tab" onclick="switchTab('sales')">🛒 <span>Sales Analytics</span></button>
-
-    </nav>
-    <div class="lang-selector">
+<!-- ===== SIDEBAR ===== -->
+<div id="sidebar">
+  <div id="sidebar-brand">
+    <div class="sb-logo">
+      <div class="sb-icon">IC</div>
+      <div>
+        <div class="sb-title">Inventory IC</div>
+        <div class="sb-sub">Christyan</div>
+      </div>
+    </div>
+  </div>
+  <div id="sidebar-nav">
+    <div class="sb-section">Operasional</div>
+    <button class="nav-tab active" onclick="switchTab('monitor')" id="navbtn-monitor"><span class="tab-icon">📊</span><span data-i18n="tab_monitor">Monitor Stok</span></button>
+    <button class="nav-tab" onclick="switchTab('in')" id="navbtn-in"><span class="tab-icon">📥</span><span data-i18n="tab_in">Stock In</span></button>
+    <button class="nav-tab" onclick="switchTab('out')" id="navbtn-out"><span class="tab-icon">📤</span><span data-i18n="tab_out">Stock Out</span></button>
+    <button class="nav-tab" onclick="switchTab('transfer')" id="navbtn-transfer"><span class="tab-icon">🔄</span><span data-i18n="tab_transfer">Transfer Stok</span></button>
+    <button class="nav-tab" onclick="switchTab('intransit')" id="navbtn-intransit"><span class="tab-icon">🚚</span><span data-i18n="tab_intransit">In Transit</span></button>
+    <div class="sb-section">Laporan</div>
+    <button class="nav-tab" onclick="switchTab('ledger')" id="navbtn-ledger"><span class="tab-icon">📋</span><span data-i18n="tab_ledger">Stock Ledger</span></button>
+    <button class="nav-tab" onclick="switchTab('analisis')" id="navbtn-analisis"><span class="tab-icon">📈</span><span data-i18n="tab_analisis">Analisis Stok</span></button>
+    <button class="nav-tab" onclick="switchTab('sales')" id="navbtn-sales"><span class="tab-icon">🛒</span><span>Sales Analytics</span></button>
+  </div>
+  <div id="sidebar-footer">
+    <div class="sb-lang">
       <button class="lang-btn active" onclick="setLang('id')">🇮🇩 ID</button>
       <button class="lang-btn" onclick="setLang('en')">🇬🇧 EN</button>
       <button class="lang-btn" onclick="setLang('ko')">🇰🇷 KO</button>
     </div>
-    <button class="btn btn-orange" onclick="downloadTemplateSistem()">📥 <span data-i18n="btn_template">Template</span></button>
-    <span id="role-badge" class="badge-viewer">VIEWER</span>
-    <span id="sync-status" style="font-size:10px;padding:3px 8px;border-radius:10px;background:#d1fae5;color:#065f46;font-weight:600;display:none">🟢 Tersync</span>
-    <button id="btn-logout" onclick="doLogout()">↩ Logout</button>
+    <span id="sync-status" style="font-size:10px;padding:3px 8px;border-radius:10px;background:#d1fae5;color:#065f46;font-weight:600;margin:0 10px 4px;display:none">🟢 Tersync</span>
+    <div id="sb-user-row">
+      <div id="sb-avatar">AD</div>
+      <div style="flex:1">
+        <div id="sb-user-name">Admin</div>
+        <div><span id="role-badge" class="badge-viewer" style="font-size:10px;padding:2px 7px;border-radius:8px">VIEWER</span></div>
+      </div>
+    </div>
+    <button id="sb-template-btn" onclick="downloadTemplateSistem()">📥 <span data-i18n="btn_template">Template</span></button>
+    <button id="sb-logout-btn" onclick="doLogout()">↩ Logout</button>
   </div>
-</header>
+</div>
+<!-- ===== MAIN AREA ===== -->
+<div id="main-area">
+  <div id="topbar">
+    <div id="topbar-title">📊 <span id="topbar-page-name">Monitor Stok</span></div>
+  </div>
+  <div id="content-wrap">
 
 <!-- ===================== TAB 1: MONITOR STOK ===================== -->
 <div id="tab-monitor" class="page active">
@@ -983,6 +1037,11 @@ function doLogin(){
     sessionStorage.setItem("icUser", user);
     document.getElementById("login-overlay").style.display = "none";
     applyRoleUI();
+    // Update sidebar user info
+    let sbAvatar = document.getElementById("sb-avatar");
+    let sbName = document.getElementById("sb-user-name");
+    if(sbAvatar) sbAvatar.textContent = user.substring(0,2).toUpperCase();
+    if(sbName) sbName.textContent = user.charAt(0).toUpperCase()+user.slice(1);
     // Init Firebase listeners (load & sync data)
     if(window._fbReady){
       initFirebaseListeners();
@@ -1426,14 +1485,21 @@ function renderTab(name){
 // =========================================================================
 // NAVIGATION
 // =========================================================================
+const _tabTitles = {
+  monitor:"📊 Monitor Stok", in:"📥 Stock In", out:"📤 Stock Out",
+  transfer:"🔄 Transfer Stok", intransit:"🚚 In Transit",
+  ledger:"📋 Stock Ledger", analisis:"📈 Analisis Stok", sales:"🛒 Sales Analytics"
+};
 function switchTab(name){
   activeTab = name;
   document.querySelectorAll(".nav-tab").forEach(t=>t.classList.remove("active"));
   document.querySelectorAll(".page,.page-full").forEach(p=>p.classList.remove("active"));
-  event.currentTarget.classList.add("active");
+  let navBtn = document.getElementById("navbtn-"+name);
+  if(navBtn) navBtn.classList.add("active");
   let el = document.getElementById("tab-"+name);
   if(el){ el.classList.add("active"); }
-  // Render sekarang (atau re-render jika dirty)
+  let tt = document.getElementById("topbar-page-name");
+  if(tt) tt.textContent = (_tabTitles[name]||name);
   renderTab(name);
 }
 
@@ -3904,6 +3970,9 @@ console.log("⚡ Performance optimizations loaded: debounce, pagination, Documen
     </div>
   </div>
 </div>
+
+  </div><!-- end content-wrap -->
+</div><!-- end main-area -->
 
 </body>
 </html>
