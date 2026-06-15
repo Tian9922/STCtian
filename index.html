@@ -3280,24 +3280,21 @@ function itHitungQtyCtn(){
 }
 
 function cekNotifIntransit(){
-  let today=new Date().toISOString().split("T")[0];
-  // Cari item InTransit (bukan Draft/Complete) yang tgl masuk = hari ini
-  let todayItems=intransitLog.filter(r=>{
-    let st=r.status||"InTransit";
-    return (st==="InTransit"||st==="Draft")&&r.tanggal===today;
+  let today = new Date().toISOString().split("T")[0];
+  let todayItems = intransitLog.filter(r => {
+    let st = r.status || "InTransit";
+    return (st === "InTransit" || st === "Draft") && r.tanggal === today;
   });
-  let banner=document.getElementById("it-notif-banner");
+  let banner = document.getElementById("it-notif-banner");
   if(!banner) return;
-  if(todayItems.length===0){ banner.style.display="none"; return; }
-  let html="🔔 <strong>Reminder Hari Ini ("+today+"):</strong> Ada <strong>"+todayItems.length+" item</strong> In Transit dengan tanggal masuk hari ini!<br>";
-  todayItems.forEach(r=>{
-    let st=r.status||"InTransit";
-    let uom=hitungUOM(r.qty,r.isiKarton||0);
-    let ctngInfo=r.isiKarton>0?" ("+Math.floor(r.qty/(r.isiKarton||1))+" ctn)":"";
-    html+="&nbsp;&nbsp;• <strong>"+r.sku+"</strong> — "+r.nama+" | "+r.qty+" pcs"+ctngInfo+" | "+uom+" | <em>"+st+"</em><br>";
-  });
-  banner.innerHTML=html;
-  banner.style.display="block";
+  if(todayItems.length === 0){ 
+    banner.style.display = "none"; 
+    return; 
+  }
+  let totalQty = todayItems.reduce((sum, r) => sum + (r.qty || 0), 0);
+  let totalCtn = todayItems.reduce((sum, r) => sum + Math.floor((r.qty || 0) / (r.isiKarton || 1)), 0);
+  banner.innerHTML = `🔔 ${today} · ${todayItems.length} item In Transit · ${totalQty.toLocaleString()} pcs (${totalCtn.toLocaleString()} ctn)`;
+  banner.style.display = "block";
 }
 
 function bukaModalIntransit(id){
