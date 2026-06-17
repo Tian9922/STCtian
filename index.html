@@ -214,7 +214,7 @@
 <!-- ===== FIREBASE LOADING OVERLAY ===== -->
 <div id="fb-loader" style="display:none;position:fixed;inset:0;background:rgba(44,62,80,.85);z-index:9998;align-items:center;justify-content:center;flex-direction:column;gap:12px">
   <div style="width:44px;height:44px;border:4px solid rgba(255,255,255,.2);border-top-color:white;border-radius:50%;animation:spin .8s linear infinite"></div>
-  <span style="color:white;font-size:13px;font-weight:600" data-i18n="loading_data">Memuat data...</span>
+  <span style="color:white;font-size:13px;font-weight:600">Memuat data...</span>
   <style>@keyframes spin{to{transform:rotate(360deg)}}</style>
 </div>
 
@@ -223,24 +223,24 @@
   <div id="login-box">
     <div class="logo">
       <div style="font-size:36px;margin-bottom:6px">🏪</div>
-      <h2 data-i18n="app_title">Inventory IC</h2>
-      <p data-i18n="login_subtitle">Silakan login untuk melanjutkan</p>
+      <h2>Inventory IC</h2>
+      <p>Silakan login untuk melanjutkan</p>
     </div>
     <div class="login-field">
-      <label data-i18n="login_username">Username</label>
-      <input type="text" id="login-user" data-i18n-placeholder="login_username_placeholder" placeholder="Masukkan username..." autocomplete="username" onkeydown="if(event.key==='Enter')document.getElementById('login-pass').focus()">
+      <label>Username</label>
+      <input type="text" id="login-user" placeholder="Masukkan username..." autocomplete="username" onkeydown="if(event.key==='Enter')document.getElementById('login-pass').focus()">
     </div>
     <div class="login-field">
-      <label data-i18n="login_password">Password</label>
-      <input type="password" id="login-pass" data-i18n-placeholder="login_password_placeholder" placeholder="Masukkan password..." autocomplete="current-password" onkeydown="if(event.key==='Enter')doLogin()">
+      <label>Password</label>
+      <input type="password" id="login-pass" placeholder="Masukkan password..." autocomplete="current-password" onkeydown="if(event.key==='Enter')doLogin()">
     </div>
-    <button id="btn-login" onclick="doLogin()" data-i18n="login_button">🔐 Masuk</button>
+    <button id="btn-login" onclick="doLogin()">🔐 Masuk</button>
     <div id="login-error">⚠️ Username atau password salah!</div>
-    <div style="margin-top:16px;padding:10px;background:#fffbeb;border:1px solid #fcd34d;border-radius:6px;font-size:11px;color:#92400e;line-height:1.5" data-i18n="login_info">
+    <div style="margin-top:16px;padding:10px;background:#fffbeb;border:1px solid #fcd34d;border-radius:6px;font-size:11px;color:#92400e;line-height:1.5">
       💡 <strong>Info:</strong> Data tersimpan di browser masing-masing (localStorage). Untuk data terpusat antar device, hubungi admin untuk setup database online.
     </div>
   </div>
-  <div style="color:#718096;font-size:11px;margin-top:18px" data-i18n="footer_credit">Inventory Christyan (IC) · v3</div>
+  <div style="color:#718096;font-size:11px;margin-top:18px">Inventory Christyan (IC) · v3</div>
 </div>
 
 <!-- ===== SIDEBAR ===== -->
@@ -249,22 +249,22 @@
     <div class="sb-logo">
       <div class="sb-icon">IC</div>
       <div>
-        <div class="sb-title" data-i18n="app_title">Inventory IC</div>
-        <div class="sb-sub" data-i18n="app_subtitle">Christyan</div>
+        <div class="sb-title">Inventory IC</div>
+        <div class="sb-sub">Christyan</div>
       </div>
     </div>
   </div>
   <div id="sidebar-nav">
-    <div class="sb-section" data-i18n="section_operational">Operasional</div>
+    <div class="sb-section">Operasional</div>
     <button class="nav-tab active" onclick="switchTab('monitor')" id="navbtn-monitor"><span class="tab-icon">📊</span><span data-i18n="tab_monitor">Monitor Stok</span></button>
     <button class="nav-tab" onclick="switchTab('in')" id="navbtn-in"><span class="tab-icon">📥</span><span data-i18n="tab_in">Stock In</span></button>
     <button class="nav-tab" onclick="switchTab('out')" id="navbtn-out"><span class="tab-icon">📤</span><span data-i18n="tab_out">Stock Out</span></button>
     <button class="nav-tab" onclick="switchTab('transfer')" id="navbtn-transfer"><span class="tab-icon">🔄</span><span data-i18n="tab_transfer">Transfer Stok</span></button>
     <button class="nav-tab" onclick="switchTab('intransit')" id="navbtn-intransit"><span class="tab-icon">🚚</span><span data-i18n="tab_intransit">In Transit</span></button>
-    <div class="sb-section" data-i18n="section_reports">Laporan</div>
+    <div class="sb-section">Laporan</div>
     <button class="nav-tab" onclick="switchTab('ledger')" id="navbtn-ledger"><span class="tab-icon">📋</span><span data-i18n="tab_ledger">Stock Ledger</span></button>
     <button class="nav-tab" onclick="switchTab('analisis')" id="navbtn-analisis"><span class="tab-icon">📈</span><span data-i18n="tab_analisis">Analisis Stok</span></button>
-    <button class="nav-tab" onclick="switchTab('sales')" id="navbtn-sales"><span class="tab-icon">🛒</span><span data-i18n="tab_sales">Sales Analytics</span></button>
+    <button class="nav-tab" onclick="switchTab('sales')" id="navbtn-sales"><span class="tab-icon">🛒</span><span>Sales Analytics</span></button>
   </div>
   <div id="sidebar-footer">
     <div class="sb-lang">
@@ -272,22 +272,22 @@
       <button class="lang-btn" onclick="setLang('en')">🇬🇧 EN</button>
       <button class="lang-btn" onclick="setLang('ko')">🇰🇷 KO</button>
     </div>
-    <span id="sync-status" style="font-size:10px;padding:3px 8px;border-radius:10px;background:#d1fae5;color:#065f46;font-weight:600;margin:0 10px 4px;display:none" data-i18n="sync_status">🟢 Tersync</span>
+    <span id="sync-status" style="font-size:10px;padding:3px 8px;border-radius:10px;background:#d1fae5;color:#065f46;font-weight:600;margin:0 10px 4px;display:none">🟢 Tersync</span>
     <div id="sb-user-row">
       <div id="sb-avatar">AD</div>
       <div style="flex:1">
         <div id="sb-user-name">Admin</div>
-        <div><span id="role-badge" class="badge-viewer" style="font-size:10px;padding:2px 7px;border-radius:8px" data-i18n="role_viewer">VIEWER</span></div>
+        <div><span id="role-badge" class="badge-viewer" style="font-size:10px;padding:2px 7px;border-radius:8px">VIEWER</span></div>
       </div>
     </div>
     <button id="sb-template-btn" onclick="downloadTemplateSistem()">📥 <span data-i18n="btn_template">Template</span></button>
-    <button id="sb-logout-btn" onclick="doLogout()"><span data-i18n="logout">↩ Logout</span></button>
+    <button id="sb-logout-btn" onclick="doLogout()">↩ Logout</button>
   </div>
 </div>
 <!-- ===== MAIN AREA ===== -->
 <div id="main-area">
   <div id="topbar">
-    <div id="topbar-title">📊 <span id="topbar-page-name" data-i18n="tab_monitor">Monitor Stok</span></div>
+    <div id="topbar-title">📊 <span id="topbar-page-name">Monitor Stok</span></div>
   </div>
   <div id="content-wrap">
 
@@ -295,21 +295,21 @@
 <div id="tab-monitor" class="page active">
   <div class="right-panel" style="width:100%">
     <div class="asset-summary-box">
-      <div class="asset-summary-title" id="assetTitle" data-i18n="total_asset_value_all">💰 Total Nilai Barang (All Warehouse):</div>
+      <div class="asset-summary-title" id="assetTitle">💰 Total Nilai Barang (All Warehouse):</div>
       <div class="asset-summary-value" id="assetValue">Rp 0</div>
     </div>
     <div class="filter-row">
-      <input type="text" class="search-box" id="search" data-i18n-placeholder="search_placeholder" placeholder="🔍 Cari nama / SKU..." oninput="debounce('monitor',tampilkanTabel,250)">
+      <input type="text" class="search-box" id="search" placeholder="🔍 Cari nama / SKU..." oninput="debounce('monitor',tampilkanTabel,250)">
       <select id="filterWarehouse" onchange="tampilkanTabel()">
-        <option value="All" data-i18n="all_warehouse">🏢 All Warehouse</option>
+        <option value="All">🏢 All Warehouse</option>
         <option>Bintaro</option><option>Gunsin</option><option>MAJ</option><option>Bosco</option><option>K-Mart</option><option>Happy Wonder</option><option>Hero Supermarket</option><option>Consignment</option><option>K-Seafood</option><option>Event</option><option>Sample</option>
       </select>
-      <button class="btn btn-export" onclick="exportMonitorStok()" data-i18n="export">⬇️ Export</button>
+      <button class="btn btn-export" onclick="exportMonitorStok()">⬇️ Export</button>
       <button id="btn-hapus-semua-monitor" class="btn btn-danger" onclick="hapusSemuaBarang()">🗑️ <span data-i18n="btn_delete_all">Hapus Semua</span></button>
     </div>
     <div class="table-container">
       <table>
-        <thead><tr><th data-i18n="no">No</th><th data-i18n="th_sku">SKU</th><th data-i18n="th_nama">Nama Barang</th><th data-i18n="th_kategori">Kategori</th>
+        <thead><tr><th>No</th><th data-i18n="th_sku">SKU</th><th data-i18n="th_nama">Nama Barang</th><th data-i18n="th_kategori">Kategori</th>
           <th data-i18n="th_gudang">Gudang</th><th data-i18n="th_qty_pcs">Qty Pcs</th><th data-i18n="th_konversi">Konversi</th><th data-i18n="th_harga">Harga</th><th data-i18n="th_total_nilai">Total Nilai</th>
           <th style="width:90px;text-align:center" data-i18n="th_aksi">Aksi</th>
         </tr></thead>
@@ -332,16 +332,16 @@
   <div class="left-panel" id="panel-stock-in-left">
     <div class="card">
       <h2>⚡ <span data-i18n="fast_inbound">Fast Inbound / Upload</span></h2>
-      <div style="font-size:11px;color:#718096;margin-bottom:6px" data-i18n="fast_inbound_hint">Upload Excel untuk import stok massal ke gudang. Kolom <b>Tanggal</b> di template akan dibaca per baris — jika kosong, gunakan tanggal default di bawah. Kolom <b>Keterangan</b> juga dibaca otomatis.</div>
+      <div style="font-size:11px;color:#718096;margin-bottom:6px">Upload Excel untuk import stok massal ke gudang. Kolom <b>Tanggal</b> di template akan dibaca per baris — jika kosong, gunakan tanggal default di bawah. Kolom <b>Keterangan</b> juga dibaca otomatis.</div>
       <div style="margin-bottom:5px">
-        <label style="font-size:11px;font-weight:600;color:#4a5568;display:block;margin-bottom:2px" data-i18n="default_date_fallback">Tanggal Default (fallback jika kolom Tanggal kosong):</label>
+        <label style="font-size:11px;font-weight:600;color:#4a5568;display:block;margin-bottom:2px">Tanggal Default (fallback jika kolom Tanggal kosong):</label>
         <input type="date" id="uploadTanggal" style="width:100%;padding:5px 7px;font-size:12px;border:1px solid #cbd5e0;border-radius:4px;outline:none">
       </div>
       <div class="upload-row">
         <select id="uploadWarehouse" style="flex:1">
           <option>Bintaro</option><option>Gunsin</option><option>MAJ</option><option>Bosco</option><option>K-Mart</option><option>Happy Wonder</option><option>Hero Supermarket</option><option>Consignment</option><option>K-Seafood</option><option>Event</option><option>Sample</option>
         </select>
-        <label for="fileExcel" class="btn btn-blue" data-i18n="upload">📁 Upload</label>
+        <label for="fileExcel" class="btn btn-blue">📁 <span data-i18n="upload">Upload</span></label>
         <input type="file" id="fileExcel" accept=".xlsx,.xls,.csv" onchange="prosesUploadExcel(this)">
       </div>
     </div>
@@ -354,7 +354,7 @@
         </div>
         <div class="form-group-full sku-search-wrap">
           <label data-i18n="label_sku">Kode SKU:</label>
-          <input type="text" id="in-sku" data-i18n-placeholder="scan_sku_placeholder" placeholder="Scan atau ketik SKU..." oninput="cariSKUForTransaction('in')">
+          <input type="text" id="in-sku" placeholder="Scan atau ketik SKU..." oninput="cariSKUForTransaction('in')">
           <div class="sku-dd" id="in-sku-dd"></div>
           <div id="in-skuAlert" class="info-alert"></div>
         </div>
@@ -382,12 +382,13 @@
         </div>
         <div>
           <label data-i18n="label_qty_masuk">Qty Masuk (pcs):</label>
-          <input type="number" id="in-qty" min="1" data-i18n-placeholder="qty_pcs_placeholder" placeholder="Pcs">
+          <input type="number" id="in-qty" min="1" placeholder="Pcs">
         </div>
         <div class="form-group-full">
-          <label data-i18n="label_keterangan">Keterangan:</label>
-          <input type="text" id="in-keterangan" data-i18n-placeholder="notes_placeholder" placeholder="Keterangan tambahan...">
+          <label>Keterangan:</label>
+          <input type="text" id="in-keterangan" placeholder="Keterangan tambahan...">
         </div>
+        <!-- in-ref hidden: kept for JS compatibility -->
         <input type="hidden" id="in-ref" value="-">
       </div>
       <div style="display:flex;gap:5px">
@@ -398,7 +399,7 @@
   </div>
   <div class="right-panel">
     <div class="filter-row">
-      <input type="text" id="in-search" data-i18n-placeholder="in_search_placeholder" placeholder="🔍 Cari SKU / Nama / Keterangan..." oninput="debounce('in',tampilkanStockIn,250)" style="flex:2">
+      <input type="text" id="in-search" placeholder="🔍 Cari SKU / Nama / Keterangan..." oninput="debounce('in',tampilkanStockIn,250)" style="flex:2">
       <div style="display:flex;flex-direction:column;gap:1px">
         <label style="font-size:10px;color:#718096" data-i18n="dari_tanggal">Dari Tanggal</label>
         <input type="date" id="in-filter-from" onchange="tampilkanStockIn()" style="flex:1">
@@ -408,15 +409,15 @@
         <input type="date" id="in-filter-to" onchange="tampilkanStockIn()" style="flex:1">
       </div>
       <select id="in-filter-wh" onchange="tampilkanStockIn()" style="flex:1">
-        <option value="All" data-i18n="all_warehouse">🏢 All Warehouse</option>
+        <option value="All">🏢 All Warehouse</option>
         <option>Bintaro</option><option>Gunsin</option><option>MAJ</option><option>Bosco</option><option>K-Mart</option><option>Happy Wonder</option><option>Hero Supermarket</option><option>Consignment</option><option>K-Seafood</option><option>Event</option><option>Sample</option>
       </select>
-      <button class="btn btn-export" onclick="exportStockIn()" data-i18n="export">⬇️ Export</button>
+      <button class="btn btn-export" onclick="exportStockIn()">⬇️ Export</button>
       <button id="btn-in-delete-all" class="btn btn-danger" onclick="hapusSemuaStockIn()">🗑️ <span data-i18n="btn_delete_all">Hapus Semua</span></button>
     </div>
     <div class="table-container">
       <table>
-        <thead><tr><th data-i18n="no">No</th><th data-i18n="th_tanggal">Tanggal</th><th data-i18n="th_sku">SKU</th><th data-i18n="th_nama">Nama Barang</th>
+        <thead><tr><th>No</th><th data-i18n="th_tanggal">Tanggal</th><th data-i18n="th_sku">SKU</th><th data-i18n="th_nama">Nama Barang</th>
           <th data-i18n="th_gudang">Gudang</th><th data-i18n="th_qty_masuk">Qty Masuk</th><th data-i18n="th_konversi">Konversi</th><th data-i18n="th_harga">Harga</th><th data-i18n="th_total_nilai">Total Nilai</th><th data-i18n="th_keterangan">Keterangan</th>
           <th style="width:60px;text-align:center" data-i18n="th_aksi">Aksi</th>
         </tr></thead>
@@ -437,16 +438,16 @@
           <input type="date" id="out-tanggal">
         </div>
         <div class="form-group-full">
-          <label data-i18n="out_transaction_type">Tipe Transaksi:</label>
+          <label>Tipe Transaksi:</label>
           <select id="out-tipe" onchange="updateOutTipe()">
-            <option value="Stock Out" data-i18n="out_type_stock">📤 Stock Out</option>
-            <option value="Expired" data-i18n="out_type_expired">⚠️ Expired</option>
-            <option value="Damage" data-i18n="out_type_damage">💥 Damage</option>
+            <option value="Stock Out">📤 Stock Out</option>
+            <option value="Expired">⚠️ Expired</option>
+            <option value="Damage">💥 Damage</option>
           </select>
         </div>
         <div class="form-group-full sku-search-wrap">
           <label data-i18n="label_sku">Kode SKU:</label>
-          <input type="text" id="out-sku" data-i18n-placeholder="scan_sku_placeholder" placeholder="Scan atau ketik SKU..." oninput="cariSKUForTransaction('out')">
+          <input type="text" id="out-sku" placeholder="Scan atau ketik SKU..." oninput="cariSKUForTransaction('out')">
           <div class="sku-dd" id="out-sku-dd"></div>
           <div id="out-skuAlert" class="info-alert"></div>
         </div>
@@ -474,11 +475,11 @@
         </div>
         <div>
           <label data-i18n="label_qty_keluar">Qty Keluar (pcs):</label>
-          <input type="number" id="out-qty" min="1" data-i18n-placeholder="qty_pcs_placeholder" placeholder="Pcs">
+          <input type="number" id="out-qty" min="1" placeholder="Pcs">
         </div>
         <div class="form-group-full">
-          <label data-i18n="out_destination">Tujuan / Keterangan:</label>
-          <input type="text" id="out-ref" data-i18n-placeholder="out_destination_placeholder" placeholder="Nama customer, toko, keterangan...">
+          <label data-i18n="label_keterangan">Tujuan / Keterangan:</label>
+          <input type="text" id="out-ref" placeholder="Nama customer, toko, keterangan...">
         </div>
       </div>
       <div style="display:flex;gap:5px">
@@ -490,19 +491,19 @@
       <h2>📁 <span data-i18n="upload_stockout_template">Upload Template Stock Out</span></h2>
       <div style="font-size:11px;color:#718096;margin-bottom:6px" data-i18n="upload_stockout_hint">Header: <b>Tanggal</b>, Item Code, Qty, Warehouse, Keterangan — Tanggal dibaca per baris.</div>
       <div style="margin-bottom:5px">
-        <label style="font-size:11px;font-weight:600;color:#4a5568;display:block;margin-bottom:2px" data-i18n="default_date_fallback">Tanggal Default (fallback jika kolom Tanggal kosong):</label>
+        <label style="font-size:11px;font-weight:600;color:#4a5568;display:block;margin-bottom:2px">Tanggal Default (fallback jika kolom Tanggal kosong):</label>
         <input type="date" id="out-upload-tanggal" style="width:100%;padding:5px 7px;font-size:12px;border:1px solid #cbd5e0;border-radius:4px;outline:none">
       </div>
       <div style="display:flex;gap:6px;align-items:center;flex-wrap:wrap">
-        <button class="btn btn-orange" onclick="downloadTemplateStockOut()" style="flex:1" data-i18n="download_template">📥 Download Template</button>
-        <label for="fileStockOut" class="btn btn-blue" style="flex:1;margin:0" data-i18n="upload_file">📁 Upload File</label>
+        <button class="btn btn-orange" onclick="downloadTemplateStockOut()" style="flex:1">📥 <span data-i18n="download_template">Download Template</span></button>
+        <label for="fileStockOut" class="btn btn-blue" style="flex:1;margin:0">📁 <span data-i18n="upload_file">Upload File</span></label>
         <input type="file" id="fileStockOut" accept=".xlsx,.xls,.csv" onchange="prosesUploadStockOut(this)">
       </div>
     </div>
   </div>
   <div class="right-panel">
     <div class="filter-row">
-      <input type="text" id="out-search" data-i18n-placeholder="out_search_placeholder" placeholder="🔍 Cari SKU / Nama / Keterangan..." oninput="debounce('out',tampilkanStockOut,250)" style="flex:2">
+      <input type="text" id="out-search" placeholder="🔍 Cari SKU / Nama / Keterangan..." oninput="debounce('out',tampilkanStockOut,250)" style="flex:2">
       <div style="display:flex;flex-direction:column;gap:1px">
         <label style="font-size:10px;color:#718096" data-i18n="dari_tanggal">Dari Tanggal</label>
         <input type="date" id="out-filter-from" onchange="tampilkanStockOut()" style="flex:1">
@@ -512,21 +513,21 @@
         <input type="date" id="out-filter-to" onchange="tampilkanStockOut()" style="flex:1">
       </div>
       <select id="out-filter-wh" onchange="tampilkanStockOut()" style="flex:1">
-        <option value="All" data-i18n="all_warehouse">🏢 All Warehouse</option>
+        <option value="All">🏢 All Warehouse</option>
         <option>Bintaro</option><option>Gunsin</option><option>MAJ</option><option>Bosco</option><option>K-Mart</option><option>Happy Wonder</option><option>Hero Supermarket</option><option>Consignment</option><option>K-Seafood</option><option>Event</option><option>Sample</option>
       </select>
       <select id="out-filter-tipe" onchange="tampilkanStockOut()" style="flex:1">
-        <option value="All" data-i18n="all_types">🔄 Semua Tipe</option>
-        <option value="Stock Out" data-i18n="out_type_stock">📤 Stock Out</option>
-        <option value="Expired" data-i18n="out_type_expired">⚠️ Expired</option>
-        <option value="Damage" data-i18n="out_type_damage">💥 Damage</option>
+        <option value="All">🔄 Semua Tipe</option>
+        <option value="Stock Out">📤 Stock Out</option>
+        <option value="Expired">⚠️ Expired</option>
+        <option value="Damage">💥 Damage</option>
       </select>
-      <button class="btn btn-export" onclick="exportStockOut()" data-i18n="export">⬇️ Export</button>
+      <button class="btn btn-export" onclick="exportStockOut()">⬇️ Export</button>
       <button id="btn-out-delete-all" class="btn btn-danger" onclick="hapusSemuaStockOut()">🗑️ <span data-i18n="btn_delete_all">Hapus Semua</span></button>
     </div>
     <div class="table-container">
       <table>
-        <thead><tr><th data-i18n="no">No</th><th data-i18n="th_tanggal">Tanggal</th><th data-i18n="transaction_type">Tipe</th><th data-i18n="th_sku">SKU</th><th data-i18n="th_nama">Nama Barang</th>
+        <thead><tr><th>No</th><th data-i18n="th_tanggal">Tanggal</th><th>Tipe</th><th data-i18n="th_sku">SKU</th><th data-i18n="th_nama">Nama Barang</th>
           <th data-i18n="th_gudang">Gudang</th><th data-i18n="th_qty_keluar">Qty Keluar</th><th data-i18n="th_konversi">Konversi</th><th data-i18n="th_harga">Harga</th><th data-i18n="th_total_nilai">Total Nilai</th><th data-i18n="th_keterangan">Keterangan</th>
           <th style="width:90px;text-align:center" data-i18n="th_aksi">Aksi</th>
         </tr></thead>
@@ -548,7 +549,7 @@
         </div>
         <div class="form-group-full sku-search-wrap">
           <label data-i18n="label_sku">Kode SKU:</label>
-          <input type="text" id="tr-sku" data-i18n-placeholder="scan_sku_placeholder" placeholder="Scan atau ketik SKU..." oninput="cariSKUForTransaction('tr')">
+          <input type="text" id="tr-sku" placeholder="Scan atau ketik SKU..." oninput="cariSKUForTransaction('tr')">
           <div class="sku-dd" id="tr-sku-dd"></div>
           <div id="tr-skuAlert" class="info-alert"></div>
         </div>
@@ -586,11 +587,11 @@
         </div>
         <div class="form-group-full">
           <label data-i18n="label_qty_transfer">Qty Transfer (pcs):</label>
-          <input type="number" id="tr-qty" min="1" data-i18n-placeholder="qty_pcs_placeholder" placeholder="Pcs">
+          <input type="number" id="tr-qty" min="1" placeholder="Pcs">
         </div>
         <div class="form-group-full">
           <label data-i18n="label_keterangan">Keterangan:</label>
-          <input type="text" id="tr-ref" data-i18n-placeholder="transfer_notes_placeholder" placeholder="Keterangan transfer...">
+          <input type="text" id="tr-ref" placeholder="Keterangan transfer...">
         </div>
       </div>
       <div style="display:flex;gap:5px">
@@ -599,32 +600,32 @@
       </div>
     </div>
     <div class="card">
-      <h2>📁 <span data-i18n="upload_transfer_template">Upload Template Transfer</span></h2>
-      <div style="font-size:11px;color:#718096;margin-bottom:6px" data-i18n="upload_transfer_hint">Header: <b>Tanggal</b>, Item Code, Nama Barang, Item Group, Actual Qty, Isi/Ctn, Harga, Keterangan — Tanggal dibaca per baris.</div>
+      <h2>📁 Upload Template Transfer</h2>
+      <div style="font-size:11px;color:#718096;margin-bottom:6px">Header: <b>Tanggal</b>, Item Code, Nama Barang, Item Group, Actual Qty, Isi/Ctn, Harga, Keterangan — Tanggal dibaca per baris.</div>
       <div style="margin-bottom:5px">
-        <label style="font-size:11px;font-weight:600;color:#4a5568;display:block;margin-bottom:2px" data-i18n="default_date_fallback">Tanggal Default (fallback jika kolom Tanggal kosong):</label>
+        <label style="font-size:11px;font-weight:600;color:#4a5568;display:block;margin-bottom:2px">Tanggal Default (fallback jika kolom Tanggal kosong):</label>
         <input type="date" id="tr-upload-tanggal" style="width:100%;padding:5px 7px;font-size:12px;border:1px solid #cbd5e0;border-radius:4px;outline:none">
       </div>
       <div style="display:flex;gap:6px;margin-bottom:6px">
         <select id="tr-upload-from-wh" style="flex:1">
-          <option value="" data-i18n="select_from_warehouse">-- Dari Gudang --</option>
+          <option value="">-- Dari Gudang --</option>
           <option>Bintaro</option><option>Gunsin</option><option>MAJ</option><option>Bosco</option><option>K-Mart</option><option>Happy Wonder</option><option>Hero Supermarket</option><option>Consignment</option><option>K-Seafood</option><option>Event</option><option>Sample</option>
         </select>
         <select id="tr-upload-to-wh" style="flex:1">
-          <option value="" data-i18n="select_to_warehouse">-- Ke Gudang --</option>
+          <option value="">-- Ke Gudang --</option>
           <option>Bintaro</option><option>Gunsin</option><option>MAJ</option><option>Bosco</option><option>K-Mart</option><option>Happy Wonder</option><option>Hero Supermarket</option><option>Consignment</option><option>K-Seafood</option><option>Event</option><option>Sample</option>
         </select>
       </div>
       <div style="display:flex;gap:6px">
-        <button class="btn btn-orange" onclick="downloadTemplateTransfer()" style="flex:1;margin:0" data-i18n="download_template">📥 Download</button>
-        <label for="fileTransfer" class="btn btn-blue" style="flex:1;margin:0;display:flex;align-items:center;justify-content:center;cursor:pointer" data-i18n="upload_file">📁 Upload File</label>
+        <button class="btn btn-orange" onclick="downloadTemplateTransfer()" style="flex:1;margin:0">📥 Download</button>
+        <label for="fileTransfer" class="btn btn-blue" style="flex:1;margin:0;display:flex;align-items:center;justify-content:center;cursor:pointer">📁 Upload File</label>
         <input type="file" id="fileTransfer" accept=".xlsx,.xls,.csv" onchange="prosesUploadTransfer(this)">
       </div>
     </div>
   </div>
   <div class="right-panel">
     <div class="filter-row">
-      <input type="text" id="tr-search" data-i18n-placeholder="tr_search_placeholder" placeholder="🔍 Cari SKU / Nama / Keterangan..." oninput="debounce('tr',tampilkanTransfer,250)" style="flex:2">
+      <input type="text" id="tr-search" placeholder="🔍 Cari SKU / Nama / Keterangan..." oninput="debounce('tr',tampilkanTransfer,250)" style="flex:2">
       <div style="display:flex;flex-direction:column;gap:1px">
         <label style="font-size:10px;color:#718096" data-i18n="dari_tanggal">Dari Tanggal</label>
         <input type="date" id="tr-filter-from" onchange="tampilkanTransfer()" style="flex:1">
@@ -634,15 +635,15 @@
         <input type="date" id="tr-filter-to" onchange="tampilkanTransfer()" style="flex:1">
       </div>
       <select id="tr-filter-wh" onchange="tampilkanTransfer()" style="flex:1">
-        <option value="All" data-i18n="all_warehouse">🏢 All Warehouse</option>
+        <option value="All">🏢 All Warehouse</option>
         <option>Bintaro</option><option>Gunsin</option><option>MAJ</option><option>Bosco</option><option>K-Mart</option><option>Happy Wonder</option><option>Hero Supermarket</option><option>Consignment</option><option>K-Seafood</option><option>Event</option><option>Sample</option>
       </select>
-      <button class="btn btn-export" onclick="exportTransfer()" data-i18n="export">⬇️ Export</button>
+      <button class="btn btn-export" onclick="exportTransfer()">⬇️ Export</button>
       <button id="btn-transfer-delete-all" class="btn btn-danger" onclick="hapusSemuaTransfer()">🗑️ <span data-i18n="btn_delete_all">Hapus Semua</span></button>
     </div>
     <div class="table-container">
       <table>
-        <thead><tr><th data-i18n="no">No</th><th data-i18n="th_tanggal">Tanggal</th><th data-i18n="th_sku">SKU</th><th data-i18n="th_nama">Nama Barang</th>
+        <thead><tr><th>No</th><th data-i18n="th_tanggal">Tanggal</th><th data-i18n="th_sku">SKU</th><th data-i18n="th_nama">Nama Barang</th>
           <th data-i18n="th_dari_gudang">Dari</th><th></th><th data-i18n="th_ke_gudang">Ke</th>
           <th data-i18n="th_qty_transfer">Qty Transfer</th><th data-i18n="th_konversi">Konversi</th><th data-i18n="th_keterangan">Keterangan</th>
           <th style="width:90px;text-align:center" data-i18n="th_aksi">Aksi</th>
@@ -657,48 +658,49 @@
 <div id="tab-intransit" class="page-full">
   <div style="display:flex;gap:8px;margin-bottom:8px;align-items:flex-end;flex-wrap:wrap">
     <div class="sku-search-wrap" style="flex:2;min-width:200px">
-      <input type="text" id="it-search" data-i18n-placeholder="it_search_placeholder" placeholder="🔍 Cari nama / SKU..." oninput="tampilkanIntransit()" style="width:100%">
+      <input type="text" id="it-search" placeholder="🔍 Cari nama / SKU..." oninput="tampilkanIntransit()" style="width:100%">
     </div>
     <div style="display:flex;flex-direction:column;gap:1px">
-      <label style="font-size:10px;color:#718096" data-i18n="dari_tanggal">Dari Tanggal</label>
+      <label style="font-size:10px;color:#718096">Dari Tanggal</label>
       <input type="date" id="it-filter-from" onchange="tampilkanIntransit()">
     </div>
     <div style="display:flex;flex-direction:column;gap:1px">
-      <label style="font-size:10px;color:#718096" data-i18n="sampai_tanggal">Sampai Tanggal</label>
+      <label style="font-size:10px;color:#718096">Sampai Tanggal</label>
       <input type="date" id="it-filter-to" onchange="tampilkanIntransit()">
     </div>
     <select id="it-filter-status" onchange="tampilkanIntransit()" style="flex:1;min-width:120px">
-      <option value="All" data-i18n="it_all_status">🔄 Semua Status</option>
-      <option value="Draft" data-i18n="it_draft_status">📝 Draft</option>
-      <option value="InTransit" data-i18n="it_intransit_status">🚚 In Transit</option>
-      <option value="Complete" data-i18n="it_complete_status">✅ Complete</option>
+      <option value="All">🔄 Semua Status</option>
+      <option value="Draft">📝 Draft</option>
+      <option value="InTransit">🚚 In Transit</option>
+      <option value="Complete">✅ Complete</option>
     </select>
-    <button class="btn btn-export" onclick="exportIntransit()" data-i18n="export">⬇️ Export</button>
-    <button class="btn btn-orange" onclick="downloadTemplateIntransit()" data-i18n="it_template">📥 Template</button>
+    <button class="btn btn-export" onclick="exportIntransit()">⬇️ Export</button>
+    <button class="btn btn-orange" onclick="downloadTemplateIntransit()">📥 Template</button>
     <div style="display:flex;flex-direction:column;gap:1px">
-      <label style="font-size:10px;color:#718096;font-weight:600" data-i18n="it_upload_tgl_default">Tgl. Default (fallback)</label>
+      <label style="font-size:10px;color:#718096;font-weight:600">Tgl. Default (fallback)</label>
       <input type="date" id="it-upload-tanggal" style="padding:4px 7px;font-size:12px;border:1px solid #cbd5e0;border-radius:4px;outline:none">
     </div>
-    <label for="fileIntransit" class="btn btn-blue" style="margin:0;cursor:pointer" data-i18n="it_upload">📁 Upload</label>
+    <label for="fileIntransit" class="btn btn-blue" style="margin:0;cursor:pointer">📁 Upload</label>
     <input type="file" id="fileIntransit" accept=".xlsx,.xls,.csv" onchange="prosesUploadIntransit(this)">
-    <button class="btn btn-green" onclick="bukaModalIntransit(null)" data-i18n="it_add">➕ Tambah In Transit</button>
-    <button id="btn-intransit-delete-all" class="btn btn-danger" onclick="hapusSemuaIntransit()" data-i18n="it_delete_all">🗑️ Hapus Semua</button>
+    <button class="btn btn-green" onclick="bukaModalIntransit(null)">➕ Tambah In Transit</button>
+    <button id="btn-intransit-delete-all" class="btn btn-danger" onclick="hapusSemuaIntransit()">🗑️ Hapus Semua</button>
   </div>
   <div style="display:grid;grid-template-columns:repeat(4,1fr);gap:8px;margin-bottom:8px">
-    <div class="summary-card"><div class="s-label" data-i18n="it_draft">📝 Draft</div><div class="s-val s-blue" id="it-cnt-draft">0 item</div></div>
-    <div class="summary-card"><div class="s-label" data-i18n="it_transit">🚚 Total In Transit</div><div class="s-val s-purple" id="it-cnt-transit">0 item</div></div>
-    <div class="summary-card"><div class="s-label" data-i18n="it_completed">✅ Completed</div><div class="s-val s-green" id="it-cnt-done">0 item</div></div>
-    <div class="summary-card"><div class="s-label" data-i18n="it_planning">📦 Planning PO → Draft</div><div class="s-val" style="color:#92400e" id="it-cnt-planning">0 item</div></div>
+    <div class="summary-card"><div class="s-label">📝 Draft</div><div class="s-val s-blue" id="it-cnt-draft">0 item</div></div>
+    <div class="summary-card"><div class="s-label">🚚 Total In Transit</div><div class="s-val s-purple" id="it-cnt-transit">0 item</div></div>
+    <div class="summary-card"><div class="s-label">✅ Completed</div><div class="s-val s-green" id="it-cnt-done">0 item</div></div>
+    <div class="summary-card"><div class="s-label">📦 Planning PO → Draft</div><div class="s-val" style="color:#92400e" id="it-cnt-planning">0 item</div></div>
   </div>
   <div style="flex:1;background:white;border-radius:6px;padding:10px;box-shadow:0 1px 3px rgba(0,0,0,.06);display:flex;flex-direction:column;overflow:hidden">
+    <!-- NOTIF REMINDER -->
     <div id="it-notif-banner" style="display:none;background:#fffbeb;border:1px solid #f6ad55;border-radius:6px;padding:8px 12px;margin-bottom:8px;font-size:12px;color:#92400e;line-height:1.6"></div>
     <div class="table-container" style="flex:1">
       <table>
         <thead><tr>
-          <th data-i18n="no">No</th><th data-i18n="it_date_in">Tgl. Masuk</th><th data-i18n="th_sku">SKU</th><th data-i18n="th_nama">Nama Barang</th>
-          <th data-i18n="it_qty_pcs">Qty (pcs)</th><th data-i18n="th_konversi">Konversi</th><th data-i18n="it_status">Status</th><th data-i18n="label_keterangan">Keterangan</th>
-          <th data-i18n="it_destination_warehouse">Gudang Tujuan</th><th data-i18n="it_complete_date">Tgl. Complete</th>
-          <th style="min-width:130px;text-align:center" data-i18n="th_aksi">Aksi</th>
+          <th>No</th><th>Tgl. Masuk</th><th>SKU</th><th>Nama Barang</th>
+          <th>Qty (pcs)</th><th>Konversi</th><th>Status</th><th>Keterangan</th>
+          <th>Gudang Tujuan</th><th>Tgl. Complete</th>
+          <th style="min-width:130px;text-align:center">Aksi</th>
         </tr></thead>
         <tbody id="tabelIntransit"></tbody>
       </table>
@@ -709,61 +711,61 @@
 <!-- MODAL INTRANSIT -->
 <div class="it-modal-overlay" id="it-modal-overlay" onclick="tutupModalIntransit(event)">
   <div class="it-modal" onclick="event.stopPropagation()">
-    <h3 id="it-modal-title" data-i18n="it_add">🚚 Tambah In Transit</h3>
+    <h3 id="it-modal-title">🚚 Tambah In Transit</h3>
     <input type="hidden" id="it-edit-id">
     <div class="form-grid">
       <div class="form-group-full">
-        <label data-i18n="it_tanggal_masuk">Tanggal Masuk:</label>
+        <label>Tanggal Masuk:</label>
         <input type="date" id="it-tanggal">
       </div>
       <div class="form-group-full sku-search-wrap">
-        <label data-i18n="label_sku">Cari SKU / Nama Barang:</label>
-        <input type="text" id="it-sku-input" data-i18n-placeholder="scan_sku_placeholder" placeholder="Ketik SKU atau nama..." oninput="itSuggestion()" autocomplete="off">
+        <label>Cari SKU / Nama Barang:</label>
+        <input type="text" id="it-sku-input" placeholder="Ketik SKU atau nama..." oninput="itSuggestion()" autocomplete="off">
         <div class="sku-dd" id="it-sku-dd"></div>
       </div>
       <div class="form-group-full">
-        <label data-i18n="label_nama">Nama Barang:</label>
+        <label>Nama Barang:</label>
         <input type="text" id="it-nama" readonly placeholder="Otomatis..." style="background:#edf2f7">
       </div>
       <div>
-        <label data-i18n="label_isi_ctn">Isi/Ctn:</label>
+        <label>Isi/Ctn:</label>
         <input type="number" id="it-isi-ctn" readonly style="background:#edf2f7">
       </div>
       <div>
-        <label data-i18n="it_qty_ctn">Qty (Ctn):</label>
+        <label>Qty (Ctn):</label>
         <input type="number" id="it-qty-ctn" min="0" placeholder="karton" oninput="itHitungQtyPcs()">
       </div>
       <div>
-        <label data-i18n="it_qty_pcs">Qty (pcs):</label>
+        <label>Qty (pcs):</label>
         <input type="number" id="it-qty" min="1" placeholder="pcs" oninput="itHitungQtyCtn()">
       </div>
       <div class="form-group-full">
-        <label data-i18n="label_keterangan">Keterangan:</label>
-        <input type="text" id="it-keterangan" data-i18n-placeholder="it_notes_placeholder" placeholder="Keterangan pengiriman...">
+        <label>Keterangan:</label>
+        <input type="text" id="it-keterangan" placeholder="Keterangan pengiriman...">
       </div>
       <div class="form-group-full">
-        <label data-i18n="it_status">Status:</label>
+        <label>Status:</label>
         <select id="it-status" onchange="itStatusChange()">
-          <option value="Draft" data-i18n="it_draft_status">📝 Draft</option>
-          <option value="InTransit" data-i18n="it_intransit_status">🚚 In Transit</option>
-          <option value="Complete" data-i18n="it_complete_status">✅ Complete</option>
+          <option value="Draft">📝 Draft</option>
+          <option value="InTransit">🚚 In Transit</option>
+          <option value="Complete">✅ Complete</option>
         </select>
       </div>
       <div class="form-group-full" id="it-wh-group" style="display:none">
-        <label data-i18n="it_warehouse_tujuan">Warehouse Tujuan (saat Complete):</label>
+        <label>Warehouse Tujuan (saat Complete):</label>
         <select id="it-warehouse">
           <option>Bintaro</option><option>Gunsin</option><option>MAJ</option><option>Bosco</option><option>K-Mart</option><option>Happy Wonder</option><option>Hero Supermarket</option><option>Consignment</option><option>K-Seafood</option><option>Event</option><option>Sample</option>
         </select>
       </div>
     </div>
     <div style="display:flex;gap:6px;margin-top:12px">
-      <button class="btn btn-green" onclick="simpanIntransit()" style="flex:1" data-i18n="it_save">✅ Simpan</button>
-      <button class="btn btn-gray" onclick="tutupModalIntransit(null)" style="flex:1;margin-top:0" data-i18n="it_cancel">Batal</button>
+      <button class="btn btn-green" onclick="simpanIntransit()" style="flex:1">✅ Simpan</button>
+      <button class="btn btn-gray" onclick="tutupModalIntransit(null)" style="flex:1;margin-top:0">Batal</button>
     </div>
   </div>
 </div>
 
-<!-- ===================== TAB 6: STOCK LEDGER ===================== -->
+<!-- ===================== TAB 5: STOCK LEDGER ===================== -->
 <div id="tab-ledger" class="page-full">
   <div class="summary-grid">
     <div class="summary-card"><div class="s-label" data-i18n="led_total_stok">Total Nilai Stok</div><div class="s-val s-blue" id="led-total-stok">Rp 0</div></div>
@@ -774,7 +776,7 @@
   <div class="ledger-filters">
     <div class="fgrp">
       <label data-i18n="cari_sku">Cari SKU / Nama</label>
-      <input type="text" id="led-search" data-i18n-placeholder="led_search_placeholder" placeholder="🔍 Ketik SKU atau nama..." oninput="debounce('led',tampilkanLedger,250)">
+      <input type="text" id="led-search" placeholder="🔍 Ketik SKU atau nama..." oninput="debounce('led',tampilkanLedger,250)">
     </div>
     <div class="fgrp">
       <label data-i18n="dari_tanggal">Dari Tanggal</label>
@@ -787,7 +789,7 @@
     <div class="fgrp">
       <label data-i18n="label_warehouse">Warehouse</label>
       <select id="led-wh" onchange="tampilkanLedger()">
-        <option value="All" data-i18n="all_warehouse">All Warehouse</option>
+        <option value="All">All Warehouse</option>
         <option>Bintaro</option><option>Gunsin</option><option>MAJ</option><option>Bosco</option><option>K-Mart</option><option>Happy Wonder</option><option>Hero Supermarket</option><option>Consignment</option><option>K-Seafood</option><option>Event</option><option>Sample</option>
       </select>
     </div>
@@ -795,15 +797,15 @@
       <label data-i18n="tipe_transaksi">Tipe Transaksi</label>
       <select id="led-type" onchange="tampilkanLedger()">
         <option value="All" data-i18n="semua_tipe">Semua Tipe</option>
-        <option value="IN" data-i18n="stock_in">Stock In</option>
-        <option value="OUT" data-i18n="stock_out">Stock Out</option>
+        <option value="IN">Stock In</option>
+        <option value="OUT">Stock Out</option>
         <option value="TRANSFER_OUT" data-i18n="transfer_keluar">Transfer Keluar</option>
         <option value="TRANSFER_IN" data-i18n="transfer_masuk">Transfer Masuk</option>
       </select>
     </div>
     <div style="display:flex;gap:4px;align-items:flex-end">
-      <button class="btn btn-export" onclick="exportLedger()" data-i18n="export_excel">⬇️ Export Excel</button>
-      <button class="btn btn-orange" onclick="resetLedgerFilter()" data-i18n="reset">↺ Reset</button>
+      <button class="btn btn-export" onclick="exportLedger()">⬇️ Export Excel</button>
+      <button class="btn btn-orange" onclick="resetLedgerFilter()">↺ Reset</button>
       <button id="btn-ledger-delete-all" class="btn btn-danger" onclick="hapusSemuaLedger()">🗑️ <span data-i18n="btn_delete_all">Hapus Semua</span></button>
     </div>
   </div>
@@ -811,8 +813,8 @@
     <div class="table-container" style="flex:1">
       <table>
         <thead>
-          <tr><th data-i18n="no">No</th><th data-i18n="th_tanggal">Tanggal</th><th data-i18n="tipe_transaksi">Tipe</th><th data-i18n="th_sku">SKU</th><th data-i18n="th_nama">Nama Barang</th>
-          <th data-i18n="th_gudang">Gudang</th><th data-i18n="qty">Qty</th><th data-i18n="th_konversi">Konversi (Ctn)</th><th data-i18n="remaining_stock_pcs">Sisa Stock (Pcs)</th><th data-i18n="remaining_stock_ctn">Sisa Stock (Ctn)</th>
+          <tr><th>No</th><th data-i18n="th_tanggal">Tanggal</th><th data-i18n="tipe_transaksi">Tipe</th><th data-i18n="th_sku">SKU</th><th data-i18n="th_nama">Nama Barang</th>
+          <th data-i18n="th_gudang">Gudang</th><th>Qty</th><th data-i18n="th_konversi">Konversi (Ctn)</th><th>Sisa Stock (Pcs)</th><th>Sisa Stock (Ctn)</th>
         </tr></thead>
         <tbody id="tabelLedger"></tbody>
       </table>
@@ -820,70 +822,71 @@
   </div>
 </div>
 
-<!-- ===================== TAB 7: ANALISIS STOK ===================== -->
+<!-- ===================== TAB 6: ANALISIS STOK ===================== -->
 <div id="tab-analisis" class="page-full">
   <!-- Planning PO Panel (inline di analisis) -->
   <div id="an-po-panel" style="display:none;background:white;border-radius:6px;padding:14px;box-shadow:0 1px 3px rgba(0,0,0,.06);margin-bottom:8px;border:2px solid #bee3f8">
     <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:10px">
-      <h2 style="margin:0;font-size:13px;color:#2b6cb0" data-i18n="input_planning_po">📦 Input Planning PO — <span id="an-po-nama-label" style="font-weight:400">-</span></h2>
+      <h2 style="margin:0;font-size:13px;color:#2b6cb0">📦 Input Planning PO — <span id="an-po-nama-label" style="font-weight:400">-</span></h2>
       <button onclick="tutupAnPOPanel()" style="background:none;border:none;font-size:16px;cursor:pointer;color:#4a5568">✕</button>
     </div>
     <div style="display:grid;grid-template-columns:repeat(4,1fr);gap:8px;align-items:end">
       <div>
-        <label style="font-size:11px;font-weight:600;color:#4a5568;display:block;margin-bottom:2px" data-i18n="current_stock_pcs">Stok Saat Ini (pcs)</label>
+        <label style="font-size:11px;font-weight:600;color:#4a5568;display:block;margin-bottom:2px">Stok Saat Ini (pcs)</label>
         <input type="number" id="an-po-stok" readonly style="width:100%;padding:5px 7px;font-size:12px;border:1px solid #cbd5e0;border-radius:4px;background:#edf2f7;color:#4a5568">
       </div>
       <div>
-        <label style="font-size:11px;font-weight:600;color:#4a5568;display:block;margin-bottom:2px" data-i18n="avg_out_per_day">Avg Out/Hari</label>
+        <label style="font-size:11px;font-weight:600;color:#4a5568;display:block;margin-bottom:2px">Avg Out/Hari</label>
         <input type="number" id="an-po-avg" readonly style="width:100%;padding:5px 7px;font-size:12px;border:1px solid #cbd5e0;border-radius:4px;background:#edf2f7;color:#4a5568">
       </div>
       <div>
-        <label style="font-size:11px;font-weight:600;color:#4a5568;display:block;margin-bottom:2px" data-i18n="label_isi_ctn">Isi/Karton</label>
+        <label style="font-size:11px;font-weight:600;color:#4a5568;display:block;margin-bottom:2px">Isi/Karton</label>
         <input type="number" id="an-po-isi" readonly style="width:100%;padding:5px 7px;font-size:12px;border:1px solid #cbd5e0;border-radius:4px;background:#edf2f7;color:#4a5568">
       </div>
       <div>
-        <label style="font-size:11px;font-weight:600;color:#4a5568;display:block;margin-bottom:2px" data-i18n="po_qty_ctn">📦 Qty PO (karton)</label>
-        <input type="number" id="an-po-qty-ctn" min="1" data-i18n-placeholder="enter_ctn" placeholder="Masukkan karton..." oninput="anHitungPO()" style="width:100%;padding:5px 7px;font-size:12px;border:1px solid #3182ce;border-radius:4px;outline:none">
+        <label style="font-size:11px;font-weight:600;color:#4a5568;display:block;margin-bottom:2px">📦 Qty PO (karton)</label>
+        <input type="number" id="an-po-qty-ctn" min="1" placeholder="Masukkan karton..." oninput="anHitungPO()" style="width:100%;padding:5px 7px;font-size:12px;border:1px solid #3182ce;border-radius:4px;outline:none">
       </div>
     </div>
+    <!-- Preview bayangan ketahanan -->
     <div id="an-po-preview" style="display:none;margin-top:10px;display:grid;grid-template-columns:1fr 1fr 1fr 1fr;gap:8px">
       <div style="background:#ebf8ff;border:1px solid #bee3f8;border-radius:5px;padding:8px;text-align:center">
-        <div style="font-size:10px;color:#2b6cb0;margin-bottom:2px" data-i18n="po_qty_pcs">PO Qty (pcs)</div>
+        <div style="font-size:10px;color:#2b6cb0;margin-bottom:2px">PO Qty (pcs)</div>
         <div id="an-po-res-pcs" style="font-size:15px;font-weight:700;color:#2b6cb0">-</div>
       </div>
       <div style="background:#f0fff4;border:1px solid #9ae6b4;border-radius:5px;padding:8px;text-align:center">
-        <div style="font-size:10px;color:#276749;margin-bottom:2px" data-i18n="stock_after_po">Stok Setelah PO</div>
+        <div style="font-size:10px;color:#276749;margin-bottom:2px">Stok Setelah PO</div>
         <div id="an-po-res-after" style="font-size:15px;font-weight:700;color:#276749">-</div>
       </div>
       <div style="background:#faf5ff;border:1px solid #d6bcfa;border-radius:5px;padding:8px;text-align:center">
-        <div style="font-size:10px;color:#553c9a;margin-bottom:2px" data-i18n="duration_now">Ketahanan Skrg</div>
+        <div style="font-size:10px;color:#553c9a;margin-bottom:2px">Ketahanan Skrg</div>
         <div id="an-po-res-dur-now" style="font-size:15px;font-weight:700;color:#553c9a">-</div>
       </div>
       <div style="background:#fef3c7;border:1px solid #fcd34d;border-radius:5px;padding:8px;text-align:center">
-        <div style="font-size:10px;color:#92400e;margin-bottom:2px" data-i18n="duration_after_po">Ketahanan + PO 🔮</div>
+        <div style="font-size:10px;color:#92400e;margin-bottom:2px">Ketahanan + PO 🔮</div>
         <div id="an-po-res-dur-after" style="font-size:15px;font-weight:700;color:#92400e">-</div>
       </div>
     </div>
     <div style="display:flex;gap:6px;margin-top:10px">
-      <button class="btn btn-green" onclick="anSimpanPOKeDraft()" style="flex:1;margin-top:0" data-i18n="save_to_draft">➕ Simpan ke InTransit (Draft)</button>
-      <button class="btn btn-gray" onclick="tutupAnPOPanel()" style="flex:1;margin-top:0" data-i18n="btn_cancel">Batal</button>
+      <button class="btn btn-green" onclick="anSimpanPOKeDraft()" style="flex:1;margin-top:0">➕ Simpan ke InTransit (Draft)</button>
+      <button class="btn btn-gray" onclick="tutupAnPOPanel()" style="flex:1;margin-top:0">Batal</button>
     </div>
   </div>
   <div class="cat-summary">
-    <div class="cat-card cat-fast"><div class="cc-label" data-i18n="fast_moving">🚀 Fast Moving</div><div class="cc-val" id="cnt-fast" style="color:#065f46">0</div></div>
-    <div class="cat-card cat-med"><div class="cc-label" data-i18n="medium_moving">🔄 Medium Moving</div><div class="cc-val" id="cnt-med" style="color:#92400e">0</div></div>
-    <div class="cat-card cat-slow"><div class="cc-label" data-i18n="slow_moving">🐢 Slow Moving</div><div class="cc-val" id="cnt-slow" style="color:#991b1b">0</div></div>
-    <div class="cat-card cat-nd"><div class="cc-label" data-i18n="no_data_out_short">⚪ No Data Out</div><div class="cc-val" id="cnt-nd" style="color:#4a5568">0</div></div>
+    <div class="cat-card cat-fast"><div class="cc-label">🚀 Fast Moving</div><div class="cc-val" id="cnt-fast" style="color:#065f46">0</div></div>
+    <div class="cat-card cat-med"><div class="cc-label">🔄 Medium Moving</div><div class="cc-val" id="cnt-med" style="color:#92400e">0</div></div>
+    <div class="cat-card cat-slow"><div class="cc-label">🐢 Slow Moving</div><div class="cc-val" id="cnt-slow" style="color:#991b1b">0</div></div>
+    <div class="cat-card cat-nd"><div class="cc-label">⚪ No Data Out</div><div class="cc-val" id="cnt-nd" style="color:#4a5568">0</div></div>
   </div>
   <div class="analisis-filters">
     <div class="fgrp">
       <label data-i18n="cari_sku">Cari SKU / Nama</label>
-      <input type="text" id="an-search" data-i18n-placeholder="an_search_placeholder" placeholder="🔍 Ketik..." oninput="debounce('an',tampilkanAnalisis,250)">
+      <input type="text" id="an-search" placeholder="🔍 Ketik..." oninput="debounce('an',tampilkanAnalisis,250)">
     </div>
     <div class="fgrp">
-      <label data-i18n="label_warehouse">Warehouse</label>
+      <label>Warehouse</label>
       <select id="an-wh" onchange="tampilkanAnalisis()">
-        <option value="All" data-i18n="all_warehouse">All Warehouse</option>
+        <option value="All">All Warehouse</option>
         <option>Bintaro</option><option>Gunsin</option><option>MAJ</option><option>Bosco</option><option>K-Mart</option><option>Happy Wonder</option><option>Hero Supermarket</option><option>Consignment</option><option>K-Seafood</option><option>Event</option><option>Sample</option>
       </select>
     </div>
@@ -894,45 +897,45 @@
       </select>
     </div>
     <div class="fgrp">
-      <label data-i18n="filter_moving">Filter Moving</label>
+      <label>Filter Moving</label>
       <select id="an-moving" onchange="tampilkanAnalisis()">
         <option value="All" data-i18n="semua">Semua</option>
-        <option value="Fast" data-i18n="fast_moving">🚀 Fast Moving</option>
-        <option value="Medium" data-i18n="medium_moving">🔄 Medium Moving</option>
-        <option value="Slow" data-i18n="slow_moving">🐢 Slow Moving</option>
-        <option value="NoData" data-i18n="no_data_out_short">⚪ No Data</option>
+        <option value="Fast">🚀 Fast Moving</option>
+        <option value="Medium">🔄 Medium Moving</option>
+        <option value="Slow">🐢 Slow Moving</option>
+        <option value="NoData">⚪ No Data</option>
       </select>
     </div>
     <div class="fgrp">
       <label data-i18n="periode_analisis">Periode Analisis (hari)</label>
       <select id="an-periode" onchange="tampilkanAnalisis()">
-        <option value="30" data-i18n="days_30">30 hari</option>
-        <option value="60" data-i18n="days_60">60 hari</option>
-        <option value="90" selected data-i18n="days_90">90 hari</option>
-        <option value="180" data-i18n="days_180">180 hari</option>
+        <option value="30">30 hari</option>
+        <option value="60">60 hari</option>
+        <option value="90" selected>90 hari</option>
+        <option value="180">180 hari</option>
         <option value="0" data-i18n="semua_data">Semua data</option>
       </select>
     </div>
     <div style="display:flex;gap:4px;align-items:flex-end">
-      <button class="btn btn-export" onclick="exportAnalisis()" data-i18n="export">⬇️ Export</button>
+      <button class="btn btn-export" onclick="exportAnalisis()">⬇️ Export</button>
     </div>
   </div>
   <div style="flex:1;background:white;border-radius:6px;padding:10px;box-shadow:0 1px 3px rgba(0,0,0,.06);display:flex;flex-direction:column;overflow:hidden">
-    <div style="font-size:11px;color:#718096;margin-bottom:6px" data-i18n="analisis_legend">
-      ℹ️ <strong>Fast Moving</strong>: &gt; 5 pcs/hari &nbsp;|&nbsp; <strong>Medium</strong>: 1–5 pcs/hari &nbsp;|&nbsp; <strong>Slow</strong>: &lt; 1 pcs/hari &nbsp;|&nbsp; 💡 Klik <strong>Input PO</strong> untuk simulasi ketahanan stok
+    <div style="font-size:11px;color:#718096;margin-bottom:6px">
+      ℹ️ <strong>Fast Moving</strong>: &gt; 5 pcs/hari &nbsp;|&nbsp; <strong>Medium</strong>: 1–5 pcs/hari &nbsp;|&nbsp; <strong>Slow Moving</strong>: &lt; 1 pcs/hari &nbsp;|&nbsp; 💡 Klik <strong>Input PO</strong> untuk simulasi ketahanan stok
     </div>
     <div class="table-container" style="flex:1">
       <table>
         <thead>
-          <tr><th data-i18n="no">No</th>
+          <tr><th>No</th>
           <th data-i18n="th_sku">SKU</th><th data-i18n="th_nama">Nama Barang</th><th data-i18n="th_gudang">Gudang</th>
-          <th data-i18n="stok_saat_ini">Stok Saat Ini</th><th data-i18n="in_transit">InTransit</th><th data-i18n="th_konversi">Konversi</th>
+          <th data-i18n="stok_saat_ini">Stok Saat Ini</th><th>InTransit</th><th data-i18n="th_konversi">Konversi</th>
           <th data-i18n="total_out_periode">Total Out (periode)</th>
-          <th data-i18n="avg_month_30">Avg/Bulan (30hr)</th>
-          <th data-i18n="avg_3month_90">Avg 3 Bulan (90hr)</th>
+          <th>Avg/Bulan (30hr)</th>
+          <th>Avg 3 Bulan (90hr)</th>
           <th data-i18n="kategori_moving">Kategori Moving</th>
           <th data-i18n="ketahanan_stok">Ketahanan Stok</th>
-          <th style="min-width:80px;text-align:center" data-i18n="planning_po">Planning PO</th>
+          <th style="min-width:80px;text-align:center">Planning PO</th>
         </tr></thead>
         <tbody id="tabelAnalisis"></tbody>
       </table>
@@ -941,57 +944,57 @@
 </div>
 
 
-<!-- ===================== TAB 8: SALES ANALYTICS ===================== -->
+<!-- ===================== TAB 7: SALES ANALYTICS ===================== -->
 <div id="tab-sales" class="page-full">
   <!-- Summary Cards -->
   <div class="summary-grid" style="grid-template-columns:repeat(5,1fr)">
-    <div class="summary-card"><div class="s-label" data-i18n="sa_total_item">📦 Total Item Terjual</div><div class="s-val s-blue" id="sa-total-item">0</div></div>
-    <div class="summary-card"><div class="s-label" data-i18n="sa_total_qty">📤 Total Qty Keluar</div><div class="s-val s-red" id="sa-total-qty">0 pcs</div></div>
-    <div class="summary-card"><div class="s-label" data-i18n="sa_total_nilai">💰 Total Nilai Penjualan</div><div class="s-val s-green" id="sa-total-nilai">Rp 0</div></div>
-    <div class="summary-card"><div class="s-label" data-i18n="sa_top_sku">🛍️ SKU Terlaris</div><div class="s-val" id="sa-top-sku" style="font-size:12px;color:#7c3aed">-</div></div>
-    <div class="summary-card"><div class="s-label" data-i18n="sa_avg_day">📊 Avg Penjualan/Hari</div><div class="s-val s-purple" id="sa-avg-day">0 pcs</div></div>
-    <div class="summary-card"><div class="s-label" data-i18n="sa_avg_month">📅 Avg Penjualan/Bulan (30hr)</div><div class="s-val s-blue" id="sa-avg-month">0 pcs</div></div>
-    <div class="summary-card"><div class="s-label" data-i18n="sa_avg_3month">📆 Avg 3 Bulan (90hr)</div><div class="s-val" style="color:#553c9a;font-size:16px;font-weight:700" id="sa-avg-3month">0 pcs</div></div>
+    <div class="summary-card"><div class="s-label">📦 Total Item Terjual</div><div class="s-val s-blue" id="sa-total-item">0</div></div>
+    <div class="summary-card"><div class="s-label">📤 Total Qty Keluar</div><div class="s-val s-red" id="sa-total-qty">0 pcs</div></div>
+    <div class="summary-card"><div class="s-label">💰 Total Nilai Penjualan</div><div class="s-val s-green" id="sa-total-nilai">Rp 0</div></div>
+    <div class="summary-card"><div class="s-label">🛍️ SKU Terlaris</div><div class="s-val" id="sa-top-sku" style="font-size:12px;color:#7c3aed">-</div></div>
+    <div class="summary-card"><div class="s-label">📊 Avg Penjualan/Hari</div><div class="s-val s-purple" id="sa-avg-day">0 pcs</div></div>
+    <div class="summary-card"><div class="s-label">📅 Avg Penjualan/Bulan (30hr)</div><div class="s-val s-blue" id="sa-avg-month">0 pcs</div></div>
+    <div class="summary-card"><div class="s-label">📆 Avg 3 Bulan (90hr)</div><div class="s-val" style="color:#553c9a;font-size:16px;font-weight:700" id="sa-avg-3month">0 pcs</div></div>
   </div>
   <!-- Filters -->
   <div class="analisis-filters">
     <div class="fgrp" style="flex:2">
-      <label data-i18n="search_sku_name">🔍 Cari SKU / Nama Barang</label>
-      <input type="text" id="sa-search" data-i18n-placeholder="sa_search_placeholder" placeholder="Ketik SKU atau nama barang..." oninput="debounce('sa',tampilkanSales,250)">
+      <label>🔍 Cari SKU / Nama Barang</label>
+      <input type="text" id="sa-search" placeholder="Ketik SKU atau nama barang..." oninput="debounce('sa',tampilkanSales,250)">
     </div>
     <div class="fgrp">
-      <label data-i18n="label_warehouse">Warehouse</label>
+      <label>Warehouse</label>
       <select id="sa-wh" onchange="tampilkanSales()">
-        <option value="All" data-i18n="all_warehouse">All Warehouse</option>
+        <option value="All">All Warehouse</option>
         <option>Bintaro</option><option>Gunsin</option><option>MAJ</option><option>Bosco</option><option>K-Mart</option><option>Happy Wonder</option><option>Hero Supermarket</option><option>Consignment</option><option>K-Seafood</option><option>Event</option><option>Sample</option>
       </select>
     </div>
     <div class="fgrp">
-      <label data-i18n="dari_tanggal">Dari Tanggal</label>
+      <label>Dari Tanggal</label>
       <input type="date" id="sa-from" onchange="tampilkanSales()">
     </div>
     <div class="fgrp">
-      <label data-i18n="sampai_tanggal">Sampai Tanggal</label>
+      <label>Sampai Tanggal</label>
       <input type="date" id="sa-to" onchange="tampilkanSales()">
     </div>
     <div class="fgrp">
-      <label data-i18n="sa_filter_tipe">Tipe</label>
+      <label>Tipe</label>
       <select id="sa-tipe" onchange="tampilkanSales()">
-        <option value="All" data-i18n="all_types">Semua Tipe</option>
-        <option value="Stock Out" data-i18n="out_type_stock">📤 Stock Out</option>
-        <option value="Expired" data-i18n="out_type_expired">⚠️ Expired</option>
-        <option value="Damage" data-i18n="out_type_damage">💥 Damage</option>
+        <option value="All">Semua Tipe</option>
+        <option value="Stock Out">📤 Stock Out</option>
+        <option value="Expired">⚠️ Expired</option>
+        <option value="Damage">💥 Damage</option>
       </select>
     </div>
     <div class="fgrp">
-      <label data-i18n="sa_view">Tampilan</label>
+      <label>Tampilan</label>
       <select id="sa-view" onchange="tampilkanSales()">
-        <option value="detail" data-i18n="sa_view_detail">📋 Per Transaksi</option>
-        <option value="rekap" data-i18n="sa_view_rekap">📊 Rekap per Barang</option>
+        <option value="detail">📋 Per Transaksi</option>
+        <option value="rekap">📊 Rekap per Barang</option>
       </select>
     </div>
     <div style="display:flex;gap:4px;align-items:flex-end">
-      <button class="btn btn-export" onclick="exportSales()" data-i18n="sa_export">⬇️ Export</button>
+      <button class="btn btn-export" onclick="exportSales()">⬇️ Export</button>
     </div>
   </div>
   <div style="flex:1;background:white;border-radius:6px;padding:10px;box-shadow:0 1px 3px rgba(0,0,0,.06);display:flex;flex-direction:column;overflow:hidden">
@@ -999,8 +1002,8 @@
       <table id="sa-table">
         <thead id="sa-thead">
           <tr>
-            <th data-i18n="no">No</th><th data-i18n="th_tanggal">Tanggal</th><th data-i18n="transaction_type">Tipe</th><th data-i18n="th_sku">SKU</th><th data-i18n="th_nama">Nama Barang</th>
-            <th data-i18n="th_gudang">Gudang</th><th data-i18n="th_qty_keluar">Qty Keluar</th><th data-i18n="th_konversi">Konversi</th><th data-i18n="th_harga">Harga Satuan</th><th data-i18n="th_total_nilai">Total Nilai</th><th data-i18n="th_keterangan">Keterangan</th>
+            <th>No</th><th>Tanggal</th><th>Tipe</th><th>SKU</th><th>Nama Barang</th>
+            <th>Gudang</th><th>Qty Keluar</th><th>Konversi</th><th>Harga Satuan</th><th>Total Nilai</th><th>Keterangan</th>
           </tr>
         </thead>
         <tbody id="tabelSales"></tbody>
@@ -1053,7 +1056,7 @@ function doLogin(){
 }
 
 function doLogout(){
-  if(!confirm(t("confirm_logout") || "Yakin ingin logout?")) return;
+  if(!confirm("Yakin ingin logout?")) return;
   sessionStorage.removeItem("icRole");
   sessionStorage.removeItem("icUser");
   currentRole = null;
@@ -1076,10 +1079,14 @@ function applyRoleUI(){
   }
 
   // ---- MONITOR STOK ----
+  // Sembunyikan tombol Edit, Hapus, & Hapus Semua dari tabel (dilakukan saat render)
+  // Tombol Hapus Semua di filter row monitor
   _viewerHide("btn-hapus-semua-monitor");
 
   // ---- STOCK IN ----
+  // Sembunyikan seluruh left-panel (form input + upload)
   _viewerHide("panel-stock-in-left");
+  // Sembunyikan tombol Edit & Hapus (saat render tabel)
   _viewerHide("btn-in-delete-all");
 
   // ---- STOCK OUT ----
@@ -1091,7 +1098,9 @@ function applyRoleUI(){
   _viewerHide("btn-transfer-delete-all");
 
   // ---- INTRANSIT ----
+  // Viewer bisa tambah & upload intransit, tapi TIDAK bisa hapus
   _viewerHide("btn-intransit-delete-all");
+  // Tombol Hapus pada tiap row intransit dikontrol saat render
 
   // ---- LEDGER ----
   _viewerHide("btn-ledger-delete-all");
@@ -1110,6 +1119,9 @@ function _viewerHide(id){
 (function checkSession(){
   let r = sessionStorage.getItem("icRole");
   if(r){ currentRole = r; }
+  // Login overlay tetap tampil, user harus login lagi setelah refresh (keamanan)
+  // Kalau mau persist session, uncomment baris berikut:
+  // if(r){ document.getElementById("login-overlay").style.display="none"; applyRoleUI(); }
 })();
 
 // =========================================================================
@@ -1117,660 +1129,84 @@ function _viewerHide(id){
 // =========================================================================
 const LANG = {
   id: {
-    // General
-    app_title:"Inventory IC",
-    app_subtitle:"Christyan",
-    loading_data:"Memuat data...",
-    login_subtitle:"Silakan login untuk melanjutkan",
-    login_username:"Username",
-    login_password:"Password",
-    login_username_placeholder:"Masukkan username...",
-    login_password_placeholder:"Masukkan password...",
-    login_button:"🔐 Masuk",
-    login_info:"💡 <strong>Info:</strong> Data tersimpan di browser masing-masing (localStorage). Untuk data terpusat antar device, hubungi admin untuk setup database online.",
-    footer_credit:"Inventory Christyan (IC) · v3",
-    section_operational:"Operasional",
-    section_reports:"Laporan",
-    logout:"↩ Logout",
-    sync_status:"🟢 Tersync",
-    role_viewer:"VIEWER",
-    no:"No",
-    export:"⬇️ Export",
-    export_excel:"⬇️ Export Excel",
-    reset:"↺ Reset",
-    search_sku_name:"🔍 Cari SKU / Nama Barang",
-    all_warehouse:"🏢 All Warehouse",
-    all_types:"🔄 Semua Tipe",
-    transaction_type:"Tipe",
-    stock_in:"Stock In",
-    stock_out:"Stock Out",
-    qty:"Qty",
-    remaining_stock_pcs:"Sisa Stock (Pcs)",
-    remaining_stock_ctn:"Sisa Stock (Ctn)",
-    in_transit:"InTransit",
-    avg_month_30:"Avg/Bulan (30hr)",
-    avg_3month_90:"Avg 3 Bulan (90hr)",
-    planning_po:"Planning PO",
-    input_planning_po:"📦 Input Planning PO",
-    current_stock_pcs:"Stok Saat Ini (pcs)",
-    avg_out_per_day:"Avg Out/Hari",
-    enter_ctn:"Masukkan karton...",
-    po_qty_pcs:"PO Qty (pcs)",
-    stock_after_po:"Stok Setelah PO",
-    duration_now:"Ketahanan Skrg",
-    duration_after_po:"Ketahanan + PO 🔮",
-    save_to_draft:"➕ Simpan ke InTransit (Draft)",
-    fast_moving:"🚀 Fast Moving",
-    medium_moving:"🔄 Medium Moving",
-    slow_moving:"🐢 Slow Moving",
-    no_data_out_short:"⚪ No Data Out",
-    filter_moving:"Filter Moving",
-    days_30:"30 hari",
-    days_60:"60 hari",
-    days_90:"90 hari",
-    days_180:"180 hari",
-    analisis_legend:"ℹ️ <strong>Fast Moving</strong>: &gt; 5 pcs/hari &nbsp;|&nbsp; <strong>Medium</strong>: 1–5 pcs/hari &nbsp;|&nbsp; <strong>Slow</strong>: &lt; 1 pcs/hari &nbsp;|&nbsp; 💡 Klik <strong>Input PO</strong> untuk simulasi ketahanan stok",
-    confirm_logout:"Yakin ingin logout?",
-    confirm_delete_all:"Hapus semua data? Tidak bisa dibatalkan.",
-    confirm_delete_row:"Hapus data ini?",
-
-    // Tabs
-    tab_monitor:"Monitor Stok",
-    tab_in:"Stock In",
-    tab_out:"Stock Out",
-    tab_transfer:"Transfer Stok",
-    tab_ledger:"Stock Ledger",
-    tab_analisis:"Analisis Stok",
-    tab_intransit:"In Transit",
-    tab_sales:"Sales Analytics",
-    btn_template:"Template",
-    btn_delete_all:"Hapus Semua",
-    btn_cancel:"Batal",
-    btn_save_in:"✅ Simpan Stock In",
-    btn_save_out:"✅ Simpan Stock Out",
-    btn_save_transfer:"✅ Simpan Transfer",
-
-    // Stock In
-    fast_inbound:"Fast Inbound / Upload",
-    fast_inbound_hint:"Upload Excel untuk import stok massal ke gudang. Kolom <b>Tanggal</b> di template akan dibaca per baris — jika kosong, gunakan tanggal default di bawah. Kolom <b>Keterangan</b> juga dibaca otomatis.",
-    default_date_fallback:"Tanggal Default (fallback jika kolom Tanggal kosong):",
-    upload:"📁 Upload",
-    form_stock_in:"Form Stock In",
-    scan_sku_placeholder:"Scan atau ketik SKU...",
-    qty_pcs_placeholder:"Pcs",
-    notes_placeholder:"Keterangan tambahan...",
-    in_search_placeholder:"🔍 Cari SKU / Nama / Keterangan...",
-    no_data_in:"Tidak ada data Stock In",
-
-    // Stock Out
-    upload_stockout_template:"Upload Template Stock Out",
-    upload_stockout_hint:"Header: <b>Tanggal</b>, Item Code, Qty, Warehouse, Keterangan — Tanggal dibaca per baris.",
-    download_template:"📥 Download Template",
-    upload_file:"📁 Upload File",
-    form_stock_out:"Form Stock Out",
-    out_transaction_type:"Tipe Transaksi:",
-    out_type_stock:"📤 Stock Out",
-    out_type_expired:"⚠️ Expired",
-    out_type_damage:"💥 Damage",
-    out_destination:"Tujuan / Keterangan:",
-    out_destination_placeholder:"Nama customer, toko, keterangan...",
-    out_search_placeholder:"🔍 Cari SKU / Nama / Keterangan...",
-    no_data_out:"Tidak ada data Stock Out",
-
-    // Transfer
-    upload_transfer_template:"Upload Template Transfer",
-    upload_transfer_hint:"Header: <b>Tanggal</b>, Item Code, Nama Barang, Item Group, Actual Qty, Isi/Ctn, Harga, Keterangan — Tanggal dibaca per baris.",
-    select_from_warehouse:"-- Dari Gudang --",
-    select_to_warehouse:"-- Ke Gudang --",
-    form_transfer:"Form Transfer Stok",
-    transfer_notes_placeholder:"Keterangan transfer...",
-    tr_search_placeholder:"🔍 Cari SKU / Nama / Keterangan...",
-    no_data_transfer:"Belum ada data Transfer",
-
-    // In Transit
-    it_draft:"📝 Draft",
-    it_transit:"🚚 Total In Transit",
-    it_completed:"✅ Completed",
-    it_planning:"📦 Planning PO → Draft",
-    it_add:"🚚 Tambah In Transit",
-    it_tanggal_masuk:"Tanggal Masuk:",
-    it_qty_ctn:"Qty (Ctn):",
-    it_qty_pcs:"Qty (pcs):",
-    it_status:"Status:",
-    it_warehouse_tujuan:"Warehouse Tujuan (saat Complete):",
-    it_date_in:"Tgl. Masuk",
-    it_destination_warehouse:"Gudang Tujuan",
-    it_complete_date:"Tgl. Complete",
-    it_upload:"📁 Upload",
-    it_template:"📥 Template",
-    it_delete_all:"🗑️ Hapus Semua",
-    it_all_status:"🔄 Semua Status",
-    it_draft_status:"📝 Draft",
-    it_intransit_status:"🚚 In Transit",
-    it_complete_status:"✅ Complete",
-    it_upload_tgl_default:"Tgl. Default (fallback)",
-    it_save:"✅ Simpan",
-    it_cancel:"Batal",
-    it_notes_placeholder:"Keterangan pengiriman...",
-
-    // Sales Analytics
-    sa_total_item:"📦 Total Item Terjual",
-    sa_total_qty:"📤 Total Qty Keluar",
-    sa_total_nilai:"💰 Total Nilai Penjualan",
-    sa_top_sku:"🛍️ SKU Terlaris",
-    sa_avg_day:"📊 Avg Penjualan/Hari",
-    sa_avg_month:"📅 Avg Penjualan/Bulan (30hr)",
-    sa_avg_3month:"📆 Avg 3 Bulan (90hr)",
-    sa_filter_tipe:"Tipe",
-    sa_view:"Tampilan",
-    sa_view_detail:"📋 Per Transaksi",
-    sa_view_rekap:"📊 Rekap per Barang",
-    sa_export:"⬇️ Export",
-    sa_search_placeholder:"Ketik SKU atau nama barang...",
-
-    // Ledger
-    led_total_stok:"Total Nilai Stok",
-    led_total_in:"Total Nilai Stock In",
-    led_total_out:"Total Nilai Stock Out",
-    led_total_trx:"Total Transaksi",
-    cari_sku:"Cari SKU / Nama",
-    tipe_transaksi:"Tipe Transaksi",
-    semua_tipe:"Semua Tipe",
-    transfer_keluar:"Transfer Keluar",
-    transfer_masuk:"Transfer Masuk",
-    no_data_ledger:"Tidak ada transaksi",
-
-    // Labels
-    label_tanggal:"Tanggal:",
-    label_sku:"Kode SKU:",
-    label_nama:"Nama Barang:",
-    label_kategori:"Kategori:",
-    label_isi_ctn:"Isi/Ctn:",
-    label_harga:"Harga (Rp):",
-    label_warehouse:"Warehouse:",
-    label_keterangan:"Keterangan:",
-    label_qty_masuk:"Qty Masuk (pcs):",
-    label_qty_keluar:"Qty Keluar (pcs):",
-    label_dari_gudang:"Dari Gudang:",
-    label_ke_gudang:"Ke Gudang:",
-    label_stok_tersedia:"Stok Tersedia (pcs):",
-    label_qty_transfer:"Qty Transfer (pcs):",
-    dari_tanggal:"Dari Tanggal",
-    sampai_tanggal:"Sampai Tanggal",
-    semua_kategori:"Semua Kategori",
-    semua:"Semua",
-    semua_data:"Semua data",
-    periode_analisis:"Periode Analisis (hari)",
-    stok_saat_ini:"Stok Saat Ini",
-    total_out_periode:"Total Out (periode)",
-    kategori_moving:"Kategori Moving",
-    ketahanan_stok:"Ketahanan Stok",
-    search_placeholder:"🔍 Cari nama / SKU...",
-    total_asset_value_all:"💰 Total Nilai Barang (All Warehouse):",
-
-    // Headers
-    th_sku:"SKU",
-    th_nama:"Nama Barang",
-    th_kategori:"Kategori",
-    th_gudang:"Gudang",
-    th_qty_pcs:"Qty Pcs",
-    th_konversi:"Konversi",
-    th_harga:"Harga",
-    th_total_nilai:"Total Nilai",
-    th_aksi:"Aksi",
-    th_tanggal:"Tanggal",
-    th_qty_masuk:"Qty Masuk",
-    th_qty_keluar:"Qty Keluar",
-    th_keterangan:"Keterangan",
-    th_dari_gudang:"Dari",
-    th_ke_gudang:"Ke",
-    th_qty_transfer:"Qty Transfer",
-
-    // Alerts
-    alert_ok:"✅ Berhasil disimpan!",
-    alert_transfer_ok:"✅ Transfer berhasil disimpan!",
-    alert_fill_all:"Lengkapi semua field!",
-    alert_qty_zero:"Qty harus > 0!",
-    insufficient_stock:"⚠️ Stok tidak mencukupi! Stok tersedia: ",
-    confirm_insufficient:"pcs. Tetap lanjut?",
+    tab_monitor:"Monitor Stok",tab_in:"Stock In",tab_out:"Stock Out",tab_transfer:"Transfer Stok",tab_ledger:"Stock Ledger",tab_analisis:"Analisis Stok",tab_planning:"Planning PO",tab_intransit:"In Transit",
+    btn_template:"Template",fast_inbound:"Fast Inbound / Upload",upload:"Upload",add_item_manual:"Tambah Barang Manual",
+    label_sku:"Kode SKU:",label_nama:"Nama Barang:",label_kategori:"Kategori:",label_isi_ctn:"Isi/Ctn:",label_harga:"Harga (Rp):",label_warehouse:"Warehouse:",label_total_pcs:"Total Stok (pcs):",
+    label_tanggal:"Tanggal:",label_qty_masuk:"Qty Masuk (pcs):",label_qty_keluar:"Qty Keluar (pcs):",label_keterangan:"Keterangan:",label_ref:"No. Referensi / Keterangan:",
+    label_dari_gudang:"Dari Gudang:",label_ke_gudang:"Ke Gudang:",label_stok_tersedia:"Stok Tersedia (pcs):",label_qty_transfer:"Qty Transfer (pcs):",
+    btn_add_item:"Tambah Barang",btn_cancel:"Batal",btn_save_in:"✅ Simpan Stock In",btn_save_out:"✅ Simpan Stock Out",btn_save_transfer:"✅ Simpan Transfer",btn_delete_all:"Hapus Semua",
+    upload_stockout_template:"Upload Template Stock Out",upload_stockout_hint:"Header: Item Code, Qty, Warehouse, Keterangan",download_template:"Download Template",upload_file:"Upload File",
+    form_stock_in:"Form Stock In",form_stock_out:"Form Stock Out",form_transfer:"Form Transfer Stok",
+    th_sku:"SKU",th_nama:"Nama Barang",th_kategori:"Kategori",th_gudang:"Gudang",th_qty_pcs:"Qty Pcs",th_konversi:"Konversi",th_harga:"Harga",th_total_nilai:"Total Nilai",th_aksi:"Aksi",
+    th_tanggal:"Tanggal",th_qty_masuk:"Qty Masuk",th_qty_keluar:"Qty Keluar",th_ref:"Referensi",th_keterangan:"Keterangan",
+    th_dari_gudang:"Dari",th_ke_gudang:"Ke",th_qty_transfer:"Qty Transfer",th_isi_ctn:"Isi",
+    dari_tanggal:"Dari Tanggal",sampai_tanggal:"Sampai Tanggal",
+    led_total_stok:"Total Nilai Stok",led_total_in:"Total Nilai Stock In",led_total_out:"Total Nilai Stock Out",led_total_trx:"Total Transaksi",
+    cari_sku:"Cari SKU / Nama",tipe_transaksi:"Tipe Transaksi",semua_tipe:"Semua Tipe",transfer_keluar:"Transfer Keluar",transfer_masuk:"Transfer Masuk",
+    semua_kategori:"Semua Kategori",semua:"Semua",semua_data:"Semua data",periode_analisis:"Periode Analisis (hari)",
+    stok_saat_ini:"Stok Saat Ini",total_out_periode:"Total Out (periode)",avg_out:"Avg Out/Hari",kategori_moving:"Kategori Moving",ketahanan_stok:"Ketahanan Stok",
+    hitung_planning_po:"Hitung Planning PO",isi_karton_pcs:"Isi/Karton (pcs):",periode_avg_out:"Periode hitung avg out (hari):",qty_po_karton:"Qty PO (karton):",qty_po_pcs:"= Qty PO dalam pcs:",
+    btn_tambah_po:"➕ Tambah ke Daftar PO",analisis_stok_skrg:"Analisis Stok Saat Ini",ketahanan_stok_skrg:"Ketahanan Stok Saat Ini",stok_pcs:"Stok (pcs)",stok_karton:"Stok (karton)",
+    hasil_kalkulasi_po:"Hasil Kalkulasi PO",po_karton:"PO Qty (karton)",po_pcs:"PO Qty (pcs)",stok_setelah_po:"Stok Setelah PO Masuk (pcs)",ketahanan_setelah_po:"Ketahanan Stok Setelah PO",
+    progress_ketahanan:"Progress ketahanan stok:",daftar_planning_po:"Daftar Planning PO",dur_skrg:"Dur.Skrg",dur_setelah:"Dur.+PO",
+    alert_ok:"✅ Berhasil disimpan!",alert_transfer_ok:"✅ Transfer berhasil disimpan!",alert_fill_all:"Lengkapi semua field!",alert_qty_zero:"Qty harus > 0!",
+    confirm_delete_all:"Hapus semua data? Tidak bisa dibatalkan.",confirm_delete_row:"Hapus data ini?",
+    no_data_out:"Tidak ada data Stock Out",no_data_in:"Tidak ada data Stock In",no_data_transfer:"Belum ada data Transfer",no_data_ledger:"Tidak ada transaksi",
+    insufficient_stock:"⚠️ Stok tidak mencukupi! Stok tersedia: ",confirm_insufficient:"pcs. Tetap lanjut?",
     same_warehouse_error:"Gudang asal dan tujuan tidak boleh sama!",
   },
   en: {
-    // General
-    app_title:"Inventory IC",
-    app_subtitle:"Christyan",
-    loading_data:"Loading data...",
-    login_subtitle:"Please login to continue",
-    login_username:"Username",
-    login_password:"Password",
-    login_username_placeholder:"Enter username...",
-    login_password_placeholder:"Enter password...",
-    login_button:"🔐 Login",
-    login_info:"💡 <strong>Info:</strong> Data is stored in each browser's localStorage. For centralized data across devices, contact admin to setup online database.",
-    footer_credit:"Inventory Christyan (IC) · v3",
-    section_operational:"Operational",
-    section_reports:"Reports",
-    logout:"↩ Logout",
-    sync_status:"🟢 Synced",
-    role_viewer:"VIEWER",
-    no:"No",
-    export:"⬇️ Export",
-    export_excel:"⬇️ Export Excel",
-    reset:"↺ Reset",
-    search_sku_name:"🔍 Search SKU / Item Name",
-    all_warehouse:"🏢 All Warehouse",
-    all_types:"🔄 All Types",
-    transaction_type:"Type",
-    stock_in:"Stock In",
-    stock_out:"Stock Out",
-    qty:"Qty",
-    remaining_stock_pcs:"Remaining Stock (Pcs)",
-    remaining_stock_ctn:"Remaining Stock (Ctn)",
-    in_transit:"InTransit",
-    avg_month_30:"Avg/Month (30d)",
-    avg_3month_90:"Avg 3 Months (90d)",
-    planning_po:"Planning PO",
-    input_planning_po:"📦 Input Planning PO",
-    current_stock_pcs:"Current Stock (pcs)",
-    avg_out_per_day:"Avg Out/Day",
-    enter_ctn:"Enter carton...",
-    po_qty_pcs:"PO Qty (pcs)",
-    stock_after_po:"Stock After PO",
-    duration_now:"Duration Now",
-    duration_after_po:"Duration + PO 🔮",
-    save_to_draft:"➕ Save to InTransit (Draft)",
-    fast_moving:"🚀 Fast Moving",
-    medium_moving:"🔄 Medium Moving",
-    slow_moving:"🐢 Slow Moving",
-    no_data_out_short:"⚪ No Data Out",
-    filter_moving:"Filter Moving",
-    days_30:"30 days",
-    days_60:"60 days",
-    days_90:"90 days",
-    days_180:"180 days",
-    analisis_legend:"ℹ️ <strong>Fast Moving</strong>: &gt; 5 pcs/day &nbsp;|&nbsp; <strong>Medium</strong>: 1–5 pcs/day &nbsp;|&nbsp; <strong>Slow</strong>: &lt; 1 pcs/day &nbsp;|&nbsp; 💡 Click <strong>Input PO</strong> for stock duration simulation",
-    confirm_logout:"Are you sure you want to logout?",
-    confirm_delete_all:"Delete all data? This cannot be undone.",
-    confirm_delete_row:"Delete this record?",
-
-    // Tabs
-    tab_monitor:"Stock Monitor",
-    tab_in:"Stock In",
-    tab_out:"Stock Out",
-    tab_transfer:"Stock Transfer",
-    tab_ledger:"Stock Ledger",
-    tab_analisis:"Stock Analysis",
-    tab_intransit:"In Transit",
-    tab_sales:"Sales Analytics",
-    btn_template:"Template",
-    btn_delete_all:"Delete All",
-    btn_cancel:"Cancel",
-    btn_save_in:"✅ Save Stock In",
-    btn_save_out:"✅ Save Stock Out",
-    btn_save_transfer:"✅ Save Transfer",
-
-    // Stock In
-    fast_inbound:"Fast Inbound / Upload",
-    fast_inbound_hint:"Upload Excel to import mass stock to warehouse. Column <b>Date</b> will be read per row — if empty, use default date below. Column <b>Notes</b> is also read automatically.",
-    default_date_fallback:"Default Date (fallback if Date column empty):",
-    upload:"📁 Upload",
-    form_stock_in:"Stock In Form",
-    scan_sku_placeholder:"Scan or type SKU...",
-    qty_pcs_placeholder:"Pcs",
-    notes_placeholder:"Additional notes...",
-    in_search_placeholder:"🔍 Search SKU / Name / Notes...",
-    no_data_in:"No Stock In data",
-
-    // Stock Out
-    upload_stockout_template:"Upload Stock Out Template",
-    upload_stockout_hint:"Headers: <b>Date</b>, Item Code, Qty, Warehouse, Notes — Date read per row.",
-    download_template:"📥 Download Template",
-    upload_file:"📁 Upload File",
-    form_stock_out:"Stock Out Form",
-    out_transaction_type:"Transaction Type:",
-    out_type_stock:"📤 Stock Out",
-    out_type_expired:"⚠️ Expired",
-    out_type_damage:"💥 Damage",
-    out_destination:"Destination / Notes:",
-    out_destination_placeholder:"Customer name, store, notes...",
-    out_search_placeholder:"🔍 Search SKU / Name / Notes...",
-    no_data_out:"No Stock Out data",
-
-    // Transfer
-    upload_transfer_template:"Upload Transfer Template",
-    upload_transfer_hint:"Headers: <b>Date</b>, Item Code, Item Name, Item Group, Actual Qty, Qty/Ctn, Price, Notes — Date read per row.",
-    select_from_warehouse:"-- From Warehouse --",
-    select_to_warehouse:"-- To Warehouse --",
-    form_transfer:"Stock Transfer Form",
-    transfer_notes_placeholder:"Transfer notes...",
-    tr_search_placeholder:"🔍 Search SKU / Name / Notes...",
-    no_data_transfer:"No Transfer data",
-
-    // In Transit
-    it_draft:"📝 Draft",
-    it_transit:"🚚 Total In Transit",
-    it_completed:"✅ Completed",
-    it_planning:"📦 Planning PO → Draft",
-    it_add:"🚚 Add In Transit",
-    it_tanggal_masuk:"Date In:",
-    it_qty_ctn:"Qty (Ctn):",
-    it_qty_pcs:"Qty (pcs):",
-    it_status:"Status:",
-    it_warehouse_tujuan:"Destination Warehouse (when Complete):",
-    it_date_in:"Date In",
-    it_destination_warehouse:"Dest. Warehouse",
-    it_complete_date:"Complete Date",
-    it_upload:"📁 Upload",
-    it_template:"📥 Template",
-    it_delete_all:"🗑️ Delete All",
-    it_all_status:"🔄 All Status",
-    it_draft_status:"📝 Draft",
-    it_intransit_status:"🚚 In Transit",
-    it_complete_status:"✅ Complete",
-    it_upload_tgl_default:"Default Date (fallback)",
-    it_save:"✅ Save",
-    it_cancel:"Cancel",
-    it_notes_placeholder:"Shipping notes...",
-
-    // Sales Analytics
-    sa_total_item:"📦 Total Items Sold",
-    sa_total_qty:"📤 Total Qty Out",
-    sa_total_nilai:"💰 Total Sales Value",
-    sa_top_sku:"🛍️ Best Seller SKU",
-    sa_avg_day:"📊 Avg Sales/Day",
-    sa_avg_month:"📅 Avg Sales/Month (30d)",
-    sa_avg_3month:"📆 Avg 3 Months (90d)",
-    sa_filter_tipe:"Type",
-    sa_view:"View",
-    sa_view_detail:"📋 Per Transaction",
-    sa_view_rekap:"📊 Summary by Item",
-    sa_export:"⬇️ Export",
-    sa_search_placeholder:"Type SKU or item name...",
-
-    // Ledger
-    led_total_stok:"Total Stock Value",
-    led_total_in:"Total Stock In Value",
-    led_total_out:"Total Stock Out Value",
-    led_total_trx:"Total Transactions",
-    cari_sku:"Search SKU / Name",
-    tipe_transaksi:"Transaction Type",
-    semua_tipe:"All Types",
-    transfer_keluar:"Transfer Out",
-    transfer_masuk:"Transfer In",
-    no_data_ledger:"No transactions found",
-
-    // Labels
-    label_tanggal:"Date:",
-    label_sku:"SKU Code:",
-    label_nama:"Item Name:",
-    label_kategori:"Category:",
-    label_isi_ctn:"Qty/Ctn:",
-    label_harga:"Price (Rp):",
-    label_warehouse:"Warehouse:",
-    label_keterangan:"Notes:",
-    label_qty_masuk:"Qty In (pcs):",
-    label_qty_keluar:"Qty Out (pcs):",
-    label_dari_gudang:"From Warehouse:",
-    label_ke_gudang:"To Warehouse:",
-    label_stok_tersedia:"Available Stock (pcs):",
-    label_qty_transfer:"Transfer Qty (pcs):",
-    dari_tanggal:"From Date",
-    sampai_tanggal:"To Date",
-    semua_kategori:"All Categories",
-    semua:"All",
-    semua_data:"All data",
-    periode_analisis:"Analysis Period (days)",
-    stok_saat_ini:"Current Stock",
-    total_out_periode:"Total Out (period)",
-    kategori_moving:"Moving Category",
-    ketahanan_stok:"Stock Duration",
-    search_placeholder:"🔍 Search name / SKU...",
-    total_asset_value_all:"💰 Total Asset Value (All Warehouse):",
-
-    // Headers
-    th_sku:"SKU",
-    th_nama:"Item Name",
-    th_kategori:"Category",
-    th_gudang:"Warehouse",
-    th_qty_pcs:"Qty Pcs",
-    th_konversi:"Conversion",
-    th_harga:"Price",
-    th_total_nilai:"Total Value",
-    th_aksi:"Action",
-    th_tanggal:"Date",
-    th_qty_masuk:"Qty In",
-    th_qty_keluar:"Qty Out",
-    th_keterangan:"Notes",
-    th_dari_gudang:"From",
-    th_ke_gudang:"To",
-    th_qty_transfer:"Transfer Qty",
-
-    // Alerts
-    alert_ok:"✅ Saved successfully!",
-    alert_transfer_ok:"✅ Transfer saved!",
-    alert_fill_all:"Please fill all fields!",
-    alert_qty_zero:"Qty must be > 0!",
-    insufficient_stock:"⚠️ Insufficient stock! Available: ",
-    confirm_insufficient:"pcs. Continue anyway?",
+    tab_monitor:"Stock Monitor",tab_in:"Stock In",tab_out:"Stock Out",tab_transfer:"Stock Transfer",tab_ledger:"Stock Ledger",tab_analisis:"Stock Analysis",tab_planning:"PO Planning",tab_intransit:"In Transit",
+    btn_template:"Template",fast_inbound:"Fast Inbound / Upload",upload:"Upload",add_item_manual:"Add Item Manually",
+    label_sku:"SKU Code:",label_nama:"Item Name:",label_kategori:"Category:",label_isi_ctn:"Qty/Ctn:",label_harga:"Price (Rp):",label_warehouse:"Warehouse:",label_total_pcs:"Total Stock (pcs):",
+    label_tanggal:"Date:",label_qty_masuk:"Qty In (pcs):",label_qty_keluar:"Qty Out (pcs):",label_keterangan:"Notes:",label_ref:"Reference / Notes:",
+    label_dari_gudang:"From Warehouse:",label_ke_gudang:"To Warehouse:",label_stok_tersedia:"Available Stock (pcs):",label_qty_transfer:"Transfer Qty (pcs):",
+    btn_add_item:"Add Item",btn_cancel:"Cancel",btn_save_in:"✅ Save Stock In",btn_save_out:"✅ Save Stock Out",btn_save_transfer:"✅ Save Transfer",btn_delete_all:"Delete All",
+    upload_stockout_template:"Upload Stock Out Template",upload_stockout_hint:"Headers: Item Code, Qty, Warehouse, Notes",download_template:"Download Template",upload_file:"Upload File",
+    form_stock_in:"Stock In Form",form_stock_out:"Stock Out Form",form_transfer:"Stock Transfer Form",
+    th_sku:"SKU",th_nama:"Item Name",th_kategori:"Category",th_gudang:"Warehouse",th_qty_pcs:"Qty Pcs",th_konversi:"Conversion",th_harga:"Price",th_total_nilai:"Total Value",th_aksi:"Action",
+    th_tanggal:"Date",th_qty_masuk:"Qty In",th_qty_keluar:"Qty Out",th_ref:"Reference",th_keterangan:"Notes",
+    th_dari_gudang:"From",th_ke_gudang:"To",th_qty_transfer:"Transfer Qty",th_isi_ctn:"Qty/Ctn",
+    dari_tanggal:"From Date",sampai_tanggal:"To Date",
+    led_total_stok:"Total Stock Value",led_total_in:"Total Stock In Value",led_total_out:"Total Stock Out Value",led_total_trx:"Total Transactions",
+    cari_sku:"Search SKU / Name",tipe_transaksi:"Transaction Type",semua_tipe:"All Types",transfer_keluar:"Transfer Out",transfer_masuk:"Transfer In",
+    semua_kategori:"All Categories",semua:"All",semua_data:"All data",periode_analisis:"Analysis Period (days)",
+    stok_saat_ini:"Current Stock",total_out_periode:"Total Out (period)",avg_out:"Avg Out/Day",kategori_moving:"Moving Category",ketahanan_stok:"Stock Duration",
+    hitung_planning_po:"Calculate PO Planning",isi_karton_pcs:"Qty/Carton (pcs):",periode_avg_out:"Avg out period (days):",qty_po_karton:"PO Qty (carton):",qty_po_pcs:"= PO Qty in pcs:",
+    btn_tambah_po:"➕ Add to PO List",analisis_stok_skrg:"Current Stock Analysis",ketahanan_stok_skrg:"Current Stock Duration",stok_pcs:"Stock (pcs)",stok_karton:"Stock (carton)",
+    hasil_kalkulasi_po:"PO Calculation Result",po_karton:"PO Qty (carton)",po_pcs:"PO Qty (pcs)",stok_setelah_po:"Stock After PO (pcs)",ketahanan_setelah_po:"Stock Duration After PO",
+    progress_ketahanan:"Stock duration progress:",daftar_planning_po:"PO Planning List",dur_skrg:"Dur.Now",dur_setelah:"Dur.+PO",
+    alert_ok:"✅ Saved successfully!",alert_transfer_ok:"✅ Transfer saved!",alert_fill_all:"Please fill all fields!",alert_qty_zero:"Qty must be > 0!",
+    confirm_delete_all:"Delete all data? This cannot be undone.",confirm_delete_row:"Delete this record?",
+    no_data_out:"No Stock Out data",no_data_in:"No Stock In data",no_data_transfer:"No Transfer data",no_data_ledger:"No transactions found",
+    insufficient_stock:"⚠️ Insufficient stock! Available: ",confirm_insufficient:"pcs. Continue anyway?",
     same_warehouse_error:"Source and destination warehouse cannot be the same!",
   },
   ko: {
-    // General
-    app_title:"인벤토리 IC",
-    app_subtitle:"크리스찬",
-    loading_data:"데이터 로딩 중...",
-    login_subtitle:"계속하려면 로그인하세요",
-    login_username:"사용자명",
-    login_password:"비밀번호",
-    login_username_placeholder:"사용자명 입력...",
-    login_password_placeholder:"비밀번호 입력...",
-    login_button:"🔐 로그인",
-    login_info:"💡 <strong>정보:</strong> 데이터는 각 브라우저의 localStorage에 저장됩니다. 기기 간 중앙 데이터를 원하시면 관리자에게 문의하여 온라인 데이터베이스를 설정하세요.",
-    footer_credit:"인벤토리 크리스찬 (IC) · v3",
-    section_operational:"운영",
-    section_reports:"보고서",
-    logout:"↩ 로그아웃",
-    sync_status:"🟢 동기화됨",
-    role_viewer:"VIEWER",
-    no:"번호",
-    export:"⬇️ 내보내기",
-    export_excel:"⬇️ 엑셀 내보내기",
-    reset:"↺ 초기화",
-    search_sku_name:"🔍 SKU / 품목명 검색",
-    all_warehouse:"🏢 전체 창고",
-    all_types:"🔄 전체 유형",
-    transaction_type:"유형",
-    stock_in:"입고",
-    stock_out:"출고",
-    qty:"수량",
-    remaining_stock_pcs:"잔여 재고 (개)",
-    remaining_stock_ctn:"잔여 재고 (박스)",
-    in_transit:"운송중",
-    avg_month_30:"월 평균 (30일)",
-    avg_3month_90:"3개월 평균 (90일)",
-    planning_po:"PO 계획",
-    input_planning_po:"📦 PO 계획 입력",
-    current_stock_pcs:"현재 재고 (개)",
-    avg_out_per_day:"일 평균 출고",
-    enter_ctn:"박스 수 입력...",
-    po_qty_pcs:"PO 수량 (개)",
-    stock_after_po:"PO 후 재고",
-    duration_now:"현재 기간",
-    duration_after_po:"PO 후 기간 🔮",
-    save_to_draft:"➕ 운송중 (초안)으로 저장",
-    fast_moving:"🚀 고속 회전",
-    medium_moving:"🔄 중속 회전",
-    slow_moving:"🐢 저속 회전",
-    no_data_out_short:"⚪ 출고 데이터 없음",
-    filter_moving:"회전 필터",
-    days_30:"30일",
-    days_60:"60일",
-    days_90:"90일",
-    days_180:"180일",
-    analisis_legend:"ℹ️ <strong>고속</strong>: &gt; 5 개/일 &nbsp;|&nbsp; <strong>중속</strong>: 1–5 개/일 &nbsp;|&nbsp; <strong>저속</strong>: &lt; 1 개/일 &nbsp;|&nbsp; 💡 <strong>PO 입력</strong>을 클릭하여 재고 지속 기간을 시뮬레이션하세요",
-    confirm_logout:"로그아웃 하시겠습니까?",
-    confirm_delete_all:"모든 데이터를 삭제하시겠습니까? 되돌릴 수 없습니다.",
-    confirm_delete_row:"이 기록을 삭제하시겠습니까?",
-
-    // Tabs
-    tab_monitor:"재고 모니터",
-    tab_in:"입고",
-    tab_out:"출고",
-    tab_transfer:"재고 이동",
-    tab_ledger:"재고 원장",
-    tab_analisis:"재고 분석",
-    tab_intransit:"운송중",
-    tab_sales:"판매 분석",
-    btn_template:"템플릿",
-    btn_delete_all:"전체 삭제",
-    btn_cancel:"취소",
-    btn_save_in:"✅ 입고 저장",
-    btn_save_out:"✅ 출고 저장",
-    btn_save_transfer:"✅ 이동 저장",
-
-    // Stock In
-    fast_inbound:"빠른 입고 / 업로드",
-    fast_inbound_hint:"엑셀을 업로드하여 창고에 대량 입고합니다. <b>날짜</b> 열은 각 행별로 읽히며 — 비어있으면 아래 기본 날짜를 사용합니다. <b>비고</b> 열도 자동으로 읽힙니다.",
-    default_date_fallback:"기본 날짜 (날짜 열이 비어있을 때 사용):",
-    upload:"📁 업로드",
-    form_stock_in:"입고 양식",
-    scan_sku_placeholder:"SKU 스캔 또는 입력...",
-    qty_pcs_placeholder:"개",
-    notes_placeholder:"추가 비고...",
-    in_search_placeholder:"🔍 SKU / 품목명 / 비고 검색...",
-    no_data_in:"입고 데이터 없음",
-
-    // Stock Out
-    upload_stockout_template:"출고 템플릿 업로드",
-    upload_stockout_hint:"헤더: <b>날짜</b>, Item Code, 수량, 창고, 비고 — 날짜는 각 행별로 읽힙니다.",
-    download_template:"📥 템플릿 다운로드",
-    upload_file:"📁 파일 업로드",
-    form_stock_out:"출고 양식",
-    out_transaction_type:"거래 유형:",
-    out_type_stock:"📤 출고",
-    out_type_expired:"⚠️ 유통기한 만료",
-    out_type_damage:"💥 손상",
-    out_destination:"목적지 / 비고:",
-    out_destination_placeholder:"고객명, 매장명, 비고...",
-    out_search_placeholder:"🔍 SKU / 품목명 / 비고 검색...",
-    no_data_out:"출고 데이터 없음",
-
-    // Transfer
-    upload_transfer_template:"이동 템플릿 업로드",
-    upload_transfer_hint:"헤더: <b>날짜</b>, Item Code, 품목명, 그룹, 실제 수량, 박스당, 단가, 비고 — 날짜는 각 행별로 읽힙니다.",
-    select_from_warehouse:"-- 출발 창고 --",
-    select_to_warehouse:"-- 도착 창고 --",
-    form_transfer:"재고 이동 양식",
-    transfer_notes_placeholder:"이동 비고...",
-    tr_search_placeholder:"🔍 SKU / 품목명 / 비고 검색...",
-    no_data_transfer:"이동 데이터 없음",
-
-    // In Transit
-    it_draft:"📝 초안",
-    it_transit:"🚚 총 운송중",
-    it_completed:"✅ 완료",
-    it_planning:"📦 PO 계획 → 초안",
-    it_add:"🚚 운송중 추가",
-    it_tanggal_masuk:"입고일:",
-    it_qty_ctn:"수량 (박스):",
-    it_qty_pcs:"수량 (개):",
-    it_status:"상태:",
-    it_warehouse_tujuan:"목적 창고 (완료 시):",
-    it_date_in:"입고일",
-    it_destination_warehouse:"목적 창고",
-    it_complete_date:"완료일",
-    it_upload:"📁 업로드",
-    it_template:"📥 템플릿",
-    it_delete_all:"🗑️ 전체 삭제",
-    it_all_status:"🔄 전체 상태",
-    it_draft_status:"📝 초안",
-    it_intransit_status:"🚚 운송중",
-    it_complete_status:"✅ 완료",
-    it_upload_tgl_default:"기본 날짜 (fallback)",
-    it_save:"✅ 저장",
-    it_cancel:"취소",
-    it_notes_placeholder:"배송 비고...",
-
-    // Sales Analytics
-    sa_total_item:"📦 총 판매 품목",
-    sa_total_qty:"📤 총 출고 수량",
-    sa_total_nilai:"💰 총 판매 금액",
-    sa_top_sku:"🛍️ 베스트셀러 SKU",
-    sa_avg_day:"📊 일 평균 판매",
-    sa_avg_month:"📅 월 평균 판매 (30일)",
-    sa_avg_3month:"📆 3개월 평균 (90일)",
-    sa_filter_tipe:"유형",
-    sa_view:"보기",
-    sa_view_detail:"📋 거래별",
-    sa_view_rekap:"📊 품목 요약",
-    sa_export:"⬇️ 내보내기",
-    sa_search_placeholder:"SKU 또는 품목명 입력...",
-
-    // Ledger
-    led_total_stok:"총 재고 금액",
-    led_total_in:"총 입고 금액",
-    led_total_out:"총 출고 금액",
-    led_total_trx:"총 거래",
-    cari_sku:"SKU / 품목명 검색",
-    tipe_transaksi:"거래 유형",
-    semua_tipe:"전체",
-    transfer_keluar:"이동 출고",
-    transfer_masuk:"이동 입고",
-    no_data_ledger:"거래 없음",
-
-    // Labels
-    label_tanggal:"날짜:",
-    label_sku:"SKU 코드:",
-    label_nama:"품목명:",
-    label_kategori:"카테고리:",
-    label_isi_ctn:"박스당 수량:",
-    label_harga:"단가 (Rp):",
-    label_warehouse:"창고:",
-    label_keterangan:"비고:",
-    label_qty_masuk:"입고 수량 (개):",
-    label_qty_keluar:"출고 수량 (개):",
-    label_dari_gudang:"출발 창고:",
-    label_ke_gudang:"도착 창고:",
-    label_stok_tersedia:"가용 재고 (개):",
-    label_qty_transfer:"이동 수량 (개):",
-    dari_tanggal:"시작 날짜",
-    sampai_tanggal:"종료 날짜",
-    semua_kategori:"전체 카테고리",
-    semua:"전체",
-    semua_data:"전체 데이터",
-    periode_analisis:"분석 기간 (일)",
-    stok_saat_ini:"현재 재고",
-    total_out_periode:"출고 합계 (기간)",
-    kategori_moving:"회전 분류",
-    ketahanan_stok:"재고 지속 기간",
-    search_placeholder:"🔍 이름 / SKU 검색...",
-    total_asset_value_all:"💰 총 자산 가치 (전체 창고):",
-
-    // Headers
-    th_sku:"SKU",
-    th_nama:"품목명",
-    th_kategori:"카테고리",
-    th_gudang:"창고",
-    th_qty_pcs:"수량(개)",
-    th_konversi:"환산",
-    th_harga:"단가",
-    th_total_nilai:"총 금액",
-    th_aksi:"작업",
-    th_tanggal:"날짜",
-    th_qty_masuk:"입고량",
-    th_qty_keluar:"출고량",
-    th_keterangan:"비고",
-    th_dari_gudang:"출발",
-    th_ke_gudang:"도착",
-    th_qty_transfer:"이동량",
-
-    // Alerts
-    alert_ok:"✅ 저장되었습니다!",
-    alert_transfer_ok:"✅ 이동이 저장되었습니다!",
-    alert_fill_all:"모든 항목을 입력하세요!",
-    alert_qty_zero:"수량은 0보다 커야 합니다!",
-    insufficient_stock:"⚠️ 재고 부족! 가용 재고: ",
-    confirm_insufficient:"개. 계속하시겠습니까?",
+    tab_monitor:"재고 모니터",tab_in:"입고",tab_out:"출고",tab_transfer:"재고 이동",tab_ledger:"재고 원장",tab_analisis:"재고 분석",tab_planning:"PO 계획",tab_intransit:"운송중",
+    btn_template:"템플릿",fast_inbound:"빠른 입고 / 업로드",upload:"업로드",add_item_manual:"수동 품목 추가",
+    label_sku:"SKU 코드:",label_nama:"품목명:",label_kategori:"카테고리:",label_isi_ctn:"박스당 수량:",label_harga:"단가 (Rp):",label_warehouse:"창고:",label_total_pcs:"총 재고 (pcs):",
+    label_tanggal:"날짜:",label_qty_masuk:"입고 수량 (pcs):",label_qty_keluar:"출고 수량 (pcs):",label_keterangan:"비고:",label_ref:"참조 / 비고:",
+    label_dari_gudang:"출발 창고:",label_ke_gudang:"도착 창고:",label_stok_tersedia:"가용 재고 (pcs):",label_qty_transfer:"이동 수량 (pcs):",
+    btn_add_item:"품목 추가",btn_cancel:"취소",btn_save_in:"✅ 입고 저장",btn_save_out:"✅ 출고 저장",btn_save_transfer:"✅ 이동 저장",btn_delete_all:"전체 삭제",
+    upload_stockout_template:"출고 템플릿 업로드",upload_stockout_hint:"헤더: Item Code, Qty, Warehouse, Keterangan",download_template:"템플릿 다운로드",upload_file:"파일 업로드",
+    form_stock_in:"입고 양식",form_stock_out:"출고 양식",form_transfer:"재고 이동 양식",
+    th_sku:"SKU",th_nama:"품목명",th_kategori:"카테고리",th_gudang:"창고",th_qty_pcs:"수량(pcs)",th_konversi:"환산",th_harga:"단가",th_total_nilai:"총 금액",th_aksi:"작업",
+    th_tanggal:"날짜",th_qty_masuk:"입고량",th_qty_keluar:"출고량",th_ref:"참조",th_keterangan:"비고",
+    th_dari_gudang:"출발",th_ke_gudang:"도착",th_qty_transfer:"이동량",th_isi_ctn:"박스당",
+    dari_tanggal:"시작 날짜",sampai_tanggal:"종료 날짜",
+    led_total_stok:"총 재고 금액",led_total_in:"총 입고 금액",led_total_out:"총 출고 금액",led_total_trx:"총 거래",
+    cari_sku:"SKU / 품목명 검색",tipe_transaksi:"거래 유형",semua_tipe:"전체",transfer_keluar:"이동 출고",transfer_masuk:"이동 입고",
+    semua_kategori:"전체 카테고리",semua:"전체",semua_data:"전체 데이터",periode_analisis:"분석 기간 (일)",
+    stok_saat_ini:"현재 재고",total_out_periode:"출고 합계 (기간)",avg_out:"일 평균 출고",kategori_moving:"회전 분류",ketahanan_stok:"재고 지속 기간",
+    hitung_planning_po:"PO 계획 계산",isi_karton_pcs:"박스당 수량 (pcs):",periode_avg_out:"평균 출고 계산 기간:",qty_po_karton:"PO 수량 (박스):",qty_po_pcs:"= PO 수량 (pcs):",
+    btn_tambah_po:"➕ PO 목록에 추가",analisis_stok_skrg:"현재 재고 분석",ketahanan_stok_skrg:"현재 재고 지속 기간",stok_pcs:"재고 (pcs)",stok_karton:"재고 (박스)",
+    hasil_kalkulasi_po:"PO 계산 결과",po_karton:"PO 수량 (박스)",po_pcs:"PO 수량 (pcs)",stok_setelah_po:"PO 후 재고 (pcs)",ketahanan_setelah_po:"PO 후 지속 기간",
+    progress_ketahanan:"재고 지속 기간 진행:",daftar_planning_po:"PO 계획 목록",dur_skrg:"현재기간",dur_setelah:"PO후기간",
+    alert_ok:"✅ 저장되었습니다!",alert_transfer_ok:"✅ 이동이 저장되었습니다!",alert_fill_all:"모든 항목을 입력하세요!",alert_qty_zero:"수량은 0보다 커야 합니다!",
+    confirm_delete_all:"모든 데이터를 삭제하시겠습니까? 되돌릴 수 없습니다.",confirm_delete_row:"이 기록을 삭제하시겠습니까?",
+    no_data_out:"출고 데이터 없음",no_data_in:"입고 데이터 없음",no_data_transfer:"이동 데이터 없음",no_data_ledger:"거래 없음",
+    insufficient_stock:"⚠️ 재고 부족! 가용 재고: ",confirm_insufficient:"pcs. 계속하시겠습니까?",
     same_warehouse_error:"출발 창고와 도착 창고가 동일합니다!",
   }
 };
@@ -1790,45 +1226,9 @@ function setLang(lang){
 }
 
 function applyLang(){
-  // Terjemahkan semua elemen dengan data-i18n
   document.querySelectorAll('[data-i18n]').forEach(el=>{
-    const key = el.getAttribute('data-i18n');
-    const translation = t(key);
-    if (translation && translation !== key) {
-      el.textContent = translation;
-    }
+    el.textContent = t(el.getAttribute('data-i18n'));
   });
-  
-  // Terjemahkan placeholder
-  document.querySelectorAll('[data-i18n-placeholder]').forEach(el=>{
-    const key = el.getAttribute('data-i18n-placeholder');
-    const translation = t(key);
-    if (translation && translation !== key) {
-      el.placeholder = translation;
-    }
-  });
-  
-  // Update topbar title
-  const topbarTitle = document.getElementById("topbar-page-name");
-  if (topbarTitle) {
-    const tabName = activeTab || 'monitor';
-    const translations = {
-      monitor: t("tab_monitor"),
-      in: t("tab_in"),
-      out: t("tab_out"),
-      transfer: t("tab_transfer"),
-      intransit: t("tab_intransit"),
-      ledger: t("tab_ledger"),
-      analisis: t("tab_analisis"),
-      sales: t("tab_sales")
-    };
-    const icon = {monitor:"📊", in:"📥", out:"📤", transfer:"🔄", intransit:"🚚", ledger:"📋", analisis:"📈", sales:"🛒"};
-    topbarTitle.textContent = (icon[tabName]||"") + " " + (translations[tabName]||tabName);
-  }
-  
-  // Update login overlay texts
-  const loginError = document.getElementById("login-error");
-  if (loginError) loginError.textContent = "⚠️ Username atau password salah!";
 }
 
 // =========================================================================
@@ -2000,7 +1400,7 @@ function initFirebaseListeners(){
     if(loadedCount >= total){
       hideLoader();
       let ss = document.getElementById("sync-status");
-      if(ss){ ss.style.display="inline-block"; ss.textContent=t("sync_status") || "🟢 Tersync"; ss.style.background="#d1fae5"; ss.style.color="#065f46"; }
+      if(ss){ ss.style.display="inline-block"; ss.textContent="🟢 Tersync"; ss.style.background="#d1fae5"; ss.style.color="#065f46"; }
       markDirty("monitor","in","out","transfer","intransit","ledger","analisis");
       renderTab(activeTab);
     }
@@ -2080,6 +1480,9 @@ function renderTab(name){
   else if(name==="sales") tampilkanSales();
 }
 
+// Hanya render tab aktif saat load — Firebase listener akan isi data
+// tampilkanTabel(); // tidak perlu, Firebase onValue akan trigger render
+
 // =========================================================================
 // NAVIGATION
 // =========================================================================
@@ -2097,20 +1500,8 @@ function switchTab(name){
   let el = document.getElementById("tab-"+name);
   if(el){ el.classList.add("active"); }
   let tt = document.getElementById("topbar-page-name");
-  if(tt) {
-    const translations = {
-      monitor: t("tab_monitor"),
-      in: t("tab_in"),
-      out: t("tab_out"),
-      transfer: t("tab_transfer"),
-      intransit: t("tab_intransit"),
-      ledger: t("tab_ledger"),
-      analisis: t("tab_analisis"),
-      sales: t("tab_sales")
-    };
-    const icon = {monitor:"📊", in:"📥", out:"📤", transfer:"🔄", intransit:"🚚", ledger:"📋", analisis:"📈", sales:"🛒"};
-    tt.textContent = (icon[name]||"") + " " + (translations[name]||name);
-  }
+  if(tt) tt.textContent = (_tabTitles[name]||name);
+  // Render setelah browser paint tab baru (terasa instan)
   requestAnimationFrame(function(){ requestAnimationFrame(function(){ renderTab(name); }); });
 }
 
@@ -2139,6 +1530,7 @@ function rpFormat(n){ return "Rp "+Number(n).toLocaleString("id-ID"); }
 // =========================================================================
 function parseTanggalExcel(val, fallback){
   if(!val) return fallback;
+  // Jika berupa angka serial Excel (misal: 46023)
   if(typeof val === "number"){
     let d = new Date(Math.round((val - 25569)*86400*1000));
     if(!isNaN(d)) return d.toISOString().split("T")[0];
@@ -2146,13 +1538,16 @@ function parseTanggalExcel(val, fallback){
   }
   let s = val.toString().trim();
   if(!s) return fallback;
+  // Already YYYY-MM-DD
   if(/^\d{4}-\d{2}-\d{2}$/.test(s)) return s;
+  // DD/MM/YYYY or DD-MM-YYYY
   let m1 = s.match(/^(\d{1,2})[\/\-](\d{1,2})[\/\-](\d{2,4})$/);
   if(m1){
     let dd=m1[1].padStart(2,"0"), mm=m1[2].padStart(2,"0"), yy=m1[3];
     if(yy.length===2) yy="20"+yy;
     return yy+"-"+mm+"-"+dd;
   }
+  // DD-Mon-YY or DD-Mon-YYYY (e.g. 02-Jan-26, 05-Feb-2026)
   let m2 = s.match(/^(\d{1,2})[-\/\s]([A-Za-z]{3})[-\/\s](\d{2,4})$/);
   if(m2){
     let months={jan:"01",feb:"02",mar:"03",apr:"04",may:"05",jun:"06",jul:"07",aug:"08",sep:"09",oct:"10",nov:"11",dec:"12"};
@@ -2160,6 +1555,7 @@ function parseTanggalExcel(val, fallback){
     if(yy.length===2) yy="20"+yy;
     return yy+"-"+mm+"-"+dd;
   }
+  // Try native Date parse as last resort
   let d = new Date(s);
   if(!isNaN(d)) return d.toISOString().split("T")[0];
   return fallback;
@@ -2255,6 +1651,7 @@ function prosesUploadExcel(element){
       let rawQty=row["Actual Qty"]||0, rawHarga=row["Harga"]||0, rawQtyCtn=row["Qty/Ctn"]||0;
       let rawTgl=row["Tanggal"], rawKet=row["Keterangan"]||"";
       if(!rawSku||!rawNama) return;
+      // Gunakan tanggal dari kolom, fallback ke uploadTgl jika kosong
       let tglBaris=parseTanggalExcel(rawTgl, uploadTgl);
       let skuF=rawSku.toString().trim();
       let skuU=skuF.toUpperCase();
@@ -2264,15 +1661,18 @@ function prosesUploadExcel(element){
       let hargaF=Math.max(0,parseFloat(rawHarga)||0);
       let qtyCtnF=Math.max(0,parseInt(rawQtyCtn)||0);
 
+      // Cek/update master data
       let semuaMaster=dapatkanSemuaMasterData();
       let existingMaster=semuaMaster.find(i=>i.sku.toUpperCase()===skuU);
       let cm=customMasterData.find(i=>i.sku.toUpperCase()===skuU);
 
       if(!existingMaster){
+        // SKU baru — daftarkan ke customMaster
         let newMaster={sku:skuF,kategori:katF,bintaro:namaF,qtyCtn:qtyCtnF,harga:hargaF};
         customMasterData.push(newMaster);
         existingMaster=newMaster; cMB++;
       } else {
+        // SKU sudah ada — update master jika ada nilai baru
         if(!cm){
           cm={sku:existingMaster.sku,kategori:existingMaster.kategori,bintaro:existingMaster.bintaro,qtyCtn:existingMaster.qtyCtn,harga:existingMaster.harga};
           customMasterData.push(cm);
@@ -2281,6 +1681,7 @@ function prosesUploadExcel(element){
         if(hargaF>0 && cm.harga!==hargaF){ cm.harga=hargaF; existingMaster.harga=hargaF; changed=true; }
         if(qtyCtnF>0 && cm.qtyCtn!==qtyCtnF){ cm.qtyCtn=qtyCtnF; existingMaster.qtyCtn=qtyCtnF; changed=true; }
         if(changed){
+          // Propagate ke seluruh data yang ada dengan SKU ini
           daftarBarang.forEach(b=>{ if(b.sku.toUpperCase()===skuU){ if(hargaF>0) b.harga=cm.harga; if(qtyCtnF>0) b.isiKarton=cm.qtyCtn; }});
           stockInLog.forEach(r=>{ if(r.sku.toUpperCase()===skuU){ if(hargaF>0) r.harga=cm.harga; if(qtyCtnF>0) r.isiKarton=cm.qtyCtn; }});
           stockOutLog.forEach(r=>{ if(r.sku.toUpperCase()===skuU){ if(hargaF>0) r.harga=cm.harga; if(qtyCtnF>0) r.isiKarton=cm.qtyCtn; }});
@@ -2289,9 +1690,12 @@ function prosesUploadExcel(element){
         }
       }
 
+      // Tambahkan stok
       if(qtyF>0){
+        // Gunakan nilai final dari master (sudah di-update)
         let finalHarga=existingMaster.harga||hargaF||0;
         let finalIsi=existingMaster.qtyCtn||qtyCtnF||0;
+        // Cek apakah sudah ada di daftarBarang untuk gudang ini
         let existing=daftarBarang.find(b=>b.sku.toUpperCase()===skuU&&(b.warehouse||"Bintaro").toUpperCase()===targetWarehouse.toUpperCase());
         if(existing){ existing.totalPcs=Number(existing.totalPcs)+qtyF; existing.harga=finalHarga; existing.isiKarton=finalIsi; }
         else { daftarBarang.push({sku:existingMaster.sku||skuF,kategori:existingMaster.kategori||katF,nama:existingMaster.bintaro||namaF,isiKarton:finalIsi,warehouse:targetWarehouse,totalPcs:qtyF,harga:finalHarga}); }
@@ -2314,6 +1718,7 @@ function prosesUploadExcel(element){
 
 // =========================================================================
 // UPLOAD EXCEL - STOCK OUT TEMPLATE
+// Header: Item Code, Qty, Warehouse, Keterangan
 // =========================================================================
 function prosesUploadStockOut(element){
   if(!isAdmin()){ alert("⛔ Akses ditolak. Fitur ini hanya untuk Admin."); return; }
@@ -2339,8 +1744,10 @@ function prosesUploadStockOut(element){
       let qtyF=Math.max(0,parseInt(rawQty)||0);
       let whF=rawWh.toString().trim();
       if(qtyF<=0){ cSkip++; return; }
+      // Find in master
       let match=semuaMaster.find(i=>i.sku.toUpperCase()===skuF);
       if(!match){ cWarn.push(skuF+" (SKU tidak ditemukan)"); cSkip++; return; }
+      // Check & reduce stock
       let existing=daftarBarang.find(b=>b.sku.toUpperCase()===skuF&&(b.warehouse||"Bintaro").toUpperCase()===whF.toUpperCase());
       let stokSaat=existing?Number(existing.totalPcs):0;
       if(stokSaat<qtyF){
@@ -2364,6 +1771,7 @@ function prosesUploadStockOut(element){
 
 // =========================================================================
 // UPLOAD EXCEL - TRANSFER TEMPLATE
+// Header: Item Code, Nama Barang, Item Group, Actual Qty, Isi/Ctn, Harga, Keterangan
 // =========================================================================
 function prosesUploadTransfer(element){
   if(!isAdmin()){ alert("⛔ Akses ditolak. Fitur ini hanya untuk Admin."); return; }
@@ -2397,12 +1805,15 @@ function prosesUploadTransfer(element){
       let hargaF=Math.max(0,parseFloat(rawHarga)||0);
       let katF=rawKat.toString().trim();
       if(qtyF<=0){ cSkip++; return; }
+      // Cek master, daftarkan jika baru
       let match=semuaMaster.find(i=>i.sku.toUpperCase()===skuF);
       if(!match){
+        // SKU baru: daftar ke customMaster
         let namaF=(rawNama||skuF).toString().trim();
         let newMaster={sku:rawSku.toString().trim(),kategori:katF,bintaro:namaF,qtyCtn:isiF,harga:hargaF};
         customMasterData.push(newMaster); match=newMaster;
       } else {
+        // Update master jika ada nilai baru
         let cm=customMasterData.find(i=>i.sku.toUpperCase()===skuF);
         if(!cm){ cm={sku:match.sku,kategori:match.kategori,bintaro:match.bintaro,qtyCtn:match.qtyCtn,harga:match.harga}; customMasterData.push(cm); }
         let changed=false;
@@ -2415,9 +1826,11 @@ function prosesUploadTransfer(element){
           cMasterUpdate++;
         }
       }
+      // Cek stok di gudang asal
       let srcItem=daftarBarang.find(b=>b.sku.toUpperCase()===skuF&&(b.warehouse||"Bintaro").toUpperCase()===fromWh.toUpperCase());
       let stokSaat=srcItem?Number(srcItem.totalPcs):0;
       if(stokSaat<qtyF) cWarn.push(match.bintaro+" @ "+fromWh+": stok "+stokSaat+", request "+qtyF);
+      // Transfer: kurangi dari asal, tambahkan ke tujuan
       let entry={id:Date.now()+Math.random(),tanggal:tglBaris,sku:match.sku,kategori:match.kategori,nama:match.bintaro,isiKarton:match.qtyCtn,harga:match.harga||0,fromWh:fromWh,toWh:toWh,qty:qtyF,ref:rawKet.toString().trim()||"-"};
       transferLog.push(entry);
       if(srcItem){ srcItem.totalPcs=Number(srcItem.totalPcs)-qtyF; }
@@ -2441,6 +1854,7 @@ function prosesUploadTransfer(element){
 
 // =========================================================================
 // UPLOAD EXCEL - INTRANSIT TEMPLATE
+// Header: Item Code, Nama Barang, Item Group, Actual Qty, Isi/Ctn, Harga, Keterangan
 // =========================================================================
 function prosesUploadIntransit(element){
   let file=element.files[0]; if(!file) return;
@@ -2468,6 +1882,7 @@ function prosesUploadIntransit(element){
       let hargaF=Math.max(0,parseFloat(rawHarga)||0);
       let katF=rawKat.toString().trim();
       let ketF=rawKet.toString().trim()||"-";
+      // Cek/update master
       let match=semuaMaster.find(i=>i.sku.toUpperCase()===skuF);
       if(!match){
         let namaF=(rawNama||skuF).toString().trim();
@@ -2485,11 +1900,13 @@ function prosesUploadIntransit(element){
           cMasterUpdate++;
         }
       }
+      // Cek apakah ada intransit existing dengan SKU sama yang masih InTransit → update keterangan/qty
       let existing=intransitLog.find(r=>r.sku.toUpperCase()===skuF&&(r.status==="InTransit"||!r.status));
       if(existing&&qtyF>0){
         existing.qty=qtyF; existing.keterangan=ketF; existing.isiKarton=match.qtyCtn; existing.harga=match.harga;
         cUpdate++; return;
       }
+      // Tambah record baru jika qty > 0
       if(qtyF<=0){ cSkip++; return; }
       let entry={id:Date.now()+Math.random(),tanggal:tglBaris,sku:match.sku,nama:match.bintaro,qty:qtyF,isiKarton:match.qtyCtn,harga:match.harga||0,keterangan:ketF,status:"InTransit",warehouse:"",tglComplete:""};
       intransitLog.push(entry); cOK++;
@@ -2613,11 +2030,34 @@ function kunciFields(status){
 // MONITOR STOK
 // =========================================================================
 function tambahBarang(){
-  // no-op, form removed
-}
-
-function resetForm(){
-  // no-op, form removed
+  let skuInput=document.getElementById("sku").value.trim();
+  let fullSku=document.getElementById("sku").getAttribute("data-full-sku");
+  let kategori=document.getElementById("kategori").value.trim();
+  let nama=document.getElementById("nama").value.trim();
+  let isiKarton=document.getElementById("isiKarton").value;
+  let warehouse=document.getElementById("warehouse").value;
+  let totalPcs=document.getElementById("totalPcs").value;
+  let harga=document.getElementById("harga").value;
+  if(!skuInput||!nama||!totalPcs||!isiKarton||!harga){ alert(t("alert_fill_all")); return; }
+  let skuFinal=fullSku?fullSku:skuInput.toUpperCase();
+  let semuaMaster=dapatkanSemuaMasterData();
+  let cekMaster=semuaMaster.find(i=>i.sku.toUpperCase()===skuFinal.toUpperCase());
+  if(!cekMaster){
+    customMasterData.push({sku:skuFinal,kategori,bintaro:nama,qtyCtn:Number(isiKarton),harga:Number(harga)});
+    fbSave("customMasterData", customMasterData);
+  }
+  if(indexEdit===-1){
+    daftarBarang.push({sku:skuFinal,kategori,nama,isiKarton,warehouse,totalPcs,harga:harga||0});
+  } else {
+    daftarBarang[indexEdit]={sku:skuFinal,kategori,nama,isiKarton,warehouse,totalPcs,harga:harga||0};
+    indexEdit=-1;
+    document.getElementById("tombolAksi").innerText=t("btn_add_item");
+    document.getElementById("tombolBatal").style.display="none";
+    document.getElementById("formTitle").innerText=t("add_item_manual");
+    document.getElementById("sku").disabled=false;
+  }
+  fbSave("barang", daftarBarang);
+  markDirty("monitor"); resetForm();
 }
 
 function editBarang(index){
@@ -2647,41 +2087,49 @@ function simpanEditBarang(){
   let hargaBerubah=newHarga!==Number(b.harga);
   let isiBerubah=newIsi!==Number(b.isiKarton);
 
+  // Update entry ini
   b.isiKarton=newIsi;
   b.harga=newHarga;
   b.warehouse=newWh;
   b.totalPcs=newPcs;
 
+  // Jika harga atau isi/ctn berubah → update semua entri dengan SKU yang sama
   if(hargaBerubah||isiBerubah){
+    // Update seluruh daftarBarang ber-SKU sama
     daftarBarang.forEach(item=>{
       if(item.sku.toUpperCase()===sku){
         if(hargaBerubah) item.harga=newHarga;
         if(isiBerubah) item.isiKarton=newIsi;
       }
     });
+    // Update stockInLog
     stockInLog.forEach(r=>{
       if(r.sku.toUpperCase()===sku){
         if(hargaBerubah) r.harga=newHarga;
         if(isiBerubah) r.isiKarton=newIsi;
       }
     });
+    // Update stockOutLog
     stockOutLog.forEach(r=>{
       if(r.sku.toUpperCase()===sku){
         if(hargaBerubah) r.harga=newHarga;
         if(isiBerubah) r.isiKarton=newIsi;
       }
     });
+    // Update transferLog
     transferLog.forEach(r=>{
       if(r.sku.toUpperCase()===sku){
         if(hargaBerubah) r.harga=newHarga;
         if(isiBerubah) r.isiKarton=newIsi;
       }
     });
+    // Update customMasterData
     let cm=customMasterData.find(m=>m.sku.toUpperCase()===sku);
     if(cm){
       if(hargaBerubah) cm.harga=newHarga;
       if(isiBerubah) cm.qtyCtn=newIsi;
     } else {
+      // Belum ada di custom, tambahkan supaya override BASE_MASTER_DATA
       let semuaMaster=dapatkanSemuaMasterData();
       let base=semuaMaster.find(m=>m.sku.toUpperCase()===sku);
       customMasterData.push({
@@ -2712,6 +2160,18 @@ function tutupModalEditBarang(e){
   document.getElementById("edit-barang-modal").classList.remove("open");
 }
 
+function batalEdit(){
+  indexEdit=-1;
+}
+
+function tambahBarang(){
+  // no-op, form removed
+}
+
+function resetForm(){
+  // no-op, form removed
+}
+
 function hapusBarang(index){
   if(!isAdmin()){ alert("⛔ Akses ditolak."); return; }
   if(confirm(t("confirm_delete_row"))){ daftarBarang.splice(index,1); fbSave("barang", daftarBarang); markDirty("monitor"); }
@@ -2728,97 +2188,89 @@ function hapusSemuaBarang(){
   }
 }
 
-// =========================================================================
-// PAGINATION HELPERS
-// =========================================================================
-const PAGE_SIZE = 50;
-const _pageState = { monitor:1, in:1, out:1, tr:1, led:1, an:1, sa:1, it:1 };
-
-function renderPagination(containerId, total, page, pageSize, onPageChange){
-  let old = document.getElementById(containerId);
-  if(old) old.remove();
-  if(total <= pageSize) return;
-  let totalPages = Math.ceil(total/pageSize);
-  let div = document.createElement("div");
-  div.id = containerId;
-  div.style.cssText = "display:flex;gap:4px;align-items:center;justify-content:flex-end;padding:6px 4px;flex-wrap:wrap;font-size:12px";
-  let info = document.createElement("span");
-  info.style.cssText = "color:#718096;margin-right:4px";
-  info.textContent = t("page_info")?.replace("{page}",page).replace("{total}",totalPages).replace("{count}",total) || `Hal ${page} / ${totalPages} (${total} data)`;
-  div.appendChild(info);
-  let makeBtn = (label, pg, disabled, active)=>{
-    let b = document.createElement("button");
-    b.textContent = label;
-    b.disabled = disabled;
-    b.style.cssText = "padding:3px 8px;font-size:11px;border-radius:4px;border:1px solid #cbd5e0;cursor:pointer;background:"+(active?"#2c3e50":"white")+";color:"+(active?"white":"#4a5568");
-    b.onclick = ()=>{ onPageChange(pg); };
-    return b;
-  };
-  div.appendChild(makeBtn("«", 1, page===1, false));
-  div.appendChild(makeBtn("‹", page-1, page===1, false));
-  let start = Math.max(1, page-2), end = Math.min(totalPages, page+2);
-  for(let p=start; p<=end; p++) div.appendChild(makeBtn(p, p, false, p===page));
-  div.appendChild(makeBtn("›", page+1, page===totalPages, false));
-  div.appendChild(makeBtn("»", totalPages, page===totalPages, false));
-  return div;
-}
-
-function attachPagination(tbodyEl, containerId, total, page, pageSize, onPageChange){
-  let tableContainer = tbodyEl.closest(".table-container");
-  if(!tableContainer) return;
-  let pgDiv = renderPagination(containerId, total, page, pageSize, onPageChange);
-  if(pgDiv){
-    let existing = document.getElementById(containerId);
-    if(existing) existing.remove();
-    tableContainer.parentElement.insertBefore(pgDiv, tableContainer.nextSibling);
-  } else {
-    let existing = document.getElementById(containerId);
-    if(existing) existing.remove();
-  }
-}
-
-function buildRows(rowsHTML){
-  let t = document.createElement("tbody");
-  t.innerHTML = rowsHTML.join("");
-  let frag = document.createDocumentFragment();
-  while(t.firstChild) frag.appendChild(t.firstChild);
-  return frag;
-}
-
-// =========================================================================
-// TAMPILKAN TABEL (MONITOR)
-// =========================================================================
 function tampilkanTabel(){
-  let tabel = document.getElementById("tabelBarang");
-  let keyword = document.getElementById("search").value.toLowerCase();
-  let selWH = document.getElementById("filterWarehouse").value;
-  document.getElementById("assetTitle").innerText = selWH==="All"?t("total_asset_value_all"):"🏢 Total Nilai Barang (Gudang "+selWH+"):";
-  let hasil = daftarBarang.filter(b=>{
-    let wh = b.warehouse||"Bintaro";
-    return (selWH==="All"||wh.toUpperCase()===selWH.toUpperCase()) &&
+  let tabel=document.getElementById("tabelBarang");
+  let keyword=document.getElementById("search").value.toLowerCase();
+  let selWH=document.getElementById("filterWarehouse").value;
+  tabel.innerHTML="";
+  document.getElementById("assetTitle").innerText=selWH==="All"?"💰 Total Nilai Barang (All Warehouse):":"🏢 Total Nilai Barang (Gudang "+selWH+"):";
+  let total=0;
+  let hasil=daftarBarang.filter(b=>{
+    let wh=(b.warehouse||"Bintaro");
+    return (selWH==="All"||wh.toUpperCase()===selWH.toUpperCase())&&(b.nama.toLowerCase().includes(keyword)||b.sku.toLowerCase().includes(keyword));
+  });
+  hasil.forEach(b=>{ total+=Number(b.totalPcs)*Number(b.harga); });
+  document.getElementById("assetValue").innerText=rpFormat(total);
+  if(hasil.length===0){ tabel.innerHTML="<tr><td colspan='10' class='kosong'>Tidak ada data</td></tr>"; return; }
+  hasil.forEach(function(b,i){
+    let idx=daftarBarang.indexOf(b);
+    let pcs=Number(b.totalPcs);
+    let uom=hitungUOM(pcs,Number(b.isiKarton));
+    let nilaiB=pcs*Number(b.harga);
+    let isNeg=pcs<0;
+    let stokCell=isNeg
+      ?"<span style='color:#c53030;font-weight:700;background:#fff5f5;padding:2px 6px;border-radius:4px;border:1px solid #fc8181'>⚠️ "+pcs+" pcs (selisih)</span>"
+      :pcs+" pcs";
+    let rowStyle=isNeg?"background:#fff5f5":"";
+    tabel.innerHTML+="<tr style='"+rowStyle+"'>"+
+      "<td>"+(i+1)+"</td><td title='"+b.sku+"'>"+b.sku+"</td><td title='"+b.nama+"'>"+b.nama+"</td>"+
+      "<td title='"+b.kategori+"'>"+b.kategori+"</td>"+
+      "<td><span class='badge badge-gudang'>"+(b.warehouse||"Bintaro")+"</span></td>"+
+      "<td>"+stokCell+"</td><td><strong>"+uom+"</strong></td>"+
+      "<td>"+rpFormat(b.harga)+"</td><td><strong>"+rpFormat(nilaiB)+"</strong></td>"+
+      "<td style='text-align:center'>"+(isAdmin()?"<button class='btn-action btn-edit' onclick='editBarang("+idx+")'>Edit</button> <button class='btn-action btn-hapus' onclick='hapusBarang("+idx+")'>Hapus</button>":"<span style='color:#a0aec0;font-size:10px'>-</span>")+"</td>"+
+    "</tr>";
+  });
+}
+
+// =========================================================================
+// EXPORT MONITOR STOK & INTRANSIT
+// =========================================================================
+function exportMonitorStok(){
+  let keyword=document.getElementById("search").value.toLowerCase();
+  let selWH=document.getElementById("filterWarehouse").value;
+  let hasil=daftarBarang.filter(b=>{
+    let wh=b.warehouse||"Bintaro";
+    return (selWH==="All"||wh.toUpperCase()===selWH.toUpperCase())&&
            (b.nama.toLowerCase().includes(keyword)||b.sku.toLowerCase().includes(keyword));
   });
-  let total = 0;
-  hasil.forEach(b=>{ total+=Number(b.totalPcs)*Number(b.harga); });
-  document.getElementById("assetValue").innerText = rpFormat(total);
-  if(hasil.length===0){ tabel.innerHTML="<tr><td colspan='10' class='kosong'>Tidak ada data</td></tr>"; attachPagination(tabel,"pg-monitor",0,1,PAGE_SIZE,()=>{}); return; }
-  let page = _pageState.monitor;
-  let sliced = hasil.slice((page-1)*PAGE_SIZE, page*PAGE_SIZE);
-  let rows = sliced.map(function(b,ii){
-    let i = (page-1)*PAGE_SIZE+ii;
-    let idx = daftarBarang.indexOf(b);
-    let pcs = Number(b.totalPcs);
-    let uom = hitungUOM(pcs,Number(b.isiKarton));
-    let nilaiB = pcs*Number(b.harga);
-    let isNeg = pcs<0;
-    let stokCell = isNeg
-      ? "<span style='color:#c53030;font-weight:700;background:#fff5f5;padding:2px 6px;border-radius:4px;border:1px solid #fc8181'>⚠️ "+pcs+" pcs (selisih)</span>"
-      : pcs+" pcs";
-    return "<tr style='"+(isNeg?"background:#fff5f5":"")+"'><td>"+(i+1)+"</td><td title='"+b.sku+"'>"+b.sku+"</td><td title='"+b.nama+"'>"+b.nama+"</td><td title='"+b.kategori+"'>"+b.kategori+"</td><td><span class='badge badge-gudang'>"+(b.warehouse||"Bintaro")+"</span></td><td>"+stokCell+"</td><td><strong>"+uom+"</strong></td><td>"+rpFormat(b.harga)+"</td><td><strong>"+rpFormat(nilaiB)+"</strong></td><td style='text-align:center'>"+(isAdmin()?"<button class='btn-action btn-edit' onclick='editBarang("+idx+")'>Edit</button> <button class='btn-action btn-hapus' onclick='hapusBarang("+idx+")'>Hapus</button>":"<span style='color:#a0aec0;font-size:10px'>-</span>")+"</td></tr>";
+  if(hasil.length===0){ alert("⚠️ Tidak ada data untuk di-export!"); return; }
+  let rows=[["SKU","Nama Barang","Kategori","Gudang","Qty (pcs)","Konversi","Harga Satuan","Total Nilai"]];
+  hasil.forEach(b=>{
+    let uom=hitungUOM(Number(b.totalPcs),Number(b.isiKarton));
+    let nilai=Number(b.totalPcs)*Number(b.harga);
+    rows.push([b.sku,b.nama,b.kategori||"-",b.warehouse||"Bintaro",b.totalPcs,uom,b.harga,nilai]);
   });
-  tabel.innerHTML = "";
-  tabel.appendChild(buildRows(rows));
-  attachPagination(tabel,"pg-monitor",hasil.length,page,PAGE_SIZE,function(pg){ _pageState.monitor=pg; tampilkanTabel(); });
+  let wb=XLSX.utils.book_new();
+  let ws=XLSX.utils.aoa_to_sheet(rows);
+  ws['!cols']=[{wch:30},{wch:38},{wch:22},{wch:12},{wch:10},{wch:14},{wch:14},{wch:16}];
+  XLSX.utils.book_append_sheet(wb,ws,"Monitor Stok");
+  XLSX.writeFile(wb,"Monitor_Stok_Export.xlsx");
+}
+
+function exportIntransit(){
+  let keyword=document.getElementById("it-search").value.toLowerCase();
+  let from=document.getElementById("it-filter-from").value;
+  let to=document.getElementById("it-filter-to").value;
+  let statusF=document.getElementById("it-filter-status").value;
+  let hasil=intransitLog.filter(r=>{
+    let matchK=r.sku.toLowerCase().includes(keyword)||r.nama.toLowerCase().includes(keyword);
+    let matchF=!from||r.tanggal>=from;
+    let matchT=!to||r.tanggal<=to;
+    let matchS=statusF==="All"||(r.status||"InTransit")===statusF;
+    return matchK&&matchF&&matchT&&matchS;
+  }).sort((a,b)=>b.tanggal.localeCompare(a.tanggal));
+  if(hasil.length===0){ alert("⚠️ Tidak ada data untuk di-export!"); return; }
+  let rows=[["Tgl. Masuk","SKU","Nama Barang","Qty (pcs)","Konversi","Status","Keterangan","Gudang Tujuan","Tgl. Complete"]];
+  hasil.forEach(r=>{
+    let uom=hitungUOM(r.qty,r.isiKarton||0);
+    rows.push([r.tanggal,r.sku,r.nama,r.qty,uom,r.status||"InTransit",r.keterangan||"-",r.warehouse||"-",r.tglComplete||"-"]);
+  });
+  let wb=XLSX.utils.book_new();
+  let ws=XLSX.utils.aoa_to_sheet(rows);
+  ws['!cols']=[{wch:12},{wch:30},{wch:38},{wch:10},{wch:14},{wch:12},{wch:30},{wch:14},{wch:14}];
+  XLSX.utils.book_append_sheet(wb,ws,"InTransit");
+  XLSX.writeFile(wb,"InTransit_Export.xlsx");
 }
 
 // =========================================================================
@@ -2835,6 +2287,7 @@ function simpanStockIn(){
   let harga=document.getElementById("in-harga").value;
   let warehouse=document.getElementById("in-warehouse").value;
   let qty=document.getElementById("in-qty").value;
+  let ref=document.getElementById("in-ref").value.trim();
   let keterangan=document.getElementById("in-keterangan").value.trim();
   if(!tanggal||!skuRaw||!nama||!qty||Number(qty)<=0){ alert(t("alert_fill_all")); return; }
   let skuFinal=fullSku||skuRaw.toUpperCase();
@@ -2852,7 +2305,7 @@ function simpanStockIn(){
     document.getElementById("in-tombol-batal").style.display="none";
   }
 
-  let entry={id:Date.now()+Math.random(),tanggal,sku:skuFinal,kategori,nama,isiKarton:Number(isiKarton)||0,warehouse,qty:Number(qty),harga:Number(harga)||0,ref:"-",keterangan:keterangan||"-"};
+  let entry={id:Date.now()+Math.random(),tanggal,sku:skuFinal,kategori,nama,isiKarton:Number(isiKarton)||0,warehouse,qty:Number(qty),harga:Number(harga)||0,ref:ref||"-",keterangan:keterangan||"-"};
   stockInLog.push(entry);
   let existing=daftarBarang.find(b=>b.sku.toUpperCase()===skuFinal.toUpperCase()&&(b.warehouse||"Bintaro").toUpperCase()===warehouse.toUpperCase());
   if(existing){ existing.totalPcs=Number(existing.totalPcs)+Number(qty); }
@@ -2909,18 +2362,19 @@ function tampilkanStockIn(){
     let matchW=wh==="All"||(r.warehouse||"Bintaro").toUpperCase()===wh.toUpperCase();
     return matchK&&matchF&&matchT&&matchW;
   }).sort((a,b)=>b.tanggal.localeCompare(a.tanggal));
-  if(hasil.length===0){ tbody.innerHTML="<tr><td colspan='11' class='kosong'>"+t("no_data_in")+"</td></tr>"; attachPagination(tbody,"pg-in",0,1,PAGE_SIZE,()=>{}); return; }
-  let page=_pageState.in;
-  let sliced=hasil.slice((page-1)*PAGE_SIZE,page*PAGE_SIZE);
-  let rows=sliced.map(function(r,ii){
-    let i=(page-1)*PAGE_SIZE+ii;
+  if(hasil.length===0){ tbody.innerHTML="<tr><td colspan='11' class='kosong'>"+t("no_data_in")+"</td></tr>"; return; }
+  hasil.forEach(function(r,i){
     let uom=hitungUOM(r.qty,r.isiKarton);
     let nilai=r.qty*r.harga;
-    return "<tr><td>"+(i+1)+"</td><td>"+r.tanggal+"</td><td title='"+r.sku+"'>"+r.sku+"</td><td title='"+r.nama+"'>"+r.nama+"</td><td><span class='badge badge-gudang'>"+r.warehouse+"</span></td><td><span class='badge badge-in'>+"+r.qty+" pcs</span></td><td><strong>"+uom+"</strong></td><td>"+rpFormat(r.harga)+"</td><td><strong>"+rpFormat(nilai)+"</strong></td><td title='"+(r.keterangan||"-")+"'>"+(r.keterangan||"-")+"</td><td style='text-align:center'>"+(isAdmin()?"<button class='btn-action btn-edit' onclick='editStockIn(\""+r.id+"\")'>Edit</button> <button class='btn-action btn-hapus' onclick='hapusStockIn(\""+r.id+"\")'>Hapus</button>":"<span style='color:#a0aec0;font-size:10px'>-</span>")+"</td></tr>";
+    tbody.innerHTML+="<tr>"+
+      "<td>"+(i+1)+"</td><td>"+r.tanggal+"</td><td title='"+r.sku+"'>"+r.sku+"</td><td title='"+r.nama+"'>"+r.nama+"</td>"+
+      "<td><span class='badge badge-gudang'>"+r.warehouse+"</span></td>"+
+      "<td><span class='badge badge-in'>+"+r.qty+" pcs</span></td>"+
+      "<td><strong>"+uom+"</strong></td><td>"+rpFormat(r.harga)+"</td><td><strong>"+rpFormat(nilai)+"</strong></td>"+
+      "<td title='"+(r.keterangan||"-")+"'>"+(r.keterangan||"-")+"</td>"+
+      "<td style='text-align:center'>"+(isAdmin()?"<button class='btn-action btn-edit' onclick='editStockIn(\""+r.id+"\")'>Edit</button> <button class='btn-action btn-hapus' onclick='hapusStockIn(\""+r.id+"\")'>Hapus</button>":"<span style='color:#a0aec0;font-size:10px'>-</span>")+"</td>"+
+    "</tr>";
   });
-  tbody.innerHTML="";
-  tbody.appendChild(buildRows(rows));
-  attachPagination(tbody,"pg-in",hasil.length,page,PAGE_SIZE,function(pg){ _pageState.in=pg; tampilkanStockIn(); });
 }
 
 function hapusStockIn(id){
@@ -2978,12 +2432,12 @@ function updateOutTipe(){
   let tipe=document.getElementById("out-tipe").value;
   let btn=document.getElementById("out-tombol-aksi");
   if(tipe==="Expired"){
-    btn.className="btn btn-orange"; btn.innerHTML=t("btn_save_expired")||"✅ Simpan Expired";
+    btn.className="btn btn-orange"; btn.innerHTML="✅ Simpan Expired";
   } else if(tipe==="Damage"){
     btn.className="btn"; btn.style.cssText="background:#6b21a8;color:white;width:100%;margin-top:6px";
-    btn.innerHTML=t("btn_save_damage")||"✅ Simpan Damage";
+    btn.innerHTML="✅ Simpan Damage";
   } else {
-    btn.className="btn btn-red"; btn.style.cssText=""; btn.innerHTML=t("btn_save_out");
+    btn.className="btn btn-red"; btn.style.cssText=""; btn.innerHTML="✅ Simpan Stock Out";
   }
 }
 
@@ -3008,7 +2462,7 @@ function simpanStockOut(){
     if(oldIdx!==-1){
       let old=stockOutLog[oldIdx];
       let oldItem=daftarBarang.find(b=>b.sku.toUpperCase()===old.sku.toUpperCase()&&(b.warehouse||"Bintaro").toUpperCase()===old.warehouse.toUpperCase());
-      if(oldItem) oldItem.totalPcs=Number(oldItem.totalPcs)+old.qty;
+      if(oldItem) oldItem.totalPcs=Number(oldItem.totalPcs)+old.qty; // restore old qty
       stockOutLog.splice(oldIdx,1);
     }
     editingOutId=null;
@@ -3020,13 +2474,12 @@ function simpanStockOut(){
   let stokSaat=existing?Number(existing.totalPcs):0;
   if(stokSaat<Number(qty)){
     let selisih=Number(qty)-stokSaat;
-    let msg = t("insufficient_stock") + stokSaat + " " + t("confirm_insufficient") || 
-             "⚠️ Stok tidak mencukupi! Stok tersedia: "+stokSaat+" pcs. Akan ada selisih "+selisih+" pcs yang tercatat sebagai hutang stok. Tetap lanjut?";
-    if(!confirm(msg)){ return; }
+    if(!confirm((stokSaat<0?"⚠️ Stok sudah minus "+Math.abs(stokSaat)+" pcs! ":"⚠️ Stok tidak mencukupi! Stok tersedia: "+stokSaat+" pcs. ")+"Akan ada selisih "+selisih+" pcs yang tercatat sebagai hutang stok. Tetap lanjut?")){ return; }
   }
   let entry={id:Date.now()+Math.random(),tanggal,tipe:tipe||"Stock Out",sku:skuFinal,kategori,nama,isiKarton:Number(isiKarton)||0,warehouse,qty:Number(qty),harga:Number(harga)||0,ref:ref||"-"};
   stockOutLog.push(entry);
   if(existing){ existing.totalPcs=Number(existing.totalPcs)-Number(qty); }
+  // Note: totalPcs CAN go negative (selisih/hutang stok) - intentional by design
   fbSave("stockOutLog", stockOutLog);
   fbSave("barang", daftarBarang);
   markDirty("out","monitor","ledger","analisis");
@@ -3075,7 +2528,7 @@ function hapusStockOut(id){
   if(idx!==-1){
     let r=stockOutLog[idx];
     let existing=daftarBarang.find(b=>b.sku.toUpperCase()===r.sku.toUpperCase()&&(b.warehouse||"Bintaro").toUpperCase()===r.warehouse.toUpperCase());
-    if(existing){ existing.totalPcs=Number(existing.totalPcs)+r.qty; }
+    if(existing){ existing.totalPcs=Number(existing.totalPcs)+r.qty; } // restore, may stay negative if other deficits exist
     stockOutLog.splice(idx,1);
     fbSave("stockOutLog", stockOutLog);
     fbSave("barang", daftarBarang);
@@ -3115,11 +2568,8 @@ function tampilkanStockOut(){
     let matchTipe=tipeF==="All"||(r.tipe||"Stock Out")===tipeF;
     return matchK&&matchF&&matchT&&matchW&&matchTipe;
   }).sort((a,b)=>b.tanggal.localeCompare(a.tanggal));
-  if(hasil.length===0){ tbody.innerHTML="<tr><td colspan='12' class='kosong'>"+t("no_data_out")+"</td></tr>"; attachPagination(tbody,"pg-out",0,1,PAGE_SIZE,()=>{}); return; }
-  let page=_pageState.out;
-  let sliced=hasil.slice((page-1)*PAGE_SIZE,page*PAGE_SIZE);
-  let rows=sliced.map(function(r,ii){
-    let i=(page-1)*PAGE_SIZE+ii;
+  if(hasil.length===0){ tbody.innerHTML="<tr><td colspan='12' class='kosong'>"+t("no_data_out")+"</td></tr>"; return; }
+  hasil.forEach(function(r,i){
     let uom=hitungUOM(r.qty,r.isiKarton);
     let nilai=r.qty*r.harga;
     let tipe=r.tipe||"Stock Out";
@@ -3128,11 +2578,17 @@ function tampilkanStockOut(){
       : tipe==="Damage"
       ? "<span class='badge' style='background:#f3e8ff;color:#6b21a8'>💥 Damage</span>"
       : "<span class='badge badge-out'>📤 Stock Out</span>";
-    return "<tr><td>"+(i+1)+"</td><td>"+r.tanggal+"</td><td>"+tipeBadge+"</td><td title='"+r.sku+"'>"+r.sku+"</td><td title='"+r.nama+"'>"+r.nama+"</td><td><span class='badge badge-gudang'>"+r.warehouse+"</span></td><td><span class='badge badge-out'>-"+r.qty+" pcs</span></td><td><strong>"+uom+"</strong></td><td>"+rpFormat(r.harga)+"</td><td><strong>"+rpFormat(nilai)+"</strong></td><td title='"+r.ref+"'>"+r.ref+"</td><td style='text-align:center'>"+(isAdmin()?"<button class='btn-action btn-edit' onclick='editStockOut(\""+r.id+"\")'>Edit</button> <button class='btn-action btn-hapus' onclick='hapusStockOut(\""+r.id+"\")'>Hapus</button>":"<span style='color:#a0aec0;font-size:10px'>-</span>")+"</td></tr>";
+    tbody.innerHTML+="<tr>"+
+      "<td>"+(i+1)+"</td><td>"+r.tanggal+"</td>"+
+      "<td>"+tipeBadge+"</td>"+
+      "<td title='"+r.sku+"'>"+r.sku+"</td><td title='"+r.nama+"'>"+r.nama+"</td>"+
+      "<td><span class='badge badge-gudang'>"+r.warehouse+"</span></td>"+
+      "<td><span class='badge badge-out'>-"+r.qty+" pcs</span></td>"+
+      "<td><strong>"+uom+"</strong></td><td>"+rpFormat(r.harga)+"</td><td><strong>"+rpFormat(nilai)+"</strong></td>"+
+      "<td title='"+r.ref+"'>"+r.ref+"</td>"+
+      "<td style='text-align:center'>"+(isAdmin()?"<button class='btn-action btn-edit' onclick='editStockOut(\""+r.id+"\")'>Edit</button> <button class='btn-action btn-hapus' onclick='hapusStockOut(\""+r.id+"\")'>Hapus</button>":"<span style='color:#a0aec0;font-size:10px'>-</span>")+"</td>"+
+    "</tr>";
   });
-  tbody.innerHTML="";
-  tbody.appendChild(buildRows(rows));
-  attachPagination(tbody,"pg-out",hasil.length,page,PAGE_SIZE,function(pg){ _pageState.out=pg; tampilkanStockOut(); });
 }
 
 function exportStockOut(){
@@ -3176,10 +2632,11 @@ function simpanTransfer(){
     let oldIdx=transferLog.findIndex(r=>r.id==editingTrId);
     if(oldIdx!==-1){
       let old=transferLog[oldIdx];
+      // Reverse old transfer
       let srcItem=daftarBarang.find(b=>b.sku.toUpperCase()===old.sku.toUpperCase()&&(b.warehouse||"Bintaro").toUpperCase()===old.fromWh.toUpperCase());
       let dstItem=daftarBarang.find(b=>b.sku.toUpperCase()===old.sku.toUpperCase()&&(b.warehouse||"Bintaro").toUpperCase()===old.toWh.toUpperCase());
       if(srcItem) srcItem.totalPcs=Number(srcItem.totalPcs)+old.qty;
-      if(dstItem) dstItem.totalPcs=Number(dstItem.totalPcs)-old.qty;
+      if(dstItem) dstItem.totalPcs=Number(dstItem.totalPcs)-old.qty; // may go negative
       transferLog.splice(oldIdx,1);
     }
     editingTrId=null;
@@ -3191,20 +2648,21 @@ function simpanTransfer(){
   let stokSaat=srcItem?Number(srcItem.totalPcs):0;
   if(stokSaat<Number(qty)){
     let selisih=Number(qty)-stokSaat;
-    let msg = t("insufficient_stock") + stokSaat + " " + t("confirm_insufficient") ||
-             "⚠️ Stok tidak mencukupi! Stok tersedia: "+stokSaat+" pcs. Akan ada selisih "+selisih+" pcs yang tercatat sebagai hutang stok. Tetap lanjut?";
-    if(!confirm(msg)){ return; }
+    if(!confirm((stokSaat<0?"⚠️ Stok sudah minus "+Math.abs(stokSaat)+" pcs! ":"⚠️ Stok tidak mencukupi! Stok tersedia: "+stokSaat+" pcs. ")+"Akan ada selisih "+selisih+" pcs yang tercatat sebagai hutang stok. Tetap lanjut?")){ return; }
   }
 
   let entry={id:Date.now()+Math.random(),tanggal,sku:skuFinal,kategori,nama,isiKarton:Number(isiKarton)||0,harga:Number(harga)||0,fromWh,toWh,qty:Number(qty),ref:ref||"-"};
   transferLog.push(entry);
+  // Reduce from source (allow negative - selisih stok)
   if(srcItem){ srcItem.totalPcs=Number(srcItem.totalPcs)-Number(qty); }
+  // Add to destination
   let dstItem=daftarBarang.find(b=>b.sku.toUpperCase()===skuFinal.toUpperCase()&&(b.warehouse||"Bintaro").toUpperCase()===toWh.toUpperCase());
   if(dstItem){ dstItem.totalPcs=Number(dstItem.totalPcs)+Number(qty); }
   else { daftarBarang.push({sku:skuFinal,kategori,nama,isiKarton:Number(isiKarton)||0,warehouse:toWh,totalPcs:Number(qty),harga:Number(harga)||0}); }
   fbSave("transferLog", transferLog);
   fbSave("barang", daftarBarang);
   markDirty("transfer","monitor","ledger","analisis");
+  // Reset
   document.getElementById("tr-sku").value="";
   document.getElementById("tr-sku").removeAttribute("data-full-sku");
   ["tr-nama","tr-kategori","tr-isiKarton","tr-harga","tr-qty","tr-ref","tr-stok-info"].forEach(id=>{ document.getElementById(id).value=""; });
@@ -3246,10 +2704,11 @@ function hapusTransfer(id){
   let idx=transferLog.findIndex(r=>r.id==id);
   if(idx!==-1){
     let r=transferLog[idx];
+    // Reverse the transfer
     let srcItem=daftarBarang.find(b=>b.sku.toUpperCase()===r.sku.toUpperCase()&&(b.warehouse||"Bintaro").toUpperCase()===r.fromWh.toUpperCase());
     let dstItem=daftarBarang.find(b=>b.sku.toUpperCase()===r.sku.toUpperCase()&&(b.warehouse||"Bintaro").toUpperCase()===r.toWh.toUpperCase());
     if(srcItem) srcItem.totalPcs=Number(srcItem.totalPcs)+r.qty;
-    if(dstItem) dstItem.totalPcs=Number(dstItem.totalPcs)-r.qty;
+    if(dstItem) dstItem.totalPcs=Number(dstItem.totalPcs)-r.qty; // may go negative
     transferLog.splice(idx,1);
     fbSave("transferLog", transferLog);
     fbSave("barang", daftarBarang);
@@ -3266,7 +2725,7 @@ function hapusSemuaTransfer(){
     let srcItem=daftarBarang.find(b=>b.sku.toUpperCase()===r.sku.toUpperCase()&&(b.warehouse||"Bintaro").toUpperCase()===r.fromWh.toUpperCase());
     let dstItem=daftarBarang.find(b=>b.sku.toUpperCase()===r.sku.toUpperCase()&&(b.warehouse||"Bintaro").toUpperCase()===r.toWh.toUpperCase());
     if(srcItem) srcItem.totalPcs=Number(srcItem.totalPcs)+r.qty;
-    if(dstItem) dstItem.totalPcs=Number(dstItem.totalPcs)-r.qty;
+    if(dstItem) dstItem.totalPcs=Number(dstItem.totalPcs)-r.qty; // may go negative
   });
   if(wh==="All") transferLog=[];
   else transferLog=transferLog.filter(r=>r.fromWh.toUpperCase()!==wh.toUpperCase()&&r.toWh.toUpperCase()!==wh.toUpperCase());
@@ -3289,17 +2748,20 @@ function tampilkanTransfer(){
     let matchW=wh==="All"||r.fromWh.toUpperCase()===wh.toUpperCase()||r.toWh.toUpperCase()===wh.toUpperCase();
     return matchK&&matchF&&matchT&&matchW;
   }).sort((a,b)=>b.tanggal.localeCompare(a.tanggal));
-  if(hasil.length===0){ tbody.innerHTML="<tr><td colspan='11' class='kosong'>"+t("no_data_transfer")+"</td></tr>"; attachPagination(tbody,"pg-tr",0,1,PAGE_SIZE,()=>{}); return; }
-  let page=_pageState.tr;
-  let sliced=hasil.slice((page-1)*PAGE_SIZE,page*PAGE_SIZE);
-  let rows=sliced.map(function(r,ii){
-    let i=(page-1)*PAGE_SIZE+ii;
+  if(hasil.length===0){ tbody.innerHTML="<tr><td colspan='11' class='kosong'>"+t("no_data_transfer")+"</td></td>"; return; }
+  hasil.forEach(function(r,i){
     let uom=hitungUOM(r.qty,r.isiKarton);
-    return "<tr><td>"+(i+1)+"</td><td>"+r.tanggal+"</td><td title='"+r.sku+"'>"+r.sku+"</td><td title='"+r.nama+"'>"+r.nama+"</td><td><span class='badge badge-gudang'>"+r.fromWh+"</span></td><td style='text-align:center;color:#7c3aed;font-weight:700'>→</td><td><span class='badge badge-gudang' style='background:#553c9a'>"+r.toWh+"</span></td><td><span class='badge badge-transfer'>"+r.qty+" pcs</span></td><td><strong>"+uom+"</strong></td><td title='"+r.ref+"'>"+r.ref+"</td><td style='text-align:center'>"+(isAdmin()?"<button class='btn-action btn-edit' onclick='editTransfer(\""+r.id+"\")'>Edit</button> <button class='btn-action btn-hapus' onclick='hapusTransfer(\""+r.id+"\")'>Hapus</button>":"<span style='color:#a0aec0;font-size:10px'>-</span>")+"</td></tr>";
+    tbody.innerHTML+="<tr>"+
+      "<td>"+(i+1)+"</td><td>"+r.tanggal+"</td><td title='"+r.sku+"'>"+r.sku+"</td><td title='"+r.nama+"'>"+r.nama+"</td>"+
+      "<td><span class='badge badge-gudang'>"+r.fromWh+"</span></td>"+
+      "<td style='text-align:center;color:#7c3aed;font-weight:700'>→</span></td>"+
+      "<td><span class='badge badge-gudang' style='background:#553c9a'>"+r.toWh+"</span></td>"+
+      "<td><span class='badge badge-transfer'>"+r.qty+" pcs</span></td>"+
+      "<td><strong>"+uom+"</strong></td>"+
+      "<td title='"+r.ref+"'>"+r.ref+"</td>"+
+      "<td style='text-align:center'>"+(isAdmin()?"<button class='btn-action btn-edit' onclick='editTransfer(\""+r.id+"\")'>Edit</button> <button class='btn-action btn-hapus' onclick='hapusTransfer(\""+r.id+"\")'>Hapus</button>":"<span style='color:#a0aec0;font-size:10px'>-</span>")+"</td>"+
+    "</tr>";
   });
-  tbody.innerHTML="";
-  tbody.appendChild(buildRows(rows));
-  attachPagination(tbody,"pg-tr",hasil.length,page,PAGE_SIZE,function(pg){ _pageState.tr=pg; tampilkanTransfer(); });
 }
 
 function exportTransfer(){
@@ -3320,7 +2782,7 @@ function exportTransfer(){
 }
 
 // =========================================================================
-// STOCK LEDGER (IN + OUT + TRANSFER)
+// STOCK LEDGER (IN + OUT + TRANSFER) - FIXED SEARCH
 // =========================================================================
 function tampilkanLedger(){
   let tbody = document.getElementById("tabelLedger");
@@ -3331,26 +2793,30 @@ function tampilkanLedger(){
   let type = document.getElementById("led-type").value;
   tbody.innerHTML = "";
 
+  // Gabungkan semua transaksi
   let inData    = stockInLog.map(r => ({...r, tipe:"IN", warehouse: r.warehouse||"Bintaro"}));
   let outData   = stockOutLog.map(r => ({...r, tipe:"OUT", warehouse: r.warehouse||"Bintaro"}));
   let trOutData = transferLog.map(r => ({...r, tipe:"TRANSFER_OUT", warehouse: r.fromWh, ref:"Transfer → "+r.toWh+(r.ref&&r.ref!=="-"?" | "+r.ref:"")}));
   let trInData  = transferLog.map(r => ({...r, tipe:"TRANSFER_IN",  warehouse: r.toWh,   ref:"Transfer ← "+r.fromWh+(r.ref&&r.ref!=="-"?" | "+r.ref:"")}));
   let semua = [...inData, ...outData, ...trOutData, ...trInData];
 
+  // Urutkan ascending dulu (terlama ke terbaru) untuk hitung running balance
   semua.sort((a,b) => {
     let d = a.tanggal.localeCompare(b.tanggal);
     return d !== 0 ? d : (Number(a.id)||0) - (Number(b.id)||0);
   });
 
-  let runBalance = {};
+  // Hitung running balance per SKU+Gudang
+  let runBalance = {}; // key: "SKU|||GUDANG"
   semua.forEach(r => {
     let key = (r.sku||"").toUpperCase()+"|||"+(r.warehouse||"").toUpperCase();
     if(!runBalance[key]) runBalance[key] = 0;
     if(r.tipe==="IN"||r.tipe==="TRANSFER_IN")       runBalance[key] += (r.qty||0);
-    else if(r.tipe==="OUT"||r.tipe==="TRANSFER_OUT") runBalance[key] = runBalance[key] - (r.qty||0);
+    else if(r.tipe==="OUT"||r.tipe==="TRANSFER_OUT") runBalance[key] = runBalance[key] - (r.qty||0); // allow negative (selisih)
     r._runBal = runBalance[key];
   });
 
+  // Sekarang filter & urutkan descending untuk tampil
   let hasil = semua.filter(r => {
     let matchKeyword = keyword===""||
                        (r.sku&&r.sku.toLowerCase().includes(keyword))||
@@ -3365,6 +2831,7 @@ function tampilkanLedger(){
     return d!==0 ? d : (Number(b.id)||0)-(Number(a.id)||0);
   });
 
+  // Summary cards
   let totalIn  = stockInLog.filter(r=>wh==="All"||(r.warehouse||"Bintaro").toUpperCase()===wh.toUpperCase()).reduce((s,r)=>s+(r.qty||0)*(r.harga||0),0);
   let totalOut = stockOutLog.filter(r=>wh==="All"||(r.warehouse||"Bintaro").toUpperCase()===wh.toUpperCase()).reduce((s,r)=>s+(r.qty||0)*(r.harga||0),0);
   let totalStok = daftarBarang.filter(b=>wh==="All"||(b.warehouse||"Bintaro").toUpperCase()===wh.toUpperCase())
@@ -3376,14 +2843,10 @@ function tampilkanLedger(){
 
   if(hasil.length===0){
     tbody.innerHTML=`<tr><td colspan='11' class='kosong'>${t("no_data_ledger")}</td></tr>`;
-    attachPagination(tbody,"pg-led",0,1,PAGE_SIZE,()=>{});
     return;
   }
 
-  let page = _pageState.led;
-  let sliced = hasil.slice((page-1)*PAGE_SIZE, page*PAGE_SIZE);
-  let rows = sliced.map(function(r,ii){
-    let i = (page-1)*PAGE_SIZE+ii;
+  hasil.forEach(function(r,i){
     let uomTrx = hitungUOM(r.qty||0, r.isiKarton||0);
     let sisaPcs = r._runBal !== undefined ? r._runBal : 0;
     let sisaUom = hitungUOM(sisaPcs, r.isiKarton||0);
@@ -3402,7 +2865,7 @@ function tampilkanLedger(){
       qtyTxt  = `<span style='color:#065f46;font-weight:700'>+${r.qty||0} pcs</span>`;
     }
 
-    return `<tr>
+    tbody.innerHTML += `<tr>
       <td>${i+1}</td>
       <td>${r.tanggal||"-"}</td>
       <td>${badge}</td>
@@ -3413,11 +2876,9 @@ function tampilkanLedger(){
       <td><strong>${uomTrx}</strong></td>
       <td><strong style='color:${sisaPcs<0?"#c53030":"#2b6cb0"}'>${sisaPcs<0?"⚠️ ":""}${sisaPcs} pcs${sisaPcs<0?" (selisih)":""}</strong></td>
       <td><strong style='color:${sisaPcs<0?"#c53030":"#2b6cb0"}'>${sisaUom}</strong></td>
+      <td title='${r.ref||"-"}'>${(r.ref||"-").substring(0,25)}${(r.ref||"").length>25?"...":""}</td>
     </tr>`;
   });
-  tbody.innerHTML = "";
-  tbody.appendChild(buildRows(rows));
-  attachPagination(tbody,"pg-led",hasil.length,page,PAGE_SIZE,function(pg){ _pageState.led=pg; tampilkanLedger(); });
 }
 
 function resetLedgerFilter(){
@@ -3437,15 +2898,17 @@ function hapusSemuaLedger(){
   let whU=wh.toUpperCase();
   let matchWh=(w)=>wh==="All"||(w||"Bintaro").toUpperCase()===whU;
 
+  // ----- Stock IN -----
   if(type==="All"||type==="IN"){
     let toRevert=stockInLog.filter(r=>matchWh(r.warehouse));
     toRevert.forEach(r=>{
       let item=daftarBarang.find(b=>b.sku.toUpperCase()===r.sku.toUpperCase()&&(b.warehouse||"Bintaro").toUpperCase()===r.warehouse.toUpperCase());
-      if(item) item.totalPcs=Number(item.totalPcs)-r.qty;
+      if(item) item.totalPcs=Number(item.totalPcs)-r.qty; // allow negative
     });
     stockInLog=stockInLog.filter(r=>!matchWh(r.warehouse));
   }
 
+  // ----- Stock OUT -----
   if(type==="All"||type==="OUT"){
     let toRevert=stockOutLog.filter(r=>matchWh(r.warehouse));
     toRevert.forEach(r=>{
@@ -3455,6 +2918,7 @@ function hapusSemuaLedger(){
     stockOutLog=stockOutLog.filter(r=>!matchWh(r.warehouse));
   }
 
+  // ----- TRANSFER (handle TRANSFER_OUT / TRANSFER_IN / All) -----
   let removeTrIds=new Set();
   transferLog.forEach(r=>{
     let outMatch=matchWh(r.fromWh);
@@ -3471,7 +2935,7 @@ function hapusSemuaLedger(){
       let fromItem=daftarBarang.find(b=>b.sku.toUpperCase()===r.sku.toUpperCase()&&(b.warehouse||"Bintaro").toUpperCase()===r.fromWh.toUpperCase());
       let toItem=daftarBarang.find(b=>b.sku.toUpperCase()===r.sku.toUpperCase()&&(b.warehouse||"Bintaro").toUpperCase()===r.toWh.toUpperCase());
       if(fromItem) fromItem.totalPcs=Number(fromItem.totalPcs)+r.qty;
-      if(toItem)   toItem.totalPcs=Number(toItem.totalPcs)-r.qty;
+      if(toItem)   toItem.totalPcs=Number(toItem.totalPcs)-r.qty; // allow negative
       removeTrIds.add(r.id);
     }
   });
@@ -3497,12 +2961,13 @@ function exportLedger(){
   let trInData=transferLog.map(r=>({...r,tipe:"TRANSFER_IN",warehouse:r.toWh,ref:"Transfer ← "+r.fromWh+(r.ref&&r.ref!=="-"?" | "+r.ref:"")}));
   let semua=[...inData,...outData,...trOutData,...trInData];
   semua.sort((a,b)=>{ let d=a.tanggal.localeCompare(b.tanggal); return d!==0?d:(Number(a.id)||0)-(Number(b.id)||0); });
+  // Hitung running balance
   let runBalance={};
   semua.forEach(r=>{
     let key=(r.sku||"").toUpperCase()+"|||"+(r.warehouse||"").toUpperCase();
     if(!runBalance[key]) runBalance[key]=0;
     if(r.tipe==="IN"||r.tipe==="TRANSFER_IN") runBalance[key]+=(r.qty||0);
-    else runBalance[key]=runBalance[key]-(r.qty||0);
+    else runBalance[key]=runBalance[key]-(r.qty||0); // allow negative (selisih stok)
     r._runBal=runBalance[key];
   });
   let hasil=semua.filter(r=>{
@@ -3555,16 +3020,27 @@ function getMovingCategory(avgPerHari){
   return "NoData";
 }
 
+function durBadge(avgPerHari, stokPcs){
+  if(avgPerHari<=0) return "<span style='color:#a0aec0;font-size:11px'>∞</span>";
+  let hari=stokPcs/avgPerHari;
+  let bln=hari/30;
+  let warna=bln>=3?"#38a169":bln>=1?"#d69e2e":"#e53e3e";
+  return "<span style='font-weight:700;color:"+warna+"'>"+bln.toFixed(1)+" bln <span style='font-weight:400;font-size:10px;color:#718096'>("+Math.round(hari)+" hr)</span></span>";
+}
+
 function getIntransitStok(sku){
+  // Returns total pcs yang sudah InTransit (bukan Draft, bukan Complete) untuk suatu SKU
   return intransitLog.filter(r=>r.sku.toUpperCase()===sku.toUpperCase()&&r.status==="InTransit")
                      .reduce((s,r)=>s+Number(r.qty),0);
 }
 
 function getDraftStok(sku){
+  // Returns total pcs yang masih Draft (planning PO belum confirmed) untuk suatu SKU
   return intransitLog.filter(r=>r.sku.toUpperCase()===sku.toUpperCase()&&r.status==="Draft")
                      .reduce((s,r)=>s+Number(r.qty),0);
 }
 
+// ==================== FUNGSI HELPER BARU (TAMBAHKAN) ====================
 function hitungKarton(totalPcs, isiKarton) {
     if (!isiKarton || isiKarton <= 0) return 0;
     return totalPcs / isiKarton;
@@ -3579,6 +3055,7 @@ function hitungAvgOutKarton(sku, warehouse, periodeHari) {
         return matchSku && matchWh && matchDate;
     });
     let totalQtyPcs = filtered.reduce((s, r) => s + r.qty, 0);
+    // Cari isiKarton dari master data
     let semuaMaster = dapatkanSemuaMasterData();
     let master = semuaMaster.find(m => m.sku.toUpperCase() === sku.toUpperCase());
     let isiKarton = master ? (master.qtyCtn || 1) : 1;
@@ -3593,6 +3070,7 @@ function hitungAvgOutKarton(sku, warehouse, periodeHari) {
     return { totalQtyPcs, totalQtyCtn, avgPerHariCtn: hari > 0 ? totalQtyCtn / hari : 0, hari };
 }
 
+// ==================== FUNGSI TAMPILKAN ANALISIS (REPLACE) ====================
 function tampilkanAnalisis() {
     let katSel = document.getElementById("an-kategori");
     if (katSel.options.length <= 1) {
@@ -3616,6 +3094,7 @@ function tampilkanAnalisis() {
         return matchK && matchW && matchKat;
     });
     
+    // Cache untuk perhitungan
     let _cacheAvg = {};
     function cachedAvg(sku, w, p) {
         let k = sku + "||" + w + "||" + p;
@@ -3623,6 +3102,7 @@ function tampilkanAnalisis() {
         return _cacheAvg[k];
     }
 
+    // Update summary cards (tetap hitung berdasarkan PCS untuk konsistensi kategori)
     let cF = 0, cM = 0, cS = 0, cN = 0;
     hasil.forEach(b => {
         let avgPcs = hitungAvgOut(b.sku, b.warehouse || "Bintaro", periode).avgPerHari;
@@ -3644,6 +3124,7 @@ function tampilkanAnalisis() {
     let tbody = document.getElementById("tabelAnalisis");
     if (hasil.length === 0) { tbody.innerHTML = "<tr><td colspan='13' class='kosong'>Tidak ada data</td></tr>"; return; }
     
+    // Sort berdasarkan avg keluar per hari (dalam KARTON)
     hasil.sort((a, b) => cachedAvg(b.sku, b.warehouse || "Bintaro", periode).avgPerHariCtn - cachedAvg(a.sku, a.warehouse || "Bintaro", periode).avgPerHariCtn);
 
     let rows = hasil.map(function (b, i) {
@@ -3661,7 +3142,7 @@ function tampilkanAnalisis() {
         let stokAktualPcs = Number(b.totalPcs);
         let isiKarton = Number(b.isiKarton) || 1;
         let stokAktualCtn = stokAktualPcs / isiKarton;
-        let stokIT = getIntransitStok(b.sku);
+        let stokIT = getIntransitStok(b.sku); // dalam PCS
         let stokITCtn = stokIT / isiKarton;
         let stokDraft = getDraftStok(b.sku);
         let stokDraftCtn = stokDraft / isiKarton;
@@ -3671,9 +3152,11 @@ function tampilkanAnalisis() {
         let itCell = stokIT > 0 ? "<span style='font-size:10px;color:#92400e;font-weight:600'>+" + stokITCtn.toFixed(1) + " ctn</span>" : "<span style='font-size:10px;color:#a0aec0'>-</span>";
         if (stokDraft > 0) itCell += "<br><span style='font-size:10px;color:#2b6cb0'>📝 " + stokDraftCtn.toFixed(1) + " ctn (draft)</span>";
         
+        // Avg per Bulan (30hr) dalam KARTON
         let avg1BlnCtn = avg1Bln > 0 ? "<span style='color:#2b6cb0;font-weight:600'>" + (avg1Bln * 30).toFixed(1) + " ctn</span><br><span style='font-size:10px;color:#718096'>" + avg1Bln.toFixed(2) + " ctn/hr</span>" : "<span style='color:#a0aec0;font-size:10px'>-</span>";
         let avg3BlnCtn = avg3Bln > 0 ? "<span style='color:#553c9a;font-weight:600'>" + (avg3Bln * 90).toFixed(1) + " ctn</span><br><span style='font-size:10px;color:#718096'>" + avg3Bln.toFixed(2) + " ctn/hr</span>" : "<span style='color:#a0aec0;font-size:10px'>-</span>";
         
+        // Ketahanan Stok dalam BULAN (berdasarkan KARTON)
         let durasiBulan = "-";
         if (avgPerHariCtn > 0) {
             let hari = totalStokCtn / avgPerHariCtn;
@@ -3705,6 +3188,7 @@ function tampilkanAnalisis() {
     tbody.appendChild(buildRows(rows));
 }
 
+// ==================== FUNGSI EXPORT ANALISIS (REPLACE) ====================
 function exportAnalisis() {
     let periode = parseInt(document.getElementById("an-periode").value) || 0;
     let wh = document.getElementById("an-wh").value;
@@ -3732,20 +3216,21 @@ function exportAnalisis() {
 }
 
 // =========================================================================
-// ANALISIS STOK - PLANNING PO PANEL
+// ANALISIS STOK - PLANNING PO PANEL (inline)
 // =========================================================================
-let anPOCurrentItem = null;
+let anPOCurrentItem = null; // {sku, nama, stokPcs, isiKarton, avgPerHari, warehouse}
 
 function bukaAnPOPanel(sku, nama, stokPcs, isiKarton, avgPerHari, whEncoded){
   let wh=decodeURIComponent(whEncoded);
   anPOCurrentItem={sku, nama, stokPcs:Number(stokPcs), isiKarton:Number(isiKarton), avgPerHari:Number(avgPerHari), warehouse:wh};
   document.getElementById("an-po-panel").style.display="block";
-  document.getElementById("an-po-nama-label").innerHTML=nama+" ("+sku+") — "+wh;
+  document.getElementById("an-po-nama-label").innerText=nama+" ("+sku+") — "+wh;
   document.getElementById("an-po-stok").value=stokPcs;
   document.getElementById("an-po-avg").value=Number(avgPerHari).toFixed(2);
   document.getElementById("an-po-isi").value=isiKarton;
   document.getElementById("an-po-qty-ctn").value="";
   document.getElementById("an-po-preview").style.display="none";
+  // Scroll ke atas agar panel terlihat
   document.getElementById("an-po-panel").scrollIntoView({behavior:"smooth",block:"start"});
 }
 
@@ -3768,17 +3253,17 @@ function anHitungPO(){
   if(qtyCtn<=0){ preview.style.display="none"; return; }
   preview.style.display="grid";
 
-  document.getElementById("an-po-res-pcs").innerHTML=qtyPcs.toLocaleString("id-ID")+" pcs ("+qtyCtn+" ctn)";
-  document.getElementById("an-po-res-after").innerHTML=afterPcs.toLocaleString("id-ID")+" pcs";
+  document.getElementById("an-po-res-pcs").innerText=qtyPcs.toLocaleString("id-ID")+" pcs ("+qtyCtn+" ctn)";
+  document.getElementById("an-po-res-after").innerText=afterPcs.toLocaleString("id-ID")+" pcs";
 
   if(avgOut<=0){
-    document.getElementById("an-po-res-dur-now").innerHTML="∞";
-    document.getElementById("an-po-res-dur-after").innerHTML="∞";
+    document.getElementById("an-po-res-dur-now").innerText="∞";
+    document.getElementById("an-po-res-dur-after").innerText="∞";
   } else {
     let hNow=stokPcs/avgOut;
     let hAfter=afterPcs/avgOut;
-    document.getElementById("an-po-res-dur-now").innerHTML=(hNow/30).toFixed(1)+" bln ("+Math.round(hNow)+" hr)";
-    document.getElementById("an-po-res-dur-after").innerHTML=(hAfter/30).toFixed(1)+" bln ("+Math.round(hAfter)+" hr)";
+    document.getElementById("an-po-res-dur-now").innerText=(hNow/30).toFixed(1)+" bln ("+Math.round(hNow)+" hr)";
+    document.getElementById("an-po-res-dur-after").innerText=(hAfter/30).toFixed(1)+" bln ("+Math.round(hAfter)+" hr)";
   }
 }
 
@@ -3791,6 +3276,7 @@ function anSimpanPOKeDraft(){
   let today=new Date().toISOString().split("T")[0];
   let semuaMaster=dapatkanSemuaMasterData();
   let m=semuaMaster.find(i=>i.sku.toUpperCase()===anPOCurrentItem.sku.toUpperCase());
+  // Tambahkan ke intransitLog sebagai Draft
   let entry={
     id:Date.now()+Math.random(),
     tanggal:today,
@@ -3834,6 +3320,7 @@ function itSuggestion(){
       document.getElementById("it-sku-input").value=m.sku;
       document.getElementById("it-nama").value=m.bintaro;
       document.getElementById("it-isi-ctn").value=m.qtyCtn;
+      // recalc ctn if qty pcs already entered
       let pcsNow=parseInt(document.getElementById("it-qty").value)||0;
       if(pcsNow>0&&m.qtyCtn>0) document.getElementById("it-qty-ctn").value=Math.floor(pcsNow/m.qtyCtn);
       dd.style.display="none";
@@ -3881,7 +3368,8 @@ function cekNotifIntransit(){
 function bukaModalIntransit(id){
   let today=new Date().toISOString().split("T")[0];
   if(id===null){
-    document.getElementById("it-modal-title").textContent=t("it_add") || "🚚 Tambah In Transit";
+    // Add new
+    document.getElementById("it-modal-title").innerText="🚚 Tambah In Transit";
     document.getElementById("it-edit-id").value="";
     document.getElementById("it-tanggal").value=today;
     document.getElementById("it-sku-input").value="";
@@ -3894,9 +3382,10 @@ function bukaModalIntransit(id){
     document.getElementById("it-wh-group").style.display="none";
     itSelectedItem=null;
   } else {
+    // Edit existing
     let r=intransitLog.find(x=>String(x.id)===String(id));
     if(!r) return;
-    document.getElementById("it-modal-title").textContent="✏️ Edit In Transit";
+    document.getElementById("it-modal-title").innerText="✏️ Edit In Transit";
     document.getElementById("it-edit-id").value=r.id;
     document.getElementById("it-tanggal").value=r.tanggal;
     document.getElementById("it-sku-input").value=r.sku;
@@ -3931,11 +3420,14 @@ function simpanIntransit(){
   let warehouse=document.getElementById("it-warehouse").value;
   let editId=document.getElementById("it-edit-id").value;
 
-  if(!tanggal||!skuInput||!nama||qty<=0){ alert(t("alert_fill_all")); return; }
+  if(!tanggal||!skuInput||!nama||qty<=0){ alert("Lengkapi semua field!"); return; }
 
+  // If status Complete, move stock to warehouse
   if(status==="Complete"){
+    // Find or create the record in daftarBarang and add stock
     let existing=daftarBarang.find(b=>b.sku.toUpperCase()===skuInput.toUpperCase()&&(b.warehouse||"Bintaro").toUpperCase()===warehouse.toUpperCase());
     
+    // Check if editing existing Complete → don't double-add
     let wasAlreadyComplete=false;
     if(editId){
       let old=intransitLog.find(r=>String(r.id)===String(editId));
@@ -3943,12 +3435,15 @@ function simpanIntransit(){
     }
 
     if(!wasAlreadyComplete){
+      // If editing and previously was intransit/hold, no stock reversal needed (stock not yet added)
+      // Add stock to warehouse
       if(existing){ existing.totalPcs=Number(existing.totalPcs)+qty; }
       else {
         let semuaMaster=dapatkanSemuaMasterData();
         let m=semuaMaster.find(i=>i.sku.toUpperCase()===skuInput.toUpperCase());
         daftarBarang.push({sku:skuInput,kategori:m?m.kategori:"General",nama:nama,isiKarton:isiCtn,warehouse,totalPcs:qty,harga:m?m.harga:0});
       }
+      // Also log as stock in
       let today2=tanggal;
       let semuaMaster=dapatkanSemuaMasterData();
       let m=semuaMaster.find(i=>i.sku.toUpperCase()===skuInput.toUpperCase());
@@ -3958,10 +3453,12 @@ function simpanIntransit(){
       markDirty("monitor","in","ledger","analisis");
     }
   } else if(editId){
+    // Was editing: if old status was Complete, reverse the stock addition
     let old=intransitLog.find(r=>String(r.id)===String(editId));
     if(old&&old.status==="Complete"){
       let existing2=daftarBarang.find(b=>b.sku.toUpperCase()===old.sku.toUpperCase()&&(b.warehouse||"Bintaro").toUpperCase()===(old.warehouse||"").toUpperCase());
       if(existing2) existing2.totalPcs=Number(existing2.totalPcs)-old.qty;
+      // Remove the matching stockIn log
       stockInLog=stockInLog.filter(r=>!(r.sku.toUpperCase()===old.sku.toUpperCase()&&r.ref==="Intransit Complete"&&r.qty===old.qty));
       fbSave("stockInLog", stockInLog);
       fbSave("barang", daftarBarang);
@@ -3984,7 +3481,7 @@ function simpanIntransit(){
   tutupModalIntransit(null);
   tampilkanIntransit();
   markDirty("analisis");
-  alert(t("alert_ok"));
+  alert("✅ Berhasil disimpan!");
 }
 
 function tampilkanIntransit(){
@@ -4002,21 +3499,16 @@ function tampilkanIntransit(){
     return matchK&&matchF&&matchT&&matchS;
   }).sort((a,b)=>b.tanggal.localeCompare(a.tanggal));
 
-  let draftCount=intransitLog.filter(r=>r.status==="Draft").length;
-  let transitCount=intransitLog.filter(r=>r.status==="InTransit").length;
-  let doneCount=intransitLog.filter(r=>r.status==="Complete").length;
-  let planCount=intransitLog.filter(r=>r.status==="Draft"&&r.fromPlanning).length;
-  document.getElementById("it-cnt-draft").innerHTML=draftCount+" item";
-  document.getElementById("it-cnt-transit").innerHTML=transitCount+" item";
-  document.getElementById("it-cnt-done").innerHTML=doneCount+" item";
-  document.getElementById("it-cnt-planning").innerHTML=planCount+" item";
+  // Update summary cards
+  document.getElementById("it-cnt-draft").innerText=intransitLog.filter(r=>r.status==="Draft").length+" item";
+  document.getElementById("it-cnt-transit").innerText=intransitLog.filter(r=>r.status==="InTransit").length+" item";
+  document.getElementById("it-cnt-done").innerText=intransitLog.filter(r=>r.status==="Complete").length+" item";
+  document.getElementById("it-cnt-planning").innerText=intransitLog.filter(r=>r.status==="Draft"&&r.fromPlanning).length+" item";
   cekNotifIntransit();
 
-  if(hasil.length===0){ tbody.innerHTML="<tr><td colspan='11' class='kosong'>Tidak ada data intransit</td></tr>"; attachPagination(tbody,"pg-it",0,1,PAGE_SIZE,()=>{}); return; }
-  let page=_pageState.it;
-  let sliced=hasil.slice((page-1)*PAGE_SIZE,page*PAGE_SIZE);
-  let rows=sliced.map(function(r,ii){
-    let i=(page-1)*PAGE_SIZE+ii;
+  if(hasil.length===0){ tbody.innerHTML="<tr><td colspan='11' class='kosong'>Tidak ada data intransit</td></tr>"; return; }
+  tbody.innerHTML="";
+  hasil.forEach(function(r,i){
     let status=r.status||"InTransit";
     let badgeSt=status==="Draft"?"<span class='badge-hold' style='background:#dbeafe;color:#1e40af'>📝 Draft</span>":
                 status==="InTransit"?"<span class='badge-intransit'>🚚 InTransit</span>":
@@ -4024,7 +3516,7 @@ function tampilkanIntransit(){
     let uom=hitungUOM(r.qty,r.isiKarton||0);
     let whTxt=status==="Complete"?("<span class='badge badge-gudang'>"+(r.warehouse||"-")+"</span>"):"<span style='color:#a0aec0;font-size:10px'>Belum</span>";
     let tglComp=r.tglComplete||"-";
-    return "<tr>"+
+    tbody.innerHTML+="<tr>"+
       "<td>"+(i+1)+"</td>"+
       "<td>"+r.tanggal+"</td>"+
       "<td style='font-size:10px' title='"+r.sku+"'>"+r.sku+"</td>"+
@@ -4041,9 +3533,6 @@ function tampilkanIntransit(){
       "</td>"+
     "</tr>";
   });
-  tbody.innerHTML="";
-  tbody.appendChild(buildRows(rows));
-  attachPagination(tbody,"pg-it",hasil.length,page,PAGE_SIZE,function(pg){ _pageState.it=pg; tampilkanIntransit(); });
 }
 
 function hapusIntransit(id){
@@ -4051,6 +3540,7 @@ function hapusIntransit(id){
   if(!confirm(t("confirm_delete_row"))) return;
   let r=intransitLog.find(x=>String(x.id)===String(id));
   if(r&&r.status==="Complete"){
+    // Reverse stock if was complete
     let existing=daftarBarang.find(b=>b.sku.toUpperCase()===r.sku.toUpperCase()&&(b.warehouse||"Bintaro").toUpperCase()===(r.warehouse||"").toUpperCase());
     if(existing) existing.totalPcs=Number(existing.totalPcs)-r.qty;
     stockInLog=stockInLog.filter(x=>!(x.sku.toUpperCase()===r.sku.toUpperCase()&&x.ref==="Intransit Complete"&&x.qty===r.qty));
@@ -4067,6 +3557,7 @@ function hapusIntransit(id){
 function hapusSemuaIntransit(){
   if(!isAdmin()){ alert("⛔ Akses ditolak. Fitur ini hanya untuk Admin."); return; }
   if(!confirm(t("confirm_delete_all"))) return;
+  // Reverse all completed
   intransitLog.filter(r=>r.status==="Complete").forEach(r=>{
     let existing=daftarBarang.find(b=>b.sku.toUpperCase()===r.sku.toUpperCase()&&(b.warehouse||"Bintaro").toUpperCase()===(r.warehouse||"").toUpperCase());
     if(existing) existing.totalPcs=Number(existing.totalPcs)-r.qty;
@@ -4080,34 +3571,10 @@ function hapusSemuaIntransit(){
   markDirty("monitor","in","ledger","analisis");
 }
 
-function exportIntransit(){
-  let keyword=document.getElementById("it-search").value.toLowerCase();
-  let from=document.getElementById("it-filter-from").value;
-  let to=document.getElementById("it-filter-to").value;
-  let statusF=document.getElementById("it-filter-status").value;
-  let hasil=intransitLog.filter(r=>{
-    let matchK=r.sku.toLowerCase().includes(keyword)||r.nama.toLowerCase().includes(keyword);
-    let matchF=!from||r.tanggal>=from;
-    let matchT=!to||r.tanggal<=to;
-    let matchS=statusF==="All"||(r.status||"InTransit")===statusF;
-    return matchK&&matchF&&matchT&&matchS;
-  }).sort((a,b)=>b.tanggal.localeCompare(a.tanggal));
-  if(hasil.length===0){ alert("⚠️ Tidak ada data untuk di-export!"); return; }
-  let rows=[["Tgl. Masuk","SKU","Nama Barang","Qty (pcs)","Konversi","Status","Keterangan","Gudang Tujuan","Tgl. Complete"]];
-  hasil.forEach(r=>{
-    let uom=hitungUOM(r.qty,r.isiKarton||0);
-    rows.push([r.tanggal,r.sku,r.nama,r.qty,uom,r.status||"InTransit",r.keterangan||"-",r.warehouse||"-",r.tglComplete||"-"]);
-  });
-  let wb=XLSX.utils.book_new();
-  let ws=XLSX.utils.aoa_to_sheet(rows);
-  ws['!cols']=[{wch:12},{wch:30},{wch:38},{wch:10},{wch:14},{wch:12},{wch:30},{wch:14},{wch:14}];
-  XLSX.utils.book_append_sheet(wb,ws,"InTransit");
-  XLSX.writeFile(wb,"InTransit_Export.xlsx");
-}
-
 // =========================================================================
 // SALES ANALYTICS
 // =========================================================================
+// ==================== SALES ANALYTICS - VERSION WITH CARTON ====================
 function tampilkanSales() {
     let keyword = document.getElementById("sa-search").value.toLowerCase();
     let wh = document.getElementById("sa-wh").value;
@@ -4116,6 +3583,7 @@ function tampilkanSales() {
     let tipeF = document.getElementById("sa-tipe").value;
     let viewMode = document.getElementById("sa-view").value;
 
+    // Ambil data master untuk konversi PCS -> KARTON
     let semuaMaster = dapatkanSemuaMasterData();
 
     let hasil = stockOutLog.filter(r => {
@@ -4127,9 +3595,11 @@ function tampilkanSales() {
         return matchK && matchW && matchF && matchT && matchTipe;
     }).sort((a, b) => b.tanggal.localeCompare(a.tanggal));
 
+    // Hitung total dalam PCS dan KARTON
     let totalQtyPcs = hasil.reduce((s, r) => s + r.qty, 0);
     let totalNilaiAll = hasil.reduce((s, r) => s + (r.qty * r.harga), 0);
     
+    // Konversi total Qty ke KARTON (rata-rata berdasarkan isi karton masing-masing SKU)
     let totalQtyCtn = 0;
     hasil.forEach(r => {
         let master = semuaMaster.find(m => m.sku.toUpperCase() === r.sku.toUpperCase());
@@ -4141,6 +3611,7 @@ function tampilkanSales() {
     document.getElementById("sa-total-qty").innerHTML = totalQtyCtn.toFixed(1) + " ctn <span style='font-size:10px;color:#718096'>(" + totalQtyPcs.toLocaleString("id-ID") + " pcs)</span>";
     document.getElementById("sa-total-nilai").innerText = rpFormat(totalNilaiAll);
 
+    // SKU Terlaris (dalam KARTON)
     let skuMapCtn = {};
     hasil.forEach(r => {
         let master = semuaMaster.find(m => m.sku.toUpperCase() === r.sku.toUpperCase());
@@ -4151,6 +3622,7 @@ function tampilkanSales() {
     let topSku = Object.entries(skuMapCtn).sort((a, b) => b[1] - a[1])[0];
     document.getElementById("sa-top-sku").innerHTML = topSku ? topSku[0] + " (" + topSku[1].toFixed(1) + " ctn)" : "-";
 
+    // Hitung rata-rata per hari (dalam KARTON)
     if (hasil.length > 0) {
         let dates = hasil.map(r => r.tanggal).sort();
         let d1 = new Date(dates[dates.length - 1]);
@@ -4169,7 +3641,7 @@ function tampilkanSales() {
     let rows;
 
     if (viewMode === "rekap") {
-        thead.innerHTML = "<tr><th>"+t("no")+"</th><th>"+t("th_sku")+"</th><th>"+t("th_nama")+"</th><th>"+t("th_gudang")+"</th><th>"+t("total_transactions")+"</th><th>"+t("total_qty_out_ctn")+"</th><th>"+t("total_qty_out_pcs")+"</th><th>"+t("th_konversi")+"</th><th>"+t("th_total_nilai")+"</th><th>"+t("first_date")+"</th><th>"+t("last_date")+"</th></tr>";
+        thead.innerHTML = "<tr><th>No</th><th>SKU</th><th>Nama Barang</th><th>Gudang</th><th>Total Transaksi</th><th>Total Qty Keluar (Karton)</th><th>Total Qty Keluar (Pcs)</th><th>Konversi</th><th>Total Nilai</th><th>Tgl Pertama</th><th>Tgl Terakhir</th></tr>";
         
         let grouped = {};
         hasil.forEach(r => {
@@ -4199,7 +3671,7 @@ function tampilkanSales() {
         
         let grpRows = Object.values(grouped).sort((a, b) => b.qtyCtn - a.qtyCtn);
         if (grpRows.length === 0) {
-            tbody.innerHTML = "<tr><td colspan='11' class='kosong'>"+t("no_data_out")+"</td></tr>";
+            tbody.innerHTML = "<tr><td colspan='11' class='kosong'>Tidak ada data penjualan</td></tr>";
             return;
         }
         
@@ -4221,10 +3693,10 @@ function tampilkanSales() {
                 "</tr>";
         });
     } else {
-        thead.innerHTML = "<tr><th>"+t("no")+"</th><th>"+t("th_tanggal")+"</th><th>"+t("transaction_type")+"</th><th>"+t("th_sku")+"</th><th>"+t("th_nama")+"</th><th>"+t("th_gudang")+"</th><th>"+t("qty_out_ctn")+"</th><th>"+t("qty_out_pcs")+"</th><th>"+t("th_konversi")+"</th><th>"+t("th_harga")+"</th><th>"+t("th_total_nilai")+"</th><th>"+t("th_keterangan")+"</th></tr>";
+        thead.innerHTML = "<tr><th>No</th><th>Tanggal</th><th>Tipe</th><th>SKU</th><th>Nama Barang</th><th>Gudang</th><th>Qty Keluar (Karton)</th><th>Qty Keluar (Pcs)</th><th>Konversi</th><th>Harga Satuan</th><th>Total Nilai</th><th>Keterangan</th></tr>";
         
         if (hasil.length === 0) {
-            tbody.innerHTML = "<tr><td colspan='12' class='kosong'>"+t("no_data_out")+"</td></tr>";
+            tbody.innerHTML = "<tr><td colspan='12' class='kosong'>Tidak ada data penjualan</td></tr>";
             return;
         }
         
@@ -4256,9 +3728,9 @@ function tampilkanSales() {
     }
     tbody.innerHTML = "";
     tbody.appendChild(buildRows(rows));
-    attachPagination(tbody,"pg-sa",hasil.length,_pageState.sa,PAGE_SIZE,function(pg){ _pageState.sa=pg; tampilkanSales(); });
 }
 
+// ==================== EXPORT SALES ANALYTICS (KARTON VERSION) ====================
 function exportSales() {
     let keyword = document.getElementById("sa-search").value.toLowerCase();
     let wh = document.getElementById("sa-wh").value;
@@ -4330,79 +3802,316 @@ document.addEventListener("click",function(e){
 });
 
 // =========================================================================
-// DEBOUNCE UTILITY
+// ⚡ PERFORMANCE OPTIMIZATIONS
 // =========================================================================
+
+// --- 1. DEBOUNCE UTILITY ---
 const _debounceTimers = {};
 function debounce(key, fn, delay){
   clearTimeout(_debounceTimers[key]);
   _debounceTimers[key] = setTimeout(fn, delay);
 }
 
-// =========================================================================
-// EXPORT MONITOR STOK
-// =========================================================================
-function exportMonitorStok(){
-  let keyword=document.getElementById("search").value.toLowerCase();
-  let selWH=document.getElementById("filterWarehouse").value;
-  let hasil=daftarBarang.filter(b=>{
-    let wh=b.warehouse||"Bintaro";
-    return (selWH==="All"||wh.toUpperCase()===selWH.toUpperCase())&&
-           (b.nama.toLowerCase().includes(keyword)||b.sku.toLowerCase().includes(keyword));
+// --- 2. THROTTLED FIREBASE SAVE ---
+const _fbSaveTimers = {};
+const _origFbSave = fbSave;
+window.fbSave = function(key, data){
+  clearTimeout(_fbSaveTimers[key]);
+  _fbSaveTimers[key] = setTimeout(()=>{ _origFbSave(key, data); }, 800);
+};
+
+// --- 3. PAGINATION STATE ---
+const PAGE_SIZE = 50;
+const _pageState = { monitor:1, in:1, out:1, tr:1, led:1, an:1, sa:1, it:1 };
+
+// Reset halaman ke 1 saat filter berubah
+const _origMarkDirty = markDirty;
+window.markDirty = function(...tabs){
+  tabs.forEach(t=>{
+    if(t==="monitor") _pageState.monitor=1;
+    else if(t==="in") _pageState.in=1;
+    else if(t==="out") _pageState.out=1;
+    else if(t==="transfer") _pageState.tr=1;
+    else if(t==="ledger") _pageState.led=1;
+    else if(t==="analisis") _pageState.an=1;
+    else if(t==="sales") _pageState.sa=1;
+    else if(t==="intransit") _pageState.it=1;
   });
-  if(hasil.length===0){ alert("⚠️ Tidak ada data untuk di-export!"); return; }
-  let rows=[["SKU","Nama Barang","Kategori","Gudang","Qty (pcs)","Konversi","Harga Satuan","Total Nilai"]];
-  hasil.forEach(b=>{
-    let uom=hitungUOM(Number(b.totalPcs),Number(b.isiKarton));
-    let nilai=Number(b.totalPcs)*Number(b.harga);
-    rows.push([b.sku,b.nama,b.kategori||"-",b.warehouse||"Bintaro",b.totalPcs,uom,b.harga,nilai]);
-  });
-  let wb=XLSX.utils.book_new();
-  let ws=XLSX.utils.aoa_to_sheet(rows);
-  ws['!cols']=[{wch:30},{wch:38},{wch:22},{wch:12},{wch:10},{wch:14},{wch:14},{wch:16}];
-  XLSX.utils.book_append_sheet(wb,ws,"Monitor Stok");
-  XLSX.writeFile(wb,"Monitor_Stok_Export.xlsx");
+  _origMarkDirty(...tabs);
+};
+
+// --- 4. PAGINATION RENDERER ---
+function renderPagination(containerId, total, page, pageSize, onPageChange){
+  let old = document.getElementById(containerId);
+  if(old) old.remove();
+  if(total <= pageSize) return;
+  let totalPages = Math.ceil(total/pageSize);
+  let div = document.createElement("div");
+  div.id = containerId;
+  div.style.cssText = "display:flex;gap:4px;align-items:center;justify-content:flex-end;padding:6px 4px;flex-wrap:wrap;font-size:12px";
+  let info = document.createElement("span");
+  info.style.cssText = "color:#718096;margin-right:4px";
+  info.textContent = "Hal "+page+" / "+totalPages+" ("+total+" data)";
+  div.appendChild(info);
+  let makeBtn = (label, pg, disabled, active)=>{
+    let b = document.createElement("button");
+    b.textContent = label;
+    b.disabled = disabled;
+    b.style.cssText = "padding:3px 8px;font-size:11px;border-radius:4px;border:1px solid #cbd5e0;cursor:pointer;background:"+(active?"#2c3e50":"white")+";color:"+(active?"white":"#4a5568");
+    b.onclick = ()=>{ onPageChange(pg); };
+    return b;
+  };
+  div.appendChild(makeBtn("«", 1, page===1, false));
+  div.appendChild(makeBtn("‹", page-1, page===1, false));
+  let start = Math.max(1, page-2), end = Math.min(totalPages, page+2);
+  for(let p=start; p<=end; p++) div.appendChild(makeBtn(p, p, false, p===page));
+  div.appendChild(makeBtn("›", page+1, page===totalPages, false));
+  div.appendChild(makeBtn("»", totalPages, page===totalPages, false));
+  return div;
 }
 
-console.log("⚡ Full multi-language support loaded!");
+function attachPagination(tbodyEl, containerId, total, page, pageSize, onPageChange){
+  let tableContainer = tbodyEl.closest(".table-container");
+  if(!tableContainer) return;
+  let pgDiv = renderPagination(containerId, total, page, pageSize, onPageChange);
+  if(pgDiv){
+    let existing = document.getElementById(containerId);
+    if(existing) existing.remove();
+    tableContainer.parentElement.insertBefore(pgDiv, tableContainer.nextSibling);
+  } else {
+    let existing = document.getElementById(containerId);
+    if(existing) existing.remove();
+  }
+}
+
+// --- 5. FAST DOM BUILDER (DocumentFragment) ---
+function buildRows(rowsHTML){
+  let t = document.createElement("tbody");
+  t.innerHTML = rowsHTML.join("");
+  let frag = document.createDocumentFragment();
+  while(t.firstChild) frag.appendChild(t.firstChild);
+  return frag;
+}
+
+// --- 6. OVERRIDE tampilkanTabel (Monitor Stok) ---
+window.tampilkanTabel = function(){
+  let tabel = document.getElementById("tabelBarang");
+  let keyword = document.getElementById("search").value.toLowerCase();
+  let selWH = document.getElementById("filterWarehouse").value;
+  document.getElementById("assetTitle").innerText = selWH==="All"?"💰 Total Nilai Barang (All Warehouse):":"🏢 Total Nilai Barang (Gudang "+selWH+"):";
+  let hasil = daftarBarang.filter(b=>{
+    let wh = b.warehouse||"Bintaro";
+    return (selWH==="All"||wh.toUpperCase()===selWH.toUpperCase()) &&
+           (b.nama.toLowerCase().includes(keyword)||b.sku.toLowerCase().includes(keyword));
+  });
+  let total = 0;
+  hasil.forEach(b=>{ total+=Number(b.totalPcs)*Number(b.harga); });
+  document.getElementById("assetValue").innerText = rpFormat(total);
+  if(hasil.length===0){ tabel.innerHTML="<tr><td colspan='10' class='kosong'>Tidak ada data</td></tr>"; attachPagination(tabel,"pg-monitor",0,1,PAGE_SIZE,()=>{}); return; }
+  let page = _pageState.monitor;
+  let sliced = hasil.slice((page-1)*PAGE_SIZE, page*PAGE_SIZE);
+  let rows = sliced.map(function(b,ii){
+    let i = (page-1)*PAGE_SIZE+ii;
+    let idx = daftarBarang.indexOf(b);
+    let pcs = Number(b.totalPcs);
+    let uom = hitungUOM(pcs,Number(b.isiKarton));
+    let nilaiB = pcs*Number(b.harga);
+    let isNeg = pcs<0;
+    let stokCell = isNeg
+      ? "<span style='color:#c53030;font-weight:700;background:#fff5f5;padding:2px 6px;border-radius:4px;border:1px solid #fc8181'>⚠️ "+pcs+" pcs (selisih)</span>"
+      : pcs+" pcs";
+    return "<tr style='"+(isNeg?"background:#fff5f5":"")+"'><td>"+(i+1)+"</td><td title='"+b.sku+"'>"+b.sku+"</td><td title='"+b.nama+"'>"+b.nama+"</td><td title='"+b.kategori+"'>"+b.kategori+"</td><td><span class='badge badge-gudang'>"+(b.warehouse||"Bintaro")+"</span></td><td>"+stokCell+"</td><td><strong>"+uom+"</strong></td><td>"+rpFormat(b.harga)+"</td><td><strong>"+rpFormat(nilaiB)+"</strong></td><td style='text-align:center'>"+(isAdmin()?"<button class='btn-action btn-edit' onclick='editBarang("+idx+")'>Edit</button> <button class='btn-action btn-hapus' onclick='hapusBarang("+idx+")'>Hapus</button>":"<span style='color:#a0aec0;font-size:10px'>-</span>")+"</td></tr>";
+  });
+  tabel.innerHTML = "";
+  tabel.appendChild(buildRows(rows));
+  attachPagination(tabel,"pg-monitor",hasil.length,page,PAGE_SIZE,function(pg){ _pageState.monitor=pg; window.tampilkanTabel(); });
+};
+
+// --- 7. OVERRIDE tampilkanStockIn ---
+window.tampilkanStockIn = function(){
+  let tbody = document.getElementById("tabelStockIn");
+  let keyword = document.getElementById("in-search").value.toLowerCase();
+  let from = document.getElementById("in-filter-from").value;
+  let to = document.getElementById("in-filter-to").value;
+  let wh = document.getElementById("in-filter-wh").value;
+  let hasil = stockInLog.filter(r=>{
+    return (r.sku.toLowerCase().includes(keyword)||r.nama.toLowerCase().includes(keyword)||(r.ref||"").toLowerCase().includes(keyword)) &&
+           (!from||r.tanggal>=from) && (!to||r.tanggal<=to) &&
+           (wh==="All"||(r.warehouse||"Bintaro").toUpperCase()===wh.toUpperCase());
+  }).sort((a,b)=>b.tanggal.localeCompare(a.tanggal));
+  if(hasil.length===0){ tbody.innerHTML="<tr><td colspan='11' class='kosong'>"+t("no_data_in")+"</td></tr>"; attachPagination(tbody,"pg-in",0,1,PAGE_SIZE,()=>{}); return; }
+  let page = _pageState.in;
+  let sliced = hasil.slice((page-1)*PAGE_SIZE, page*PAGE_SIZE);
+  let rows = sliced.map(function(r,ii){
+    let i = (page-1)*PAGE_SIZE+ii;
+    let uom = hitungUOM(r.qty,r.isiKarton);
+    let nilai = r.qty*r.harga;
+    return "<tr><td>"+(i+1)+"</td><td>"+r.tanggal+"</td><td title='"+r.sku+"'>"+r.sku+"</td><td title='"+r.nama+"'>"+r.nama+"</td><td><span class='badge badge-gudang'>"+r.warehouse+"</span></td><td><span class='badge badge-in'>+"+r.qty+" pcs</span></td><td><strong>"+uom+"</strong></td><td>"+rpFormat(r.harga)+"</td><td><strong>"+rpFormat(nilai)+"</strong></td><td title='"+(r.keterangan||"-")+"'>"+(r.keterangan||"-")+"</td><td style='text-align:center'>"+(isAdmin()?"<button class='btn-action btn-edit' onclick='editStockIn(\""+r.id+"\")'>Edit</button> <button class='btn-action btn-hapus' onclick='hapusStockIn(\""+r.id+"\")'>Hapus</button>":"<span style='color:#a0aec0;font-size:10px'>-</span>")+"</td></tr>";
+  });
+  tbody.innerHTML = "";
+  tbody.appendChild(buildRows(rows));
+  attachPagination(tbody,"pg-in",hasil.length,page,PAGE_SIZE,function(pg){ _pageState.in=pg; window.tampilkanStockIn(); });
+};
+
+// --- 8. OVERRIDE tampilkanStockOut ---
+window.tampilkanStockOut = function(){
+  let tbody = document.getElementById("tabelStockOut");
+  let keyword = document.getElementById("out-search").value.toLowerCase();
+  let from = document.getElementById("out-filter-from").value;
+  let to = document.getElementById("out-filter-to").value;
+  let wh = document.getElementById("out-filter-wh").value;
+  let tipeF = document.getElementById("out-filter-tipe").value;
+  let hasil = stockOutLog.filter(r=>{
+    return (r.sku.toLowerCase().includes(keyword)||r.nama.toLowerCase().includes(keyword)||(r.ref||"").toLowerCase().includes(keyword)) &&
+           (!from||r.tanggal>=from) && (!to||r.tanggal<=to) &&
+           (wh==="All"||(r.warehouse||"Bintaro").toUpperCase()===wh.toUpperCase()) &&
+           (tipeF==="All"||(r.tipe||"Stock Out")===tipeF);
+  }).sort((a,b)=>b.tanggal.localeCompare(a.tanggal));
+  if(hasil.length===0){ tbody.innerHTML="<tr><td colspan='12' class='kosong'>"+t("no_data_out")+"</td></tr>"; attachPagination(tbody,"pg-out",0,1,PAGE_SIZE,()=>{}); return; }
+  let page = _pageState.out;
+  let sliced = hasil.slice((page-1)*PAGE_SIZE, page*PAGE_SIZE);
+  let rows = sliced.map(function(r,ii){
+    let i = (page-1)*PAGE_SIZE+ii;
+    let uom = hitungUOM(r.qty,r.isiKarton);
+    let nilai = r.qty*r.harga;
+    let tipe = r.tipe||"Stock Out";
+    let tipeBadge = tipe==="Expired"?"<span class='badge' style='background:#fef3c7;color:#92400e'>⚠️ Expired</span>":tipe==="Damage"?"<span class='badge' style='background:#f3e8ff;color:#6b21a8'>💥 Damage</span>":"<span class='badge badge-out'>📤 Stock Out</span>";
+    return "<tr><td>"+(i+1)+"</td><td>"+r.tanggal+"</td><td>"+tipeBadge+"</td><td title='"+r.sku+"'>"+r.sku+"</td><td title='"+r.nama+"'>"+r.nama+"</td><td><span class='badge badge-gudang'>"+r.warehouse+"</span></td><td><span class='badge badge-out'>-"+r.qty+" pcs</span></td><td><strong>"+uom+"</strong></td><td>"+rpFormat(r.harga)+"</td><td><strong>"+rpFormat(nilai)+"</strong></td><td title='"+r.ref+"'>"+r.ref+"</td><td style='text-align:center'>"+(isAdmin()?"<button class='btn-action btn-edit' onclick='editStockOut(\""+r.id+"\")'>Edit</button> <button class='btn-action btn-hapus' onclick='hapusStockOut(\""+r.id+"\")'>Hapus</button>":"<span style='color:#a0aec0;font-size:10px'>-</span>")+"</td></tr>";
+  });
+  tbody.innerHTML = "";
+  tbody.appendChild(buildRows(rows));
+  attachPagination(tbody,"pg-out",hasil.length,page,PAGE_SIZE,function(pg){ _pageState.out=pg; window.tampilkanStockOut(); });
+};
+
+// --- 9. OVERRIDE tampilkanTransfer ---
+window.tampilkanTransfer = function(){
+  let tbody = document.getElementById("tabelTransfer");
+  let keyword = document.getElementById("tr-search").value.toLowerCase();
+  let from = document.getElementById("tr-filter-from").value;
+  let to = document.getElementById("tr-filter-to").value;
+  let wh = document.getElementById("tr-filter-wh").value;
+  let hasil = transferLog.filter(r=>{
+    return (r.sku.toLowerCase().includes(keyword)||r.nama.toLowerCase().includes(keyword)||(r.ref||"").toLowerCase().includes(keyword)) &&
+           (!from||r.tanggal>=from) && (!to||r.tanggal<=to) &&
+           (wh==="All"||r.fromWh.toUpperCase()===wh.toUpperCase()||r.toWh.toUpperCase()===wh.toUpperCase());
+  }).sort((a,b)=>b.tanggal.localeCompare(a.tanggal));
+  if(hasil.length===0){ tbody.innerHTML="<tr><td colspan='11' class='kosong'>"+t("no_data_transfer")+"</td></tr>"; attachPagination(tbody,"pg-tr",0,1,PAGE_SIZE,()=>{}); return; }
+  let page = _pageState.tr;
+  let sliced = hasil.slice((page-1)*PAGE_SIZE, page*PAGE_SIZE);
+  let rows = sliced.map(function(r,ii){
+    let i = (page-1)*PAGE_SIZE+ii;
+    let uom = hitungUOM(r.qty,r.isiKarton);
+    return "<tr><td>"+(i+1)+"</td><td>"+r.tanggal+"</td><td title='"+r.sku+"'>"+r.sku+"</td><td title='"+r.nama+"'>"+r.nama+"</td><td><span class='badge badge-gudang'>"+r.fromWh+"</span></td><td style='text-align:center;color:#7c3aed;font-weight:700'>→</td><td><span class='badge badge-gudang' style='background:#553c9a'>"+r.toWh+"</span></td><td><span class='badge badge-transfer'>"+r.qty+" pcs</span></td><td><strong>"+uom+"</strong></td><td title='"+r.ref+"'>"+r.ref+"</td><td style='text-align:center'>"+(isAdmin()?"<button class='btn-action btn-edit' onclick='editTransfer(\""+r.id+"\")'>Edit</button> <button class='btn-action btn-hapus' onclick='hapusTransfer(\""+r.id+"\")'>Hapus</button>":"<span style='color:#a0aec0;font-size:10px'>-</span>")+"</td></tr>";
+  });
+  tbody.innerHTML = "";
+  tbody.appendChild(buildRows(rows));
+  attachPagination(tbody,"pg-tr",hasil.length,page,PAGE_SIZE,function(pg){ _pageState.tr=pg; window.tampilkanTransfer(); });
+};
+
+// --- 10. OVERRIDE tampilkanLedger dengan pagination ---
+const _origTampilkanLedger = tampilkanLedger;
+window.tampilkanLedger = function(){
+  let tbody = document.getElementById("tabelLedger");
+  let keyword = document.getElementById("led-search").value.toLowerCase().trim();
+  let from = document.getElementById("led-from").value;
+  let to = document.getElementById("led-to").value;
+  let wh = document.getElementById("led-wh").value;
+  let type = document.getElementById("led-type").value;
+
+  let inData    = stockInLog.map(r=>({...r,tipe:"IN",warehouse:r.warehouse||"Bintaro"}));
+  let outData   = stockOutLog.map(r=>({...r,tipe:"OUT",warehouse:r.warehouse||"Bintaro"}));
+  let trOutData = transferLog.map(r=>({...r,tipe:"TRANSFER_OUT",warehouse:r.fromWh,ref:"Transfer → "+r.toWh+(r.ref&&r.ref!=="-"?" | "+r.ref:"")}));
+  let trInData  = transferLog.map(r=>({...r,tipe:"TRANSFER_IN",warehouse:r.toWh,ref:"Transfer ← "+r.fromWh+(r.ref&&r.ref!=="-"?" | "+r.ref:"")}));
+  let semua = [...inData,...outData,...trOutData,...trInData];
+
+  semua.sort((a,b)=>{ let d=a.tanggal.localeCompare(b.tanggal); return d!==0?d:(Number(a.id)||0)-(Number(b.id)||0); });
+
+  let runBalance = {};
+  semua.forEach(r=>{
+    let key = (r.sku||"").toUpperCase()+"|||"+(r.warehouse||"").toUpperCase();
+    if(!runBalance[key]) runBalance[key]=0;
+    if(r.tipe==="IN"||r.tipe==="TRANSFER_IN") runBalance[key]+=(r.qty||0);
+    else runBalance[key]-=(r.qty||0);
+    r._runBal = runBalance[key];
+  });
+
+  let hasil = semua.filter(r=>{
+    return (keyword===""||((r.sku&&r.sku.toLowerCase().includes(keyword))||(r.nama&&r.nama.toLowerCase().includes(keyword)))) &&
+           (!from||r.tanggal>=from) && (!to||r.tanggal<=to) &&
+           (wh==="All"||(r.warehouse||"").toUpperCase()===wh.toUpperCase()) &&
+           (type==="All"||r.tipe===type);
+  }).sort((a,b)=>{ let d=b.tanggal.localeCompare(a.tanggal); return d!==0?d:(Number(b.id)||0)-(Number(a.id)||0); });
+
+  let totalIn  = stockInLog.filter(r=>wh==="All"||(r.warehouse||"Bintaro").toUpperCase()===wh.toUpperCase()).reduce((s,r)=>s+(r.qty||0)*(r.harga||0),0);
+  let totalOut = stockOutLog.filter(r=>wh==="All"||(r.warehouse||"Bintaro").toUpperCase()===wh.toUpperCase()).reduce((s,r)=>s+(r.qty||0)*(r.harga||0),0);
+  let totalStok = daftarBarang.filter(b=>wh==="All"||(b.warehouse||"Bintaro").toUpperCase()===wh.toUpperCase()).reduce((s,b)=>s+(Number(b.totalPcs)||0)*(Number(b.harga)||0),0);
+  document.getElementById("led-total-stok").innerText = rpFormat(totalStok);
+  document.getElementById("led-total-in").innerText = rpFormat(totalIn);
+  document.getElementById("led-total-out").innerText = rpFormat(totalOut);
+  document.getElementById("led-total-trx").innerText = hasil.length;
+
+  if(hasil.length===0){ tbody.innerHTML="<tr><td colspan='10' class='kosong'>"+t("no_data_ledger")+"</td></tr>"; attachPagination(tbody,"pg-led",0,1,PAGE_SIZE,()=>{}); return; }
+
+  let page = _pageState.led;
+  let sliced = hasil.slice((page-1)*PAGE_SIZE, page*PAGE_SIZE);
+  let rows = sliced.map(function(r,ii){
+    let i = (page-1)*PAGE_SIZE+ii;
+    let uomTrx = hitungUOM(r.qty||0,r.isiKarton||0);
+    let sisaPcs = r._runBal||0;
+    let sisaUom = hitungUOM(sisaPcs,r.isiKarton||0);
+    let badge,qtyTxt;
+    if(r.tipe==="IN"){ badge="<span class='badge badge-in'>📥 IN</span>"; qtyTxt="<span style='color:#065f46;font-weight:700'>+"+(r.qty||0)+" pcs</span>"; }
+    else if(r.tipe==="OUT"){ badge="<span class='badge badge-out'>📤 OUT</span>"; qtyTxt="<span style='color:#991b1b;font-weight:700'>-"+(r.qty||0)+" pcs</span>"; }
+    else if(r.tipe==="TRANSFER_OUT"){ badge="<span class='badge badge-transfer'>🔄 TRF OUT</span>"; qtyTxt="<span style='color:#3730a3;font-weight:700'>-"+(r.qty||0)+" pcs</span>"; }
+    else { badge="<span class='badge badge-transfer' style='background:#d1fae5;color:#065f46'>🔄 TRF IN</span>"; qtyTxt="<span style='color:#065f46;font-weight:700'>+"+(r.qty||0)+" pcs</span>"; }
+    let sisaColor = sisaPcs<0?"color:#c53030":"color:#2c3e50";
+    let nilai = (r.qty||0)*(r.harga||0);
+    return "<tr><td>"+(i+1)+"</td><td>"+(r.tanggal||"-")+"</td><td>"+badge+"</td><td title='"+(r.sku||"-")+"'>"+(r.sku||"-")+"</td><td title='"+(r.nama||"-")+"'>"+(r.nama||"-")+"</td><td><span class='badge badge-gudang'>"+(r.warehouse||"-")+"</span></td><td>"+qtyTxt+"</td><td><strong>"+uomTrx+"</strong></td><td style='"+sisaColor+";font-weight:700'>"+sisaPcs+" pcs</td><td>"+sisaUom+"</td></tr>";
+  });
+  tbody.innerHTML = "";
+  tbody.appendChild(buildRows(rows));
+  attachPagination(tbody,"pg-led",hasil.length,page,PAGE_SIZE,function(pg){ _pageState.led=pg; window.tampilkanLedger(); });
+};
+
+console.log("⚡ Performance optimizations loaded: debounce, pagination, DocumentFragment, throttled Firebase save");
 
 </script>
-
 <!-- MODAL EDIT BARANG (Monitor Stok) -->
 <div class="it-modal-overlay" id="edit-barang-modal" onclick="tutupModalEditBarang(event)">
   <div class="it-modal" onclick="event.stopPropagation()">
-    <h3 data-i18n="edit_stock_item">✏️ Edit Stok Barang</h3>
+    <h3>✏️ Edit Stok Barang</h3>
     <input type="hidden" id="eb-index">
     <div class="form-grid">
       <div class="form-group-full">
-        <label data-i18n="th_sku">SKU:</label>
+        <label>SKU:</label>
         <input type="text" id="eb-sku" readonly style="background:#edf2f7;color:#4a5568">
       </div>
       <div class="form-group-full">
-        <label data-i18n="th_nama">Nama Barang:</label>
+        <label>Nama Barang:</label>
         <input type="text" id="eb-nama" style="background:#edf2f7" readonly>
       </div>
       <div>
-        <label data-i18n="label_isi_ctn">Isi/Ctn:</label>
+        <label>Isi/Ctn:</label>
         <input type="number" id="eb-isi-ctn" min="0">
       </div>
       <div>
-        <label data-i18n="label_harga">Harga (Rp):</label>
+        <label>Harga (Rp):</label>
         <input type="number" id="eb-harga" min="0">
       </div>
       <div>
-        <label data-i18n="label_warehouse">Warehouse:</label>
+        <label>Warehouse:</label>
         <select id="eb-warehouse">
           <option>Bintaro</option><option>Gunsin</option><option>MAJ</option><option>Bosco</option><option>K-Mart</option><option>Happy Wonder</option><option>Hero Supermarket</option><option>Consignment</option><option>K-Seafood</option><option>Event</option><option>Sample</option>
         </select>
       </div>
       <div>
-        <label data-i18n="total_stock_pcs">Total Stok (pcs):</label>
+        <label>Total Stok (pcs):</label>
         <input type="number" id="eb-total-pcs" min="0">
       </div>
     </div>
     <div style="display:flex;gap:6px;margin-top:12px">
-      <button class="btn btn-green" onclick="simpanEditBarang()" style="flex:1" data-i18n="btn_save">✅ Simpan</button>
-      <button class="btn btn-gray" onclick="tutupModalEditBarang(null)" style="flex:1;margin-top:0" data-i18n="btn_cancel">Batal</button>
+      <button class="btn btn-green" onclick="simpanEditBarang()" style="flex:1">✅ Simpan</button>
+      <button class="btn btn-gray" onclick="tutupModalEditBarang(null)" style="flex:1;margin-top:0">Batal</button>
     </div>
   </div>
 </div>
