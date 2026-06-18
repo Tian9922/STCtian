@@ -5,6 +5,7 @@
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <title>Inventory IC - Online</title>
   <script src="https://cdn.jsdelivr.net/npm/xlsx@0.18.5/dist/xlsx.full.min.js"></script>
+  <script src="https://cdn.jsdelivr.net/npm/chart.js@4.4.0/dist/chart.umd.min.js"></script>
 
   <!-- ===== FIREBASE SDK (Compat - lebih reliable) ===== -->
   <script src="https://www.gstatic.com/firebasejs/10.12.0/firebase-app-compat.js"></script>
@@ -255,6 +256,8 @@
     </div>
   </div>
   <div id="sidebar-nav">
+    <div class="sb-section">Dashboard</div>
+    <button class="nav-tab" onclick="switchTab('dashboard')" id="navbtn-dashboard"><span class="tab-icon">🏠</span><span>Dashboard</span></button>
     <div class="sb-section">Operasional</div>
     <button class="nav-tab active" onclick="switchTab('monitor')" id="navbtn-monitor"><span class="tab-icon">📊</span><span data-i18n="tab_monitor">Monitor Stok</span></button>
     <button class="nav-tab" onclick="switchTab('in')" id="navbtn-in"><span class="tab-icon">📥</span><span data-i18n="tab_in">Stock In</span></button>
@@ -290,6 +293,59 @@
     <div id="topbar-title">📊 <span id="topbar-page-name">Monitor Stok</span></div>
   </div>
   <div id="content-wrap">
+
+
+<!-- ===================== TAB: DASHBOARD ===================== -->
+<div id="tab-dashboard" class="page-full">
+  <!-- Row 1: KPI Cards -->
+  <div id="db-kpi-row" style="display:grid;grid-template-columns:repeat(5,1fr);gap:8px;margin-bottom:8px;flex-shrink:0"></div>
+
+  <!-- Row 2: Charts -->
+  <div style="display:grid;grid-template-columns:1fr 1fr;gap:8px;margin-bottom:8px;flex-shrink:0">
+    <!-- Chart: Out per 7 hari -->
+    <div style="background:white;border-radius:6px;padding:12px;box-shadow:0 1px 3px rgba(0,0,0,.06)">
+      <div style="font-size:12px;font-weight:700;color:#2c3e50;margin-bottom:8px">📤 Stock Out — 7 Hari Terakhir (Ctn)</div>
+      <canvas id="db-chart-out7" height="140"></canvas>
+    </div>
+    <!-- Chart: Top 5 SKU -->
+    <div style="background:white;border-radius:6px;padding:12px;box-shadow:0 1px 3px rgba(0,0,0,.06)">
+      <div style="font-size:12px;font-weight:700;color:#2c3e50;margin-bottom:8px">🏆 Top 5 SKU Terlaris (Bulan Ini, Ctn)</div>
+      <canvas id="db-chart-top5" height="140"></canvas>
+    </div>
+  </div>
+
+  <!-- Row 3: Moving category + Low stock table -->
+  <div style="display:grid;grid-template-columns:220px 1fr;gap:8px;flex:1;min-height:0">
+    <!-- Moving donut -->
+    <div style="background:white;border-radius:6px;padding:12px;box-shadow:0 1px 3px rgba(0,0,0,.06);display:flex;flex-direction:column">
+      <div style="font-size:12px;font-weight:700;color:#2c3e50;margin-bottom:8px">📊 Kategori Moving</div>
+      <div style="flex:1;display:flex;align-items:center;justify-content:center">
+        <canvas id="db-chart-moving" width="180" height="180"></canvas>
+      </div>
+      <div id="db-moving-legend" style="margin-top:8px;font-size:11px"></div>
+    </div>
+    <!-- Low / critical stock table -->
+    <div style="background:white;border-radius:6px;padding:12px;box-shadow:0 1px 3px rgba(0,0,0,.06);display:flex;flex-direction:column;overflow:hidden">
+      <div style="font-size:12px;font-weight:700;color:#2c3e50;margin-bottom:8px">⚠️ Stok Kritis — Ketahanan &lt; 1 Bulan (berdasarkan Avg 30hr)</div>
+      <div style="flex:1;overflow-y:auto;border:1px solid #e2e8f0;border-radius:4px">
+        <table style="width:100%;border-collapse:collapse;font-size:11px">
+          <thead>
+            <tr style="position:sticky;top:0">
+              <th style="background:#2c3e50;color:white;padding:6px 8px;text-align:left">SKU</th>
+              <th style="background:#2c3e50;color:white;padding:6px 8px;text-align:left">Nama Barang</th>
+              <th style="background:#2c3e50;color:white;padding:6px 8px;text-align:left">Gudang</th>
+              <th style="background:#2c3e50;color:white;padding:6px 8px;text-align:right">Stok (Ctn)</th>
+              <th style="background:#2c3e50;color:white;padding:6px 8px;text-align:right">Avg/Bln (22hk)</th>
+              <th style="background:#2c3e50;color:white;padding:6px 8px;text-align:right">Ketahanan</th>
+              <th style="background:#2c3e50;color:white;padding:6px 8px;text-align:center">Status</th>
+            </tr>
+          </thead>
+          <tbody id="db-low-stock-body"></tbody>
+        </table>
+      </div>
+    </div>
+  </div>
+</div>
 
 <!-- ===================== TAB 1: MONITOR STOK ===================== -->
 <div id="tab-monitor" class="page active">
@@ -1407,19 +1463,19 @@ function initFirebaseListeners(){
 
   db.ref("inventory/customMasterData").on("value", snap => {
     customMasterData = snap.val() || []; onLoaded();
-    markDirty("monitor","in","out","transfer","intransit","ledger","analisis"); renderTab(activeTab);
+    markDirty("monitor","in","out","transfer","intransit","ledger","analisis","dashboard"); renderTab(activeTab);
   });
   db.ref("inventory/barang").on("value", snap => {
     daftarBarang = snap.val() || []; onLoaded();
-    markDirty("monitor","ledger","analisis"); renderTab(activeTab);
+    markDirty("monitor","ledger","analisis","dashboard"); renderTab(activeTab);
   });
   db.ref("inventory/stockInLog").on("value", snap => {
     stockInLog = snap.val() || []; onLoaded();
-    markDirty("in","ledger","analisis"); renderTab(activeTab);
+    markDirty("in","ledger","analisis","dashboard"); renderTab(activeTab);
   });
   db.ref("inventory/stockOutLog").on("value", snap => {
     stockOutLog = snap.val() || []; onLoaded();
-    markDirty("out","ledger","analisis"); renderTab(activeTab);
+    markDirty("out","ledger","analisis","dashboard"); renderTab(activeTab);
   });
   db.ref("inventory/transferLog").on("value", snap => {
     transferLog = snap.val() || []; onLoaded();
@@ -1477,6 +1533,7 @@ function renderTab(name){
   else if(name==="analisis") tampilkanAnalisis();
   else if(name==="intransit") tampilkanIntransit();
   else if(name==="sales") tampilkanSales();
+  else if(name==="dashboard") tampilkanDashboard();
 }
 
 // Hanya render tab aktif saat load — Firebase listener akan isi data
@@ -1488,7 +1545,7 @@ function renderTab(name){
 const _tabTitles = {
   monitor:"📊 Monitor Stok", in:"📥 Stock In", out:"📤 Stock Out",
   transfer:"🔄 Transfer Stok", intransit:"🚚 In Transit",
-  ledger:"📋 Stock Ledger", analisis:"📈 Analisa Stock", sales:"🛒 Sales Analytics"
+  dashboard:"🏠 Dashboard", ledger:"📋 Stock Ledger", analisis:"📈 Analisa Stock", sales:"🛒 Sales Analytics"
 };
 function switchTab(name){
   activeTab = name;
@@ -4085,6 +4142,186 @@ window.tampilkanLedger = function(){
   tbody.appendChild(buildRows(rows));
   attachPagination(tbody,"pg-led",hasil.length,page,PAGE_SIZE,function(pg){ _pageState.led=pg; window.tampilkanLedger(); });
 };
+
+
+// =========================================================================
+// DASHBOARD
+// =========================================================================
+let _dbCharts = {};
+
+function destroyChart(id) {
+  if (_dbCharts[id]) { _dbCharts[id].destroy(); delete _dbCharts[id]; }
+}
+
+function getDateStr(daysAgo) {
+  let d = new Date();
+  d.setDate(d.getDate() - daysAgo);
+  return d.toISOString().slice(0, 10);
+}
+
+function getMonthStr(d) {
+  return d.toISOString().slice(0, 7); // YYYY-MM
+}
+
+function tampilkanDashboard() {
+  // ── helpers ──────────────────────────────────────────────
+  function getIsiKarton(sku) {
+    let all = dapatkanSemuaMasterData();
+    let m = all.find(x => x.sku.toUpperCase() === sku.toUpperCase());
+    return m ? (m.qtyCtn || 1) : 1;
+  }
+  function pcsToCtн(pcs, isi) { return isi > 0 ? pcs / isi : 0; }
+
+  let today = new Date();
+  let thisMonth = getMonthStr(today);
+  let last30 = getDateStr(30);
+
+  // ── KPI DATA ────────────────────────────────────────────
+  let totalNilaiStok = daftarBarang.reduce((s, b) => s + (Number(b.totalPcs) || 0) * (Number(b.harga) || 0), 0);
+
+  let totalSkuAktif = [...new Set(daftarBarang.map(b => b.sku.toUpperCase()))].length;
+
+  let outBulanIni = stockOutLog.filter(r => (r.tanggal || '').slice(0, 7) === thisMonth);
+  let nilaiOutBulanIni = outBulanIni.reduce((s, r) => s + (r.qty || 0) * (r.harga || 0), 0);
+  let qtyOutBulanIni = outBulanIni.reduce((s, r) => s + (r.qty || 0), 0);
+
+  let inBulanIni = stockInLog.filter(r => (r.tanggal || '').slice(0, 7) === thisMonth);
+  let nilaiInBulanIni = inBulanIni.reduce((s, r) => s + (r.qty || 0) * (r.harga || 0), 0);
+
+  // moving categories
+  let cF = 0, cM = 0, cS = 0, cN = 0;
+  let seen = {};
+  daftarBarang.forEach(b => {
+    let key = b.sku.toUpperCase() + '__' + (b.warehouse || 'Bintaro').toUpperCase();
+    if (seen[key]) return; seen[key] = true;
+    let avg = hitungAvgOutKarton(b.sku, b.warehouse || 'Bintaro', 30).avgPerHariCtn;
+    let cat = getMovingCategory(avg);
+    if (cat === 'Fast') cF++; else if (cat === 'Medium') cM++; else if (cat === 'Slow') cS++; else cN++;
+  });
+
+  // ── RENDER KPI CARDS ───────────────────────────────────
+  let kpiRow = document.getElementById('db-kpi-row');
+  kpiRow.innerHTML = [
+    { icon: '💰', label: 'Nilai Stok', val: rpFormat(totalNilaiStok), color: '#2b6cb0' },
+    { icon: '📦', label: 'SKU Aktif', val: totalSkuAktif + ' SKU', color: '#065f46' },
+    { icon: '📤', label: 'Out Bulan Ini', val: rpFormat(nilaiOutBulanIni), color: '#991b1b', sub: qtyOutBulanIni.toLocaleString('id-ID') + ' pcs' },
+    { icon: '📥', label: 'In Bulan Ini', val: rpFormat(nilaiInBulanIni), color: '#553c9a' },
+    { icon: '🚀', label: 'Fast / Med / Slow', val: cF + ' / ' + cM + ' / ' + cS, color: '#0369a1', sub: cN + ' no data' },
+  ].map(k => `
+    <div style="background:white;border-radius:6px;padding:12px 14px;box-shadow:0 1px 3px rgba(0,0,0,.06)">
+      <div style="font-size:11px;color:#718096;margin-bottom:4px">${k.icon} ${k.label}</div>
+      <div style="font-size:15px;font-weight:700;color:${k.color}">${k.val}</div>
+      ${k.sub ? `<div style="font-size:10px;color:#a0aec0;margin-top:2px">${k.sub}</div>` : ''}
+    </div>`).join('');
+
+  // ── CHART 1: Stock Out 7 hari terakhir (ctn) ──────────
+  destroyChart('out7');
+  let labels7 = [], data7 = [];
+  for (let i = 6; i >= 0; i--) {
+    let dStr = getDateStr(i);
+    let label = new Date(dStr + 'T00:00:00').toLocaleDateString('id-ID', { weekday: 'short', day: 'numeric', month: 'short' });
+    labels7.push(label);
+    let dayOut = stockOutLog.filter(r => r.tanggal === dStr);
+    let ctn = dayOut.reduce((s, r) => {
+      let isi = getIsiKarton(r.sku);
+      return s + (r.qty || 0) / isi;
+    }, 0);
+    data7.push(Math.round(ctn * 10) / 10);
+  }
+  let ctx7 = document.getElementById('db-chart-out7').getContext('2d');
+  _dbCharts['out7'] = new Chart(ctx7, {
+    type: 'bar',
+    data: {
+      labels: labels7,
+      datasets: [{ label: 'Ctn Keluar', data: data7, backgroundColor: 'rgba(59,130,246,.7)', borderRadius: 4 }]
+    },
+    options: { responsive: true, plugins: { legend: { display: false } }, scales: { y: { beginAtZero: true, ticks: { font: { size: 10 } } }, x: { ticks: { font: { size: 10 } } } } }
+  });
+
+  // ── CHART 2: Top 5 SKU bulan ini ───────────────────────
+  destroyChart('top5');
+  let skuTotals = {};
+  outBulanIni.forEach(r => {
+    let k = r.sku.toUpperCase();
+    let isi = getIsiKarton(r.sku);
+    skuTotals[k] = (skuTotals[k] || 0) + (r.qty || 0) / isi;
+  });
+  let top5 = Object.entries(skuTotals).sort((a, b) => b[1] - a[1]).slice(0, 5);
+  let labelMap = {};
+  daftarBarang.forEach(b => { if (!labelMap[b.sku.toUpperCase()]) labelMap[b.sku.toUpperCase()] = b.nama; });
+  let ctx5 = document.getElementById('db-chart-top5').getContext('2d');
+  _dbCharts['top5'] = new Chart(ctx5, {
+    type: 'bar',
+    data: {
+      labels: top5.map(x => (labelMap[x[0]] || x[0]).substring(0, 20)),
+      datasets: [{ label: 'Ctn', data: top5.map(x => Math.round(x[1] * 10) / 10), backgroundColor: ['rgba(16,185,129,.75)', 'rgba(59,130,246,.75)', 'rgba(139,92,246,.75)', 'rgba(245,158,11,.75)', 'rgba(239,68,68,.75)'], borderRadius: 4 }]
+    },
+    options: {
+      indexAxis: 'y',
+      responsive: true,
+      plugins: { legend: { display: false } },
+      scales: { x: { beginAtZero: true, ticks: { font: { size: 10 } } }, y: { ticks: { font: { size: 10 } } } }
+    }
+  });
+
+  // ── CHART 3: Donut Moving ──────────────────────────────
+  destroyChart('moving');
+  let ctxM = document.getElementById('db-chart-moving').getContext('2d');
+  _dbCharts['moving'] = new Chart(ctxM, {
+    type: 'doughnut',
+    data: {
+      labels: ['Fast', 'Medium', 'Slow', 'No Data'],
+      datasets: [{ data: [cF, cM, cS, cN], backgroundColor: ['#10b981', '#f59e0b', '#ef4444', '#d1d5db'], borderWidth: 2 }]
+    },
+    options: { responsive: false, plugins: { legend: { display: false } }, cutout: '65%' }
+  });
+  document.getElementById('db-moving-legend').innerHTML = [
+    { c: '#10b981', l: 'Fast', v: cF }, { c: '#f59e0b', l: 'Medium', v: cM },
+    { c: '#ef4444', l: 'Slow', v: cS }, { c: '#d1d5db', l: 'No Data', v: cN }
+  ].map(x => `<div style="display:flex;align-items:center;gap:5px;margin-bottom:3px">
+    <div style="width:10px;height:10px;border-radius:2px;background:${x.c};flex-shrink:0"></div>
+    <span style="color:#4a5568">${x.l}</span><span style="margin-left:auto;font-weight:700">${x.v}</span></div>`).join('');
+
+  // ── TABLE: Low / Critical Stock ────────────────────────
+  let lowItems = [];
+  let seen2 = {};
+  daftarBarang.forEach(b => {
+    let key = b.sku.toUpperCase() + '__' + (b.warehouse || 'Bintaro').toUpperCase();
+    if (seen2[key]) return; seen2[key] = true;
+    let isi = Number(b.isiKarton) || 1;
+    let stokCtn = Number(b.totalPcs) / isi;
+    let avg30 = hitungAvgOutKarton(b.sku, b.warehouse || 'Bintaro', 30).avgPerHariCtn;
+    if (avg30 <= 0) return; // skip no-data
+    let hariTahan = stokCtn / avg30;
+    if (hariTahan < 30) {
+      let avgBln = avg30 * 22;
+      lowItems.push({ b, stokCtn, avgBln, hariTahan });
+    }
+  });
+  lowItems.sort((a, b) => a.hariTahan - b.hariTahan);
+
+  let tbody = document.getElementById('db-low-stock-body');
+  if (lowItems.length === 0) {
+    tbody.innerHTML = "<tr><td colspan='7' style='text-align:center;color:#a0aec0;padding:20px'>✅ Semua stok aman (ketahanan ≥ 1 bulan)</td></tr>";
+  } else {
+    tbody.innerHTML = lowItems.map(({ b, stokCtn, avgBln, hariTahan }) => {
+      let bln = hariTahan / 30;
+      let status = hariTahan <= 7
+        ? "<span style='background:#fee2e2;color:#991b1b;padding:2px 7px;border-radius:3px;font-size:10px;font-weight:700'>🔴 Kritis</span>"
+        : "<span style='background:#fef3c7;color:#92400e;padding:2px 7px;border-radius:3px;font-size:10px;font-weight:700'>🟡 Rendah</span>";
+      let warna = hariTahan <= 7 ? '#991b1b' : '#92400e';
+      return `<tr>
+        <td style="padding:6px 8px;border-bottom:1px solid #edf2f7;font-size:10px;color:#4a5568">${b.sku}</td>
+        <td style="padding:6px 8px;border-bottom:1px solid #edf2f7;max-width:160px;overflow:hidden;text-overflow:ellipsis;white-space:nowrap">${b.nama}</td>
+        <td style="padding:6px 8px;border-bottom:1px solid #edf2f7"><span style="background:#4a5568;color:white;padding:2px 6px;border-radius:3px;font-size:10px">${b.warehouse || 'Bintaro'}</span></td>
+        <td style="padding:6px 8px;border-bottom:1px solid #edf2f7;text-align:right;font-weight:700">${stokCtn.toFixed(1)}</td>
+        <td style="padding:6px 8px;border-bottom:1px solid #edf2f7;text-align:right">${avgBln.toFixed(1)} ctn</td>
+        <td style="padding:6px 8px;border-bottom:1px solid #edf2f7;text-align:right;font-weight:700;color:${warna}">${bln.toFixed(1)} bln (${Math.round(hariTahan)} hr)</td>
+        <td style="padding:6px 8px;border-bottom:1px solid #edf2f7;text-align:center">${status}</td>
+      </tr>`;
+    }).join('');
+  }
+}
 
 console.log("⚡ Performance optimizations loaded: debounce, pagination, DocumentFragment, throttled Firebase save");
 
