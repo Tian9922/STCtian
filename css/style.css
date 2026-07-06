@@ -180,3 +180,53 @@
     .sku-search-wrap .sku-dd div{padding:6px 8px;font-size:12px;cursor:pointer;border-bottom:1px solid #f0f0f0}
     .sku-search-wrap .sku-dd div:hover{background:#ebf8ff}
     .sku-search-wrap .sku-dd div small{color:#718096;display:block;font-size:10px}
+
+    /* ===================================================================
+       DASHBOARD 2.0 — Professional redesign
+       =================================================================== */
+    #tab-dashboard{background:#f6f8fb}
+    .dash-kpi-grid{display:grid;grid-template-columns:repeat(5,1fr);gap:12px;margin-bottom:12px;flex-shrink:0}
+    .dash-kpi-card{position:relative;overflow:hidden;background:#ffffff;border:1px solid #eef1f6;border-radius:12px;padding:14px 16px 13px;box-shadow:0 1px 2px rgba(15,23,42,.04);transition:transform .16s ease,box-shadow .16s ease}
+    .dash-kpi-card:hover{transform:translateY(-2px);box-shadow:0 8px 20px rgba(15,23,42,.08)}
+    .dash-kpi-card::before{content:'';position:absolute;top:0;left:0;width:100%;height:3px;background:var(--dk-accent,#3b82f6)}
+    .dash-kpi-top{display:flex;align-items:center;justify-content:space-between;margin-bottom:10px}
+    .dash-kpi-icon{width:30px;height:30px;border-radius:9px;display:flex;align-items:center;justify-content:center;font-size:14px;background:var(--dk-accent-bg,#eff6ff)}
+    .dash-kpi-label{font-size:10.5px;font-weight:700;color:#8a94a6;text-transform:uppercase;letter-spacing:.5px}
+    .dash-kpi-value{font-size:19px;font-weight:800;color:#0f172a;letter-spacing:-.2px;line-height:1.15}
+    .dash-kpi-sub{font-size:10.5px;color:#a3acbd;margin-top:5px;font-weight:600}
+
+    .dash-row{display:grid;gap:12px;margin-bottom:12px;flex-shrink:0}
+    .dash-row-charts{grid-template-columns:1.3fr 1fr}
+    .dash-row-bottom{grid-template-columns:230px 1fr;flex:1;min-height:0;margin-bottom:0}
+
+    .dash-panel{background:#ffffff;border:1px solid #eef1f6;border-radius:12px;padding:16px;box-shadow:0 1px 2px rgba(15,23,42,.04);display:flex;flex-direction:column;overflow:hidden}
+    .dash-panel-head{display:flex;align-items:center;justify-content:space-between;margin-bottom:12px;padding-bottom:11px;border-bottom:1px solid #f1f4f8}
+    .dash-panel-title{font-size:12.5px;font-weight:700;color:#1e293b;display:flex;align-items:center;gap:7px}
+    .dash-panel-badge{font-size:9.5px;font-weight:700;color:#64748b;background:#f1f5f9;padding:3px 8px;border-radius:20px;letter-spacing:.3px}
+
+    /* Top SKU leaderboard */
+    .rank-list{display:flex;flex-direction:column;gap:10px;overflow-y:auto;flex:1;padding-right:4px}
+    .rank-item{display:flex;align-items:center;gap:10px}
+    .rank-badge{width:22px;height:22px;border-radius:50%;display:flex;align-items:center;justify-content:center;font-size:10px;font-weight:800;flex-shrink:0;color:white;background:#a8b3c5}
+    .rank-badge.r-gold{background:linear-gradient(135deg,#fcd34d,#f59e0b);box-shadow:0 2px 6px rgba(245,158,11,.35)}
+    .rank-badge.r-silver{background:linear-gradient(135deg,#e2e8f0,#94a3b8);box-shadow:0 2px 6px rgba(100,116,139,.3)}
+    .rank-badge.r-bronze{background:linear-gradient(135deg,#e5a06a,#b45309);box-shadow:0 2px 6px rgba(180,83,9,.3)}
+    .rank-info{flex:1;min-width:0}
+    .rank-name-row{display:flex;justify-content:space-between;align-items:baseline;margin-bottom:4px;gap:8px}
+    .rank-name{font-size:11.5px;font-weight:600;color:#334155;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+    .rank-value{font-size:11px;font-weight:800;color:#0f172a;flex-shrink:0}
+    .rank-bar-wrap{background:#f1f5f9;border-radius:5px;height:6px;overflow:hidden}
+    .rank-bar-fill{height:100%;border-radius:5px;background:linear-gradient(90deg,#3b82f6,#60a5fa)}
+
+    .dash-legend{display:flex;flex-direction:column;gap:7px;margin-top:12px}
+    .dash-legend-item{display:flex;align-items:center;gap:7px;font-size:11px}
+    .dash-legend-dot{width:9px;height:9px;border-radius:3px;flex-shrink:0}
+    .dash-legend-label{color:#5b6577;font-weight:600}
+    .dash-legend-val{margin-left:auto;font-weight:800;color:#0f172a}
+
+    .dash-table-wrap{flex:1;overflow-y:auto;border-radius:8px;border:1px solid #eef1f6}
+    .dash-table{width:100%;border-collapse:collapse;font-size:11px}
+    .dash-table thead th{background:#f8fafc;color:#5b6577;font-weight:700;font-size:9.5px;text-transform:uppercase;letter-spacing:.4px;padding:9px 10px;text-align:left;position:sticky;top:0;border-bottom:1px solid #eef1f6}
+    .dash-table tbody td{padding:8px 10px;border-bottom:1px solid #f4f6f9}
+    .dash-table tbody tr:last-child td{border-bottom:none}
+    .dash-table tbody tr:hover{background:#fafbfd}
