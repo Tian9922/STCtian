@@ -114,46 +114,57 @@
 <!-- ===================== TAB: DASHBOARD ===================== -->
 <div id="tab-dashboard" class="page-full">
   <!-- Row 1: KPI Cards -->
-  <div id="db-kpi-row" style="display:grid;grid-template-columns:repeat(5,1fr);gap:8px;margin-bottom:8px;flex-shrink:0"></div>
+  <div id="db-kpi-row" class="dash-kpi-grid"></div>
 
   <!-- Row 2: Charts -->
-  <div style="display:grid;grid-template-columns:1fr 1fr;gap:8px;margin-bottom:8px;flex-shrink:0">
+  <div class="dash-row dash-row-charts">
     <!-- Chart: Out per 7 hari -->
-    <div style="background:white;border-radius:6px;padding:12px;box-shadow:0 1px 3px rgba(0,0,0,.06)">
-      <div style="font-size:12px;font-weight:700;color:#2c3e50;margin-bottom:8px">📤 Stock Out — 7 Hari Terakhir (Ctn)</div>
-      <canvas id="db-chart-out7" height="140"></canvas>
+    <div class="dash-panel">
+      <div class="dash-panel-head">
+        <div class="dash-panel-title">📤 Stock Out — 7 Hari Terakhir</div>
+        <div class="dash-panel-badge">CARTON</div>
+      </div>
+      <canvas id="db-chart-out7" height="150"></canvas>
     </div>
-    <!-- Chart: Top 5 SKU -->
-    <div style="background:white;border-radius:6px;padding:12px;box-shadow:0 1px 3px rgba(0,0,0,.06)">
-      <div style="font-size:12px;font-weight:700;color:#2c3e50;margin-bottom:8px">🏆 Top 5 SKU Terlaris (Bulan Ini, Ctn)</div>
-      <canvas id="db-chart-top5" height="140"></canvas>
+    <!-- Top 15 SKU leaderboard -->
+    <div class="dash-panel">
+      <div class="dash-panel-head">
+        <div class="dash-panel-title">🏆 Top 15 SKU Terlaris</div>
+        <div class="dash-panel-badge">BULAN INI</div>
+      </div>
+      <div id="db-top-sku-list" class="rank-list"></div>
     </div>
   </div>
 
   <!-- Row 3: Moving category + Low stock table -->
-  <div style="display:grid;grid-template-columns:220px 1fr;gap:8px;flex:1;min-height:0">
+  <div class="dash-row dash-row-bottom">
     <!-- Moving donut -->
-    <div style="background:white;border-radius:6px;padding:12px;box-shadow:0 1px 3px rgba(0,0,0,.06);display:flex;flex-direction:column">
-      <div style="font-size:12px;font-weight:700;color:#2c3e50;margin-bottom:8px">📊 Kategori Moving</div>
-      <div style="flex:1;display:flex;align-items:center;justify-content:center">
-        <canvas id="db-chart-moving" width="180" height="180"></canvas>
+    <div class="dash-panel">
+      <div class="dash-panel-head">
+        <div class="dash-panel-title">📊 Kategori Moving</div>
       </div>
-      <div id="db-moving-legend" style="margin-top:8px;font-size:11px"></div>
+      <div style="flex:1;display:flex;align-items:center;justify-content:center">
+        <canvas id="db-chart-moving" width="170" height="170"></canvas>
+      </div>
+      <div id="db-moving-legend" class="dash-legend"></div>
     </div>
     <!-- Low / critical stock table -->
-    <div style="background:white;border-radius:6px;padding:12px;box-shadow:0 1px 3px rgba(0,0,0,.06);display:flex;flex-direction:column;overflow:hidden">
-      <div style="font-size:12px;font-weight:700;color:#2c3e50;margin-bottom:8px">⚠️ Stok Kritis — Ketahanan &lt; 1 Bulan (berdasarkan Avg 30hr)</div>
-      <div style="flex:1;overflow-y:auto;border:1px solid #e2e8f0;border-radius:4px">
-        <table style="width:100%;border-collapse:collapse;font-size:11px">
+    <div class="dash-panel">
+      <div class="dash-panel-head">
+        <div class="dash-panel-title">⚠️ Stok Kritis — Ketahanan &lt; 1 Bulan</div>
+        <div class="dash-panel-badge">AVG 30 HARI</div>
+      </div>
+      <div class="dash-table-wrap">
+        <table class="dash-table">
           <thead>
-            <tr style="position:sticky;top:0">
-              <th style="background:#2c3e50;color:white;padding:6px 8px;text-align:left">SKU</th>
-              <th style="background:#2c3e50;color:white;padding:6px 8px;text-align:left">Nama Barang</th>
-              <th style="background:#2c3e50;color:white;padding:6px 8px;text-align:left">Gudang</th>
-              <th style="background:#2c3e50;color:white;padding:6px 8px;text-align:right">Stok (Ctn)</th>
-              <th style="background:#2c3e50;color:white;padding:6px 8px;text-align:right">Avg/Bln (22hk)</th>
-              <th style="background:#2c3e50;color:white;padding:6px 8px;text-align:right">Ketahanan</th>
-              <th style="background:#2c3e50;color:white;padding:6px 8px;text-align:center">Status</th>
+            <tr>
+              <th>SKU</th>
+              <th>Nama Barang</th>
+              <th>Gudang</th>
+              <th style="text-align:right">Stok (Ctn)</th>
+              <th style="text-align:right">Avg/Bln (22hk)</th>
+              <th style="text-align:right">Ketahanan</th>
+              <th style="text-align:center">Status</th>
             </tr>
           </thead>
           <tbody id="db-low-stock-body"></tbody>
