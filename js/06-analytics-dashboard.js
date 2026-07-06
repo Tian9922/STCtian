@@ -559,16 +559,19 @@ function tampilkanDashboard() {
   // ── RENDER KPI CARDS ───────────────────────────────────
   let kpiRow = document.getElementById('db-kpi-row');
   kpiRow.innerHTML = [
-    { icon: '💰', label: 'Nilai Stok', val: rpFormat(totalNilaiStok), color: '#2b6cb0' },
-    { icon: '📦', label: 'SKU Aktif', val: totalSkuAktif + ' SKU', color: '#065f46' },
-    { icon: '📤', label: 'Out Bulan Ini', val: rpFormat(nilaiOutBulanIni), color: '#991b1b', sub: qtyOutBulanIni.toLocaleString('id-ID') + ' pcs' },
-    { icon: '📥', label: 'In Bulan Ini', val: rpFormat(nilaiInBulanIni), color: '#553c9a' },
-    { icon: '🚀', label: 'Fast / Med / Slow', val: cF + ' / ' + cM + ' / ' + cS, color: '#0369a1', sub: cN + ' no data' },
+    { icon: '💰', label: 'Nilai Stok', val: rpFormat(totalNilaiStok), accent: '#3b82f6', bg: '#eff6ff' },
+    { icon: '📦', label: 'SKU Aktif', val: totalSkuAktif + ' SKU', accent: '#10b981', bg: '#ecfdf5' },
+    { icon: '📤', label: 'Out Bulan Ini', val: rpFormat(nilaiOutBulanIni), accent: '#ef4444', bg: '#fef2f2', sub: qtyOutBulanIni.toLocaleString('id-ID') + ' pcs terjual' },
+    { icon: '📥', label: 'In Bulan Ini', val: rpFormat(nilaiInBulanIni), accent: '#8b5cf6', bg: '#f5f3ff' },
+    { icon: '🚀', label: 'Fast / Med / Slow', val: cF + ' / ' + cM + ' / ' + cS, accent: '#0ea5e9', bg: '#f0f9ff', sub: cN + ' item tanpa data' },
   ].map(k => `
-    <div style="background:white;border-radius:6px;padding:12px 14px;box-shadow:0 1px 3px rgba(0,0,0,.06)">
-      <div style="font-size:11px;color:#718096;margin-bottom:4px">${k.icon} ${k.label}</div>
-      <div style="font-size:15px;font-weight:700;color:${k.color}">${k.val}</div>
-      ${k.sub ? `<div style="font-size:10px;color:#a0aec0;margin-top:2px">${k.sub}</div>` : ''}
+    <div class="dash-kpi-card" style="--dk-accent:${k.accent};--dk-accent-bg:${k.bg}">
+      <div class="dash-kpi-top">
+        <div class="dash-kpi-icon">${k.icon}</div>
+      </div>
+      <div class="dash-kpi-label">${k.label}</div>
+      <div class="dash-kpi-value">${k.val}</div>
+      ${k.sub ? `<div class="dash-kpi-sub">${k.sub}</div>` : ''}
     </div>`).join('');
 
   // ── CHART 1: Stock Out 7 hari terakhir (ctn) ──────────
@@ -586,40 +589,56 @@ function tampilkanDashboard() {
     data7.push(Math.round(ctn * 10) / 10);
   }
   let ctx7 = document.getElementById('db-chart-out7').getContext('2d');
+  let grad7 = ctx7.createLinearGradient(0, 0, 0, 150);
+  grad7.addColorStop(0, 'rgba(59,130,246,.9)');
+  grad7.addColorStop(1, 'rgba(59,130,246,.35)');
   _dbCharts['out7'] = new Chart(ctx7, {
     type: 'bar',
     data: {
       labels: labels7,
-      datasets: [{ label: 'Ctn Keluar', data: data7, backgroundColor: 'rgba(59,130,246,.7)', borderRadius: 4 }]
+      datasets: [{ label: 'Ctn Keluar', data: data7, backgroundColor: grad7, borderRadius: 6, maxBarThickness: 38 }]
     },
-    options: { responsive: true, plugins: { legend: { display: false } }, scales: { y: { beginAtZero: true, ticks: { font: { size: 10 } } }, x: { ticks: { font: { size: 10 } } } } }
+    options: {
+      responsive: true,
+      plugins: { legend: { display: false }, tooltip: { backgroundColor: '#0f172a', padding: 10, cornerRadius: 8, titleFont: { size: 11 }, bodyFont: { size: 11 } } },
+      scales: {
+        y: { beginAtZero: true, grid: { color: '#f1f5f9' }, ticks: { font: { size: 10 }, color: '#94a3b8' } },
+        x: { grid: { display: false }, ticks: { font: { size: 10 }, color: '#94a3b8' } }
+      }
+    }
   });
 
-  // ── CHART 2: Top 5 SKU bulan ini ───────────────────────
-  destroyChart('top5');
+  // ── TOP 15 SKU bulan ini — leaderboard list ─────────────
   let skuTotals = {};
   outBulanIni.forEach(r => {
     let k = r.sku.toUpperCase();
     let isi = getIsiKarton(r.sku);
     skuTotals[k] = (skuTotals[k] || 0) + (r.qty || 0) / isi;
   });
-  let top5 = Object.entries(skuTotals).sort((a, b) => b[1] - a[1]).slice(0, 5);
+  let top15 = Object.entries(skuTotals).sort((a, b) => b[1] - a[1]).slice(0, 15);
   let labelMap = {};
   daftarBarang.forEach(b => { if (!labelMap[b.sku.toUpperCase()]) labelMap[b.sku.toUpperCase()] = b.nama; });
-  let ctx5 = document.getElementById('db-chart-top5').getContext('2d');
-  _dbCharts['top5'] = new Chart(ctx5, {
-    type: 'bar',
-    data: {
-      labels: top5.map(x => (labelMap[x[0]] || x[0]).substring(0, 20)),
-      datasets: [{ label: 'Ctn', data: top5.map(x => Math.round(x[1] * 10) / 10), backgroundColor: ['rgba(16,185,129,.75)', 'rgba(59,130,246,.75)', 'rgba(139,92,246,.75)', 'rgba(245,158,11,.75)', 'rgba(239,68,68,.75)'], borderRadius: 4 }]
-    },
-    options: {
-      indexAxis: 'y',
-      responsive: true,
-      plugins: { legend: { display: false } },
-      scales: { x: { beginAtZero: true, ticks: { font: { size: 10 } } }, y: { ticks: { font: { size: 10 } } } }
-    }
-  });
+  let topSkuList = document.getElementById('db-top-sku-list');
+  if (top15.length === 0) {
+    topSkuList.innerHTML = "<div style='text-align:center;color:#a0aec0;padding:24px;font-size:11.5px'>Belum ada data stock out bulan ini</div>";
+  } else {
+    let maxVal = top15[0][1] || 1;
+    let rankClass = i => i === 0 ? 'r-gold' : i === 1 ? 'r-silver' : i === 2 ? 'r-bronze' : '';
+    topSkuList.innerHTML = top15.map(([sku, val], i) => {
+      let nama = labelMap[sku] || sku;
+      let pct = Math.max(4, Math.round((val / maxVal) * 100));
+      return `<div class="rank-item">
+        <div class="rank-badge ${rankClass(i)}">${i + 1}</div>
+        <div class="rank-info">
+          <div class="rank-name-row">
+            <span class="rank-name" title="${nama}">${nama}</span>
+            <span class="rank-value">${(Math.round(val * 10) / 10).toLocaleString('id-ID')} ctn</span>
+          </div>
+          <div class="rank-bar-wrap"><div class="rank-bar-fill" style="width:${pct}%"></div></div>
+        </div>
+      </div>`;
+    }).join('');
+  }
 
   // ── CHART 3: Donut Moving ──────────────────────────────
   destroyChart('moving');
@@ -635,9 +654,9 @@ function tampilkanDashboard() {
   document.getElementById('db-moving-legend').innerHTML = [
     { c: '#10b981', l: 'Fast', v: cF }, { c: '#f59e0b', l: 'Medium', v: cM },
     { c: '#ef4444', l: 'Slow', v: cS }, { c: '#d1d5db', l: 'No Data', v: cN }
-  ].map(x => `<div style="display:flex;align-items:center;gap:5px;margin-bottom:3px">
-    <div style="width:10px;height:10px;border-radius:2px;background:${x.c};flex-shrink:0"></div>
-    <span style="color:#4a5568">${x.l}</span><span style="margin-left:auto;font-weight:700">${x.v}</span></div>`).join('');
+  ].map(x => `<div class="dash-legend-item">
+    <div class="dash-legend-dot" style="background:${x.c}"></div>
+    <span class="dash-legend-label">${x.l}</span><span class="dash-legend-val">${x.v}</span></div>`).join('');
 
   // ── TABLE: Low / Critical Stock ────────────────────────
   let lowItems = [];
