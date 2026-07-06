@@ -106,7 +106,7 @@ function downloadTemplateIntransit(){
 // UPLOAD EXCEL - MONITOR (STOCK IN)
 // =========================================================================
 function prosesUploadExcel(element){
-  if(!isAdmin()){ alert("⛔ Akses ditolak. Fitur ini hanya untuk Admin."); return; }
+  if(!canInput()){ alert("⛔ Akses ditolak. Fitur ini hanya untuk Admin/Staff Gudang."); return; }
   let file=element.files[0]; if(!file) return;
   let targetWarehouse=document.getElementById("uploadWarehouse").value;
   let uploadTgl=document.getElementById("uploadTanggal").value;
@@ -194,7 +194,7 @@ function prosesUploadExcel(element){
 // Header: Item Code, Qty, Warehouse, Keterangan
 // =========================================================================
 function prosesUploadStockOut(element){
-  if(!isAdmin()){ alert("⛔ Akses ditolak. Fitur ini hanya untuk Admin."); return; }
+  if(!canInput()){ alert("⛔ Akses ditolak. Fitur ini hanya untuk Admin/Staff Gudang."); return; }
   let file=element.files[0]; if(!file) return;
   let uploadTgl=document.getElementById("out-upload-tanggal").value;
   if(!uploadTgl){ alert("⚠️ Silakan pilih Tanggal Upload Stock Out terlebih dahulu!"); element.value=""; return; }
@@ -247,7 +247,7 @@ function prosesUploadStockOut(element){
 // Header: Item Code, Nama Barang, Item Group, Actual Qty, Isi/Ctn, Harga, Keterangan
 // =========================================================================
 function prosesUploadTransfer(element){
-  if(!isAdmin()){ alert("⛔ Akses ditolak. Fitur ini hanya untuk Admin."); return; }
+  if(!canInput()){ alert("⛔ Akses ditolak. Fitur ini hanya untuk Admin/Staff Gudang."); return; }
   let file=element.files[0]; if(!file) return;
   let fromWh=document.getElementById("tr-upload-from-wh").value;
   let toWh=document.getElementById("tr-upload-to-wh").value;
@@ -331,6 +331,7 @@ function prosesUploadTransfer(element){
 // =========================================================================
 function prosesUploadIntransit(element){
   let file=element.files[0]; if(!file) return;
+  if(!canInput()){ alert("⛔ Akses ditolak. Fitur ini hanya untuk Admin/Staff Gudang."); element.value=""; return; }
   let uploadTgl=document.getElementById("it-upload-tanggal").value;
   if(!uploadTgl){ alert("⚠️ Silakan pilih Tanggal Intransit terlebih dahulu!"); element.value=""; return; }
   let reader=new FileReader();
