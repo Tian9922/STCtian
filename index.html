@@ -28,6 +28,8 @@
   <link rel="stylesheet" href="css/style.css">
 </head>
 <body>
+<!-- ===== TOAST CONTAINER ===== -->
+<div id="toast-container"></div>
 <!-- ===== FIREBASE LOADING OVERLAY ===== -->
 <div id="fb-loader" style="display:none;position:fixed;inset:0;background:rgba(44,62,80,.85);z-index:9998;align-items:center;justify-content:center;flex-direction:column;gap:12px">
   <div style="width:44px;height:44px;border:4px solid rgba(255,255,255,.2);border-top-color:white;border-radius:50%;animation:spin .8s linear infinite"></div>
@@ -64,10 +66,10 @@
 <div id="sidebar">
   <div id="sidebar-brand">
     <div class="sb-logo">
-      <div class="sb-icon">IC</div>
+      <div class="sb-icon" id="sb-brand-icon">IC</div>
       <div>
-        <div class="sb-title">Inventory IC</div>
-        <div class="sb-sub">Christyan</div>
+        <div class="sb-title" id="sb-brand-title">Inventory IC</div>
+        <div class="sb-sub" id="sb-brand-sub">Christyan</div>
       </div>
     </div>
   </div>
@@ -84,8 +86,14 @@
     <button class="nav-tab" onclick="switchTab('ledger')" id="navbtn-ledger"><span class="tab-icon">📋</span><span data-i18n="tab_ledger">Stock Ledger</span></button>
     <button class="nav-tab" onclick="switchTab('analisis')" id="navbtn-analisis"><span class="tab-icon">📈</span><span data-i18n="tab_analisis">Analisa Stock</span></button>
     <button class="nav-tab" onclick="switchTab('sales')" id="navbtn-sales"><span class="tab-icon">🛒</span><span>Sales Analytics</span></button>
+    <div class="sb-section">Admin</div>
+    <button class="nav-tab" onclick="switchTab('settings')" id="navbtn-settings" style="display:none"><span class="tab-icon">⚙️</span><span>Pengaturan</span></button>
   </div>
   <div id="sidebar-footer">
+    <div id="dark-toggle-row">
+      <span>🌙 Dark Mode</span>
+      <button class="dm-switch" id="dm-switch-btn" onclick="toggleDarkMode()"></button>
+    </div>
     <div class="sb-lang">
       <button class="lang-btn active" onclick="setLang('id')">🇮🇩 ID</button>
       <button class="lang-btn" onclick="setLang('en')">🇬🇧 EN</button>
@@ -896,12 +904,89 @@
 
 <!-- END SALES ANALYTICS -->
 
+<!-- ===================== TAB 8: SETTINGS (Admin only) ===================== -->
+<div id="tab-settings" class="page-full">
+  <div class="settings-grid">
+    <!-- Company Profile -->
+    <div class="settings-card">
+      <h2>🏢 Profil Perusahaan</h2>
+      <div class="logo-upload-row">
+        <div class="logo-preview" id="settings-logo-preview">IC</div>
+        <div style="flex:1">
+          <label>Upload Logo (PNG/JPG, otomatis diperkecil)</label>
+          <input type="file" id="settings-logo-input" accept="image/*" onchange="handleLogoUpload(event)">
+        </div>
+      </div>
+      <label>Nama Perusahaan</label>
+      <input type="text" id="settings-company-name" placeholder="Contoh: Inventory Christyan (IC)">
+      <div style="margin-top:6px"></div>
+      <label>Subjudul / Tagline kecil di sidebar</label>
+      <input type="text" id="settings-company-sub" placeholder="Contoh: Christyan">
+      <button class="btn btn-green" style="margin-top:12px" onclick="saveCompanyProfile()">✅ Simpan Profil Perusahaan</button>
+    </div>
+
+    <!-- Preferences -->
+    <div class="settings-card">
+      <h2>🎛️ Preferensi</h2>
+      <label>Warehouse Default (form input)</label>
+      <select id="settings-default-warehouse">
+        <option value="">— Tidak ada default —</option>
+        <option>Bintaro</option><option>Gunsin</option><option>MAJ</option><option>Bosco</option><option>K-Mart</option><option>Happy Wonder</option><option>Hero Supermarket</option><option>Consignment</option><option>K-Seafood</option><option>Event</option><option>Sample</option>
+      </select>
+      <div style="margin-top:10px"></div>
+      <label>Tampilan Awal Setelah Login</label>
+      <select id="settings-default-tab">
+        <option value="dashboard">🏠 Dashboard</option>
+        <option value="monitor">📊 Monitor Stok</option>
+      </select>
+      <button class="btn btn-green" style="margin-top:12px" onclick="savePreferences()">✅ Simpan Preferensi</button>
+    </div>
+
+    <!-- User & Role Management -->
+    <div class="settings-card full">
+      <h2>👥 Manajemen User &amp; Role</h2>
+      <div style="font-size:11px;color:#94a3b8;margin-bottom:6px">
+        Role: <b>Admin</b> (akses penuh) · <b>Staff Gudang</b> (boleh input Stock In/Out/Transfer/Intransit, tidak bisa hapus data) · <b>Viewer</b> (hanya lihat laporan)
+      </div>
+      <table class="user-mgmt-table" id="user-mgmt-table">
+        <thead><tr><th>Username</th><th>Role</th><th>Tipe</th><th style="text-align:right">Aksi</th></tr></thead>
+        <tbody id="user-mgmt-tbody"></tbody>
+      </table>
+      <div class="add-user-row">
+        <div><label>Username baru</label><input type="text" id="nu-username" placeholder="mis. gudang2"></div>
+        <div><label>Password</label><input type="text" id="nu-password" placeholder="password"></div>
+        <div>
+          <label>Role</label>
+          <select id="nu-role">
+            <option value="staff">📦 Staff Gudang</option>
+            <option value="viewer">👁 Viewer</option>
+            <option value="admin">👑 Admin</option>
+          </select>
+        </div>
+        <button class="btn btn-blue" onclick="addNewUser()">➕ Tambah User</button>
+      </div>
+    </div>
+
+    <!-- Login History -->
+    <div class="settings-card full">
+      <h2>🕒 Riwayat Login (20 terakhir)</h2>
+      <div class="table-container" style="max-height:260px">
+        <table class="login-history-table">
+          <thead><tr><th>Waktu</th><th>Username</th><th>Role</th><th>Browser/Device</th></tr></thead>
+          <tbody id="login-history-tbody"></tbody>
+        </table>
+      </div>
+    </div>
+  </div>
+</div>
+
 <script src="js/01-config-auth-firebase.js"></script>
 <script src="js/02-navigation-helpers.js"></script>
 <script src="js/03-import-export.js"></script>
 <script src="js/04-stock-operations.js"></script>
 <script src="js/05-reports-analisis.js"></script>
 <script src="js/06-analytics-dashboard.js"></script>
+<script src="js/07-ux-settings.js"></script>
 <!-- MODAL EDIT BARANG (Monitor Stok) -->
 <div class="it-modal-overlay" id="edit-barang-modal" onclick="tutupModalEditBarang(event)">
   <div class="it-modal" onclick="event.stopPropagation()">
