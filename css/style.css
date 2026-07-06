@@ -230,3 +230,123 @@
     .dash-table tbody td{padding:8px 10px;border-bottom:1px solid #f4f6f9}
     .dash-table tbody tr:last-child td{border-bottom:none}
     .dash-table tbody tr:hover{background:#fafbfd}
+
+/* =========================================================================
+   TOAST NOTIFICATIONS
+   ========================================================================= */
+#toast-container{position:fixed;top:16px;right:16px;z-index:99999;display:flex;flex-direction:column;gap:8px;max-width:340px}
+.toast{display:flex;align-items:flex-start;gap:10px;background:#1e293b;color:#fff;padding:11px 14px;border-radius:9px;box-shadow:0 8px 24px rgba(15,23,42,.25);font-size:12.5px;font-weight:500;line-height:1.45;opacity:0;transform:translateX(40px);animation:toastIn .28s ease forwards;white-space:pre-line}
+.toast.toast-out{animation:toastOut .22s ease forwards}
+.toast-icon{font-size:16px;flex-shrink:0;margin-top:1px}
+.toast-msg{flex:1}
+.toast-close{cursor:pointer;opacity:.55;font-size:13px;flex-shrink:0;margin-left:2px}
+.toast-close:hover{opacity:1}
+.toast-success{background:#065f46;border-left:3px solid #10b981}
+.toast-error{background:#7f1d1d;border-left:3px solid #ef4444}
+.toast-warning{background:#78350f;border-left:3px solid #f59e0b}
+.toast-info{background:#1e3a5f;border-left:3px solid #3b82f6}
+@keyframes toastIn{to{opacity:1;transform:translateX(0)}}
+@keyframes toastOut{to{opacity:0;transform:translateX(40px)}}
+
+/* =========================================================================
+   SKELETON LOADING
+   ========================================================================= */
+.skeleton-row td{padding:10px!important}
+.skeleton-line{height:13px;border-radius:4px;background:linear-gradient(90deg,#e9edf2 25%,#f4f6f9 37%,#e9edf2 63%);background-size:400% 100%;animation:skeletonShine 1.4s ease infinite}
+.skeleton-line.sk-short{width:40%}
+.skeleton-line.sk-med{width:65%}
+.skeleton-line.sk-full{width:92%}
+@keyframes skeletonShine{0%{background-position:100% 50%}100%{background-position:0 50%}}
+.skeleton-card{background:linear-gradient(90deg,#eef1f6 25%,#f6f8fb 37%,#eef1f6 63%);background-size:400% 100%;animation:skeletonShine 1.4s ease infinite;border-radius:10px}
+
+/* =========================================================================
+   EMPTY STATE
+   ========================================================================= */
+.empty-state{display:flex;flex-direction:column;align-items:center;justify-content:center;padding:38px 20px;text-align:center;gap:4px}
+.empty-state-icon{font-size:34px;margin-bottom:6px;opacity:.75}
+.empty-state-title{font-size:13px;font-weight:700;color:#4a5568}
+.empty-state-sub{font-size:11.5px;color:#a0aec0;max-width:320px}
+
+/* =========================================================================
+   DARK MODE TOGGLE SWITCH (sidebar)
+   ========================================================================= */
+#dark-toggle-row{display:flex;align-items:center;justify-content:space-between;padding:6px 10px;margin:2px 0}
+#dark-toggle-row span{color:rgba(255,255,255,.55);font-size:11px;font-weight:600;display:flex;align-items:center;gap:6px}
+.dm-switch{position:relative;width:34px;height:18px;background:rgba(255,255,255,.15);border-radius:20px;cursor:pointer;transition:background .2s;flex-shrink:0;border:none}
+.dm-switch::after{content:'';position:absolute;top:2px;left:2px;width:14px;height:14px;background:#fff;border-radius:50%;transition:transform .2s}
+.dm-switch.on{background:#3b82f6}
+.dm-switch.on::after{transform:translateX(16px)}
+
+/* =========================================================================
+   DARK MODE THEME
+   ========================================================================= */
+body.dark-mode{background:#0b1220;color:#cbd5e1}
+body.dark-mode #main-area{background:#0b1220}
+body.dark-mode #topbar{background:#111a2c;border-bottom-color:#1e293b}
+body.dark-mode #topbar-title{color:#e2e8f0}
+body.dark-mode .card,
+body.dark-mode .right-panel,
+body.dark-mode .dash-panel,
+body.dark-mode .analisis-filters,
+body.dark-mode .summary-card,
+body.dark-mode .po-card,
+body.dark-mode .it-modal,
+body.dark-mode .settings-card{background:#111a2c;box-shadow:0 1px 2px rgba(0,0,0,.3);border-color:#1e293b}
+body.dark-mode .card h2,
+body.dark-mode .po-card h2{color:#e2e8f0;border-bottom-color:#1e293b}
+body.dark-mode label{color:#94a3b8}
+body.dark-mode input,
+body.dark-mode select{background:#0f1c30;border-color:#2b3a52;color:#e2e8f0}
+body.dark-mode input[readonly]{background:#1a2740;color:#94a3b8}
+body.dark-mode input::placeholder{color:#5b6b85}
+body.dark-mode table{color:#cbd5e1}
+body.dark-mode th{color:#94a3b8!important;background:#0f1c30!important}
+body.dark-mode td{border-bottom-color:#1e293b!important}
+body.dark-mode tr:hover td{background:#152238!important}
+body.dark-mode .dash-table thead th{background:#0f1c30;color:#94a3b8;border-bottom-color:#1e293b}
+body.dark-mode .dash-table tbody td{border-bottom-color:#1e293b}
+body.dark-mode .dash-table tbody tr:hover{background:#152238}
+body.dark-mode .dash-panel-head{border-bottom-color:#1e293b}
+body.dark-mode .dash-panel-title{color:#e2e8f0}
+body.dark-mode .dash-kpi-card{background:#111a2c;border-color:#1e293b}
+body.dark-mode .dash-kpi-value{color:#f1f5f9}
+body.dark-mode #tab-dashboard{background:#0b1220}
+body.dark-mode .table-container,
+body.dark-mode .dash-table-wrap{border-color:#1e293b}
+body.dark-mode .kosong{color:#5b6b85}
+body.dark-mode .empty-state-title{color:#94a3b8}
+body.dark-mode .empty-state-sub{color:#5b6b85}
+body.dark-mode .badge-nodata{background:#1e293b;color:#94a3b8}
+body.dark-mode .analisis-filters div[style*="color:#718096"]{color:#8291a8!important}
+body.dark-mode .po-result-box{background:#0f1c30;border-color:#1e3a2f}
+body.dark-mode .po-info-item{background:#0f1c30;border-color:#1e2f45}
+body.dark-mode ::-webkit-scrollbar{width:8px;height:8px}
+body.dark-mode ::-webkit-scrollbar-track{background:#0b1220}
+body.dark-mode ::-webkit-scrollbar-thumb{background:#2b3a52;border-radius:4px}
+
+/* =========================================================================
+   SETTINGS PAGE
+   ========================================================================= */
+#tab-settings{overflow-y:auto;gap:14px}
+.settings-grid{display:grid;grid-template-columns:1fr 1fr;gap:14px;align-items:start}
+.settings-card{background:white;border-radius:10px;padding:18px;box-shadow:0 1px 3px rgba(0,0,0,.06)}
+.settings-card h2{font-size:14px;color:#2c3e50;margin-bottom:14px;display:flex;align-items:center;gap:8px}
+.settings-card .full{grid-column:1/-1}
+.logo-upload-row{display:flex;align-items:center;gap:14px;margin-bottom:14px}
+.logo-preview{width:64px;height:64px;border-radius:12px;background:#eef1f6;display:flex;align-items:center;justify-content:center;overflow:hidden;flex-shrink:0;border:1px solid #e2e8f0}
+.logo-preview img{width:100%;height:100%;object-fit:cover}
+.user-mgmt-table{width:100%;border-collapse:collapse;font-size:12px;margin-top:6px}
+.user-mgmt-table th{text-align:left;color:#94a3b8;font-size:10px;text-transform:uppercase;letter-spacing:.4px;padding:6px 8px;border-bottom:1px solid #eef1f6}
+.user-mgmt-table td{padding:8px;border-bottom:1px solid #f4f6f9}
+.role-pill{padding:2px 9px;border-radius:10px;font-size:10px;font-weight:700}
+.role-pill.admin{background:#2c3e50;color:#fff}
+.role-pill.staff{background:#0d9488;color:#fff}
+.role-pill.viewer{background:#e2e8f0;color:#4a5568}
+.badge-staff{background:#0d9488;color:#fff}
+.add-user-row{display:grid;grid-template-columns:1fr 1fr 1fr auto;gap:6px;margin-top:10px;align-items:end}
+.login-history-table{width:100%;border-collapse:collapse;font-size:11.5px}
+.login-history-table th{text-align:left;color:#94a3b8;font-size:10px;text-transform:uppercase;padding:6px 8px;border-bottom:1px solid #eef1f6}
+.login-history-table td{padding:7px 8px;border-bottom:1px solid #f4f6f9;color:#4a5568}
+body.dark-mode .user-mgmt-table th,body.dark-mode .login-history-table th{border-bottom-color:#1e293b}
+body.dark-mode .user-mgmt-table td,body.dark-mode .login-history-table td{border-bottom-color:#1e293b;color:#cbd5e1}
+body.dark-mode .logo-preview{background:#0f1c30;border-color:#1e293b}
