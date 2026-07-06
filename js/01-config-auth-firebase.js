@@ -4,8 +4,12 @@
 // =========================================================================
 const ACCOUNTS = {
   admin:  { password: "admin123",  role: "admin"  },
-  stc:    { password: "stc123",    role: "viewer" }
+  stc:    { password: "stc123",    role: "viewer" },
+  gudang: { password: "gudang123", role: "staff"  }
 };
+// Akun tambahan yang dibuat lewat halaman Settings (di-merge saat load dari Firebase)
+window._customAccounts = {};
+function _allAccounts(){ return Object.assign({}, ACCOUNTS, window._customAccounts||{}); }
 
 let currentRole = null; // null = belum login
 
@@ -13,8 +17,9 @@ function doLogin(){
   let user = document.getElementById("login-user").value.trim().toLowerCase();
   let pass = document.getElementById("login-pass").value;
   let errEl = document.getElementById("login-error");
-  if(ACCOUNTS[user] && ACCOUNTS[user].password === pass){
-    currentRole = ACCOUNTS[user].role;
+  let ACC = _allAccounts();
+  if(ACC[user] && ACC[user].password === pass){
+    currentRole = ACC[user].role;
     sessionStorage.setItem("icRole", currentRole);
     sessionStorage.setItem("icUser", user);
     document.getElementById("login-overlay").style.display = "none";
@@ -31,6 +36,8 @@ function doLogin(){
       window._fbInitCallback = initFirebaseListeners;
     }
     applyLang();
+    if(typeof recordLoginHistory==="function") recordLoginHistory(user, currentRole);
+    if(typeof showToast==="function") showToast("👋 Selamat datang, "+user.charAt(0).toUpperCase()+user.slice(1)+"!","success");
   } else {
     errEl.style.display = "block";
     document.getElementById("login-pass").value = "";
@@ -49,6 +56,12 @@ function doLogout(){
 }
 
 function isAdmin(){ return currentRole === "admin"; }
+function isStaff(){ return currentRole === "staff"; }
+function isViewer(){ return currentRole === "viewer"; }
+// Staff gudang & admin boleh input (tambah/upload) data, tapi hapus tetap admin-only
+function canInput(){ return currentRole === "admin" || currentRole === "staff"; }
+function canDelete(){ return currentRole === "admin"; }
+function canManageSettings(){ return currentRole === "admin"; }
 
 function applyRoleUI(){
   let badge = document.getElementById("role-badge");
@@ -56,32 +69,31 @@ function applyRoleUI(){
   if(isAdmin()){
     badge.textContent = "👑 ADMIN";
     badge.className   = "badge-admin";
+  } else if(isStaff()){
+    badge.textContent = "📦 STAFF GUDANG";
+    badge.className   = "badge-staff";
   } else {
     badge.textContent = "👁 VIEWER";
     badge.className   = "badge-viewer";
   }
 
   // ---- MONITOR STOK ----
-  // Sembunyikan tombol Edit, Hapus, & Hapus Semua dari tabel (dilakukan saat render)
-  // Tombol Hapus Semua di filter row monitor
   _viewerHide("btn-hapus-semua-monitor");
 
-  // ---- STOCK IN ----
-  // Sembunyikan seluruh left-panel (form input + upload)
-  _viewerHide("panel-stock-in-left");
-  // Sembunyikan tombol Edit & Hapus (saat render tabel)
+  // ---- STOCK IN ---- (staff boleh lihat & pakai form input, viewer tidak)
+  _viewerHide("panel-stock-in-left", true);
   _viewerHide("btn-in-delete-all");
 
   // ---- STOCK OUT ----
-  _viewerHide("panel-stock-out-left");
+  _viewerHide("panel-stock-out-left", true);
   _viewerHide("btn-out-delete-all");
 
   // ---- TRANSFER ----
-  _viewerHide("panel-transfer-left");
+  _viewerHide("panel-transfer-left", true);
   _viewerHide("btn-transfer-delete-all");
 
   // ---- INTRANSIT ----
-  // Viewer bisa tambah & upload intransit, tapi TIDAK bisa hapus
+  // Staff & Admin bisa tambah & upload intransit, tapi TIDAK bisa hapus (kecuali admin)
   _viewerHide("btn-intransit-delete-all");
   // Tombol Hapus pada tiap row intransit dikontrol saat render
 
@@ -90,10 +102,16 @@ function applyRoleUI(){
 
   // ---- ANALISIS ----
   // Viewer bisa akses analisis sepenuhnya (termasuk Planning PO)
+
+  // ---- SETTINGS (khusus admin) ----
+  let navSettings = document.getElementById("navbtn-settings");
+  if(navSettings) navSettings.style.display = canManageSettings() ? "" : "none";
 }
 
-function _viewerHide(id){
-  if(isAdmin()) return;
+// inputAllowedHides = true -> panel ini butuh hak INPUT (staff boleh lihat), bukan cuma admin
+function _viewerHide(id, inputAllowedHides){
+  let allowed = inputAllowedHides ? canInput() : isAdmin();
+  if(allowed) { let el0=document.getElementById(id); if(el0) el0.style.display=""; return; }
   let el = document.getElementById(id);
   if(el) el.style.display = "none";
 }
@@ -371,10 +389,16 @@ function hideLoader(){
 }
 
 // Init realtime listeners — dipanggil setelah login berhasil
+const _TBODY_BY_TAB = { monitor:["tabelBarang",9], in:["tabelStockIn",11], out:["tabelStockOut",12], transfer:["tabelTransfer",11], ledger:["tabelLedger",11], intransit:["tabelIntransit",11] };
+
 function initFirebaseListeners(){
   if(!window._db){ console.warn("Firebase belum siap"); return; }
   const db = window._db;
   showLoader("Menghubungkan ke database...");
+  window._icDataReady = false;
+  // Tampilkan skeleton di tabel tab yang sedang aktif (bukan tabel kosong tiba-tiba)
+  let sk = _TBODY_BY_TAB[activeTab];
+  if(sk && typeof renderSkeletonRows==="function") renderSkeletonRows(sk[0], sk[1], 6);
   let loadedCount = 0;
   const total = FB_KEYS.length;
 
@@ -382,6 +406,7 @@ function initFirebaseListeners(){
     loadedCount++;
     if(loadedCount >= total){
       hideLoader();
+      window._icDataReady = true;
       let ss = document.getElementById("sync-status");
       if(ss){ ss.style.display="inline-block"; ss.textContent="🟢 Tersync"; ss.style.background="#d1fae5"; ss.style.color="#065f46"; }
       markDirty("monitor","in","out","transfer","intransit","ledger","analisis");
@@ -412,6 +437,16 @@ function initFirebaseListeners(){
   db.ref("inventory/intransitLog").on("value", snap => {
     intransitLog = snap.val() || []; onLoaded();
     markDirty("intransit","analisis"); renderTab(activeTab);
+  });
+
+  // ---- SETTINGS: profil perusahaan, akun tambahan, riwayat login ----
+  db.ref("appSettings").on("value", snap => {
+    let s = snap.val() || {};
+    window._appSettings = s;
+    window._customAccounts = s.customAccounts || {};
+    window._loginHistory = s.loginHistory || [];
+    if(typeof applyCompanyBranding==="function") applyCompanyBranding();
+    if(activeTab==="settings" && typeof renderSettingsPage==="function") renderSettingsPage();
   });
 }
 
