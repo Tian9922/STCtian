@@ -21,6 +21,7 @@ function renderTab(name){
   else if(name==="intransit") tampilkanIntransit();
   else if(name==="sales") tampilkanSales();
   else if(name==="dashboard") tampilkanDashboard();
+  else if(name==="settings" && typeof renderSettingsPage==="function") renderSettingsPage();
 }
 
 // Hanya render tab aktif saat load — Firebase listener akan isi data
@@ -32,7 +33,8 @@ function renderTab(name){
 const _tabTitles = {
   monitor:"📊 Monitor Stok", in:"📥 Stock In", out:"📤 Stock Out",
   transfer:"🔄 Transfer Stok", intransit:"🚚 In Transit",
-  dashboard:"🏠 Dashboard", ledger:"📋 Stock Ledger", analisis:"📈 Analisa Stock", sales:"🛒 Sales Analytics"
+  dashboard:"🏠 Dashboard", ledger:"📋 Stock Ledger", analisis:"📈 Analisa Stock", sales:"🛒 Sales Analytics",
+  settings:"⚙️ Pengaturan"
 };
 function switchTab(name){
   activeTab = name;
