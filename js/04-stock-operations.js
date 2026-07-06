@@ -173,7 +173,7 @@ function tampilkanTabel(){
   });
   hasil.forEach(b=>{ total+=Number(b.totalPcs)*Number(b.harga); });
   document.getElementById("assetValue").innerText=rpFormat(total);
-  if(hasil.length===0){ tabel.innerHTML="<tr><td colspan='10' class='kosong'>Tidak ada data</td></tr>"; return; }
+  if(hasil.length===0){ tabel.innerHTML=emptyStateRow(10,"📦","Belum ada barang","Tambahkan barang lewat form di sebelah kiri atau upload template Excel."); return; }
   hasil.forEach(function(b,i){
     let idx=daftarBarang.indexOf(b);
     let pcs=Number(b.totalPcs);
@@ -249,7 +249,7 @@ function exportIntransit(){
 // STOCK IN
 // =========================================================================
 function simpanStockIn(){
-  if(!isAdmin()){ alert("⛔ Akses ditolak. Fitur ini hanya untuk Admin."); return; }
+  if(!canInput()){ alert("⛔ Akses ditolak. Fitur ini hanya untuk Admin/Staff Gudang."); return; }
   let tanggal=document.getElementById("in-tanggal").value;
   let skuRaw=document.getElementById("in-sku").value.trim();
   let fullSku=document.getElementById("in-sku").getAttribute("data-full-sku");
@@ -334,7 +334,7 @@ function tampilkanStockIn(){
     let matchW=wh==="All"||(r.warehouse||"Bintaro").toUpperCase()===wh.toUpperCase();
     return matchK&&matchF&&matchT&&matchW;
   }).sort((a,b)=>b.tanggal.localeCompare(a.tanggal));
-  if(hasil.length===0){ tbody.innerHTML="<tr><td colspan='11' class='kosong'>"+t("no_data_in")+"</td></tr>"; return; }
+  if(hasil.length===0){ tbody.innerHTML=emptyStateRow(11,"📥",t("no_data_in"),"Transaksi Stock In yang kamu simpan akan muncul di sini."); return; }
   hasil.forEach(function(r,i){
     let uom=hitungUOM(r.qty,r.isiKarton);
     let nilai=r.qty*r.harga;
@@ -414,7 +414,7 @@ function updateOutTipe(){
 }
 
 function simpanStockOut(){
-  if(!isAdmin()){ alert("⛔ Akses ditolak. Fitur ini hanya untuk Admin."); return; }
+  if(!canInput()){ alert("⛔ Akses ditolak. Fitur ini hanya untuk Admin/Staff Gudang."); return; }
   let tanggal=document.getElementById("out-tanggal").value;
   let tipe=document.getElementById("out-tipe").value;
   let skuRaw=document.getElementById("out-sku").value.trim();
@@ -540,7 +540,7 @@ function tampilkanStockOut(){
     let matchTipe=tipeF==="All"||(r.tipe||"Stock Out")===tipeF;
     return matchK&&matchF&&matchT&&matchW&&matchTipe;
   }).sort((a,b)=>b.tanggal.localeCompare(a.tanggal));
-  if(hasil.length===0){ tbody.innerHTML="<tr><td colspan='12' class='kosong'>"+t("no_data_out")+"</td></tr>"; return; }
+  if(hasil.length===0){ tbody.innerHTML=emptyStateRow(12,"📤",t("no_data_out"),"Transaksi Stock Out yang kamu simpan akan muncul di sini."); return; }
   hasil.forEach(function(r,i){
     let uom=hitungUOM(r.qty,r.isiKarton);
     let nilai=r.qty*r.harga;
@@ -584,7 +584,7 @@ function exportStockOut(){
 // TRANSFER STOK
 // =========================================================================
 function simpanTransfer(){
-  if(!isAdmin()){ alert("⛔ Akses ditolak. Fitur ini hanya untuk Admin."); return; }
+  if(!canInput()){ alert("⛔ Akses ditolak. Fitur ini hanya untuk Admin/Staff Gudang."); return; }
   let tanggal=document.getElementById("tr-tanggal").value;
   let skuRaw=document.getElementById("tr-sku").value.trim();
   let fullSku=document.getElementById("tr-sku").getAttribute("data-full-sku");
@@ -720,7 +720,7 @@ function tampilkanTransfer(){
     let matchW=wh==="All"||r.fromWh.toUpperCase()===wh.toUpperCase()||r.toWh.toUpperCase()===wh.toUpperCase();
     return matchK&&matchF&&matchT&&matchW;
   }).sort((a,b)=>b.tanggal.localeCompare(a.tanggal));
-  if(hasil.length===0){ tbody.innerHTML="<tr><td colspan='11' class='kosong'>"+t("no_data_transfer")+"</td></td>"; return; }
+  if(hasil.length===0){ tbody.innerHTML=emptyStateRow(11,"🔄",t("no_data_transfer"),"Transfer stok antar gudang akan muncul di sini."); return; }
   hasil.forEach(function(r,i){
     let uom=hitungUOM(r.qty,r.isiKarton);
     tbody.innerHTML+="<tr>"+
