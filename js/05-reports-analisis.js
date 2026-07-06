@@ -59,7 +59,7 @@ function tampilkanLedger(){
   document.getElementById("led-total-trx").innerText  = hasil.length;
 
   if(hasil.length===0){
-    tbody.innerHTML=`<tr><td colspan='11' class='kosong'>${t("no_data_ledger")}</td></tr>`;
+    tbody.innerHTML=emptyStateRow(11,"📋",t("no_data_ledger"),"Semua histori transaksi stok akan tercatat di sini.");
     return;
   }
 
@@ -737,7 +737,7 @@ function tampilkanIntransit(){
   document.getElementById("it-cnt-planning").innerText=intransitLog.filter(r=>r.status==="Draft"&&r.fromPlanning).length+" item";
   cekNotifIntransit();
 
-  if(hasil.length===0){ tbody.innerHTML="<tr><td colspan='11' class='kosong'>Tidak ada data intransit</td></tr>"; return; }
+  if(hasil.length===0){ tbody.innerHTML=emptyStateRow(11,"🚚","Belum ada data In Transit","PO yang sedang dalam pengiriman akan muncul di sini."); return; }
   tbody.innerHTML="";
   hasil.forEach(function(r,i){
     let status=r.status||"InTransit";
