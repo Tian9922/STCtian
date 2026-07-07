@@ -276,6 +276,22 @@ function renderSettingsPage(){
   if(whEl)   whEl.value   = s.defaultWarehouse || "";
   if(tabEl)  tabEl.value  = s.defaultTab || "dashboard";
   if(preview) preview.innerHTML = s.logoBase64 ? "<img src='"+s.logoBase64+"'>" : "IC";
+  // Telegram config
+  let tgToken = document.getElementById("tg-bot-token");
+  let tgChat  = document.getElementById("tg-chat-id");
+  let tgThresh= document.getElementById("tg-threshold-days");
+  let tgSwitch= document.getElementById("tg-enable-switch");
+  let tgLast  = document.getElementById("tg-last-sent");
+  if(tgToken) tgToken.value = s.telegramBotToken || "";
+  if(tgChat)  tgChat.value  = s.telegramChatId || "";
+  if(tgThresh) tgThresh.value = s.telegramThresholdDays || 7;
+  if(tgSwitch){
+    let on = !!s.telegramEnabled;
+    tgSwitch.classList.toggle("on", on);
+    tgSwitch.style.background = on ? "" : "#cbd5e0";
+  }
+  if(tgLast) tgLast.textContent = s.lastTelegramAlertTime ? "Terakhir terkirim: "+new Date(s.lastTelegramAlertTime).toLocaleString("id-ID") : "Belum pernah terkirim otomatis.";
   renderUserManagementTable();
   renderLoginHistoryTable();
+  if(typeof renderAuditLogTable==="function") renderAuditLogTable();
 }
