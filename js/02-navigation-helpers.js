@@ -21,6 +21,7 @@ function renderTab(name){
   else if(name==="intransit") tampilkanIntransit();
   else if(name==="sales") tampilkanSales();
   else if(name==="dashboard") tampilkanDashboard();
+  else if(name==="reorder" && typeof tampilkanReorder==="function") tampilkanReorder();
   else if(name==="settings" && typeof renderSettingsPage==="function") renderSettingsPage();
 }
 
@@ -34,6 +35,7 @@ const _tabTitles = {
   monitor:"📊 Monitor Stok", in:"📥 Stock In", out:"📤 Stock Out",
   transfer:"🔄 Transfer Stok", intransit:"🚚 In Transit",
   dashboard:"🏠 Dashboard", ledger:"📋 Stock Ledger", analisis:"📈 Analisa Stock", sales:"🛒 Sales Analytics",
+  reorder:"🔮 Rekomendasi Reorder",
   settings:"⚙️ Pengaturan"
 };
 function switchTab(name){
