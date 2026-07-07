@@ -64,6 +64,8 @@
     .page.active{display:flex;gap:10px}
     .page-full{display:none;flex:1;overflow:hidden;flex-direction:column}
     .page-full.active{display:flex;flex-direction:column;gap:10px}
+    /* Dashboard needs its own vertical scroll since it now has more rows than fit one viewport */
+    #tab-dashboard.active{overflow-y:auto;overflow-x:hidden;padding-right:4px}
     .left-panel{width:360px;display:flex;flex-direction:column;gap:8px}
     .right-panel{flex:1;background:white;border-radius:6px;padding:10px;box-shadow:0 1px 3px rgba(0,0,0,.06);display:flex;flex-direction:column;overflow:hidden}
     .card{background:white;border-radius:6px;padding:10px;box-shadow:0 1px 3px rgba(0,0,0,.06)}
@@ -99,6 +101,8 @@
     .filter-row select{flex:1;min-width:110px}
     .filter-row input[type=date]{flex:1;min-width:110px}
     .table-container{flex:1;overflow-y:auto;border:1px solid #e2e8f0;border-radius:4px}
+    #tabelBarangFoot tr td{position:sticky;bottom:0;background:#eef2f7;box-shadow:0 -1px 0 #cbd5e0}
+    body.dark-mode #tabelBarangFoot tr td{background:#1e293b;box-shadow:0 -1px 0 #334155}
     table{width:100%;border-collapse:collapse;font-size:11.5px}
     th{background:#2c3e50;color:white;padding:7px 6px;position:sticky;top:0;text-align:left;z-index:10;white-space:nowrap}
     td{padding:6px;border-bottom:1px solid #edf2f7;white-space:nowrap;max-width:180px;overflow:hidden;text-overflow:ellipsis}
@@ -185,24 +189,27 @@
        DASHBOARD 2.0 — Professional redesign
        =================================================================== */
     #tab-dashboard{background:#f6f8fb}
-    .dash-kpi-grid{display:grid;grid-template-columns:repeat(5,1fr);gap:12px;margin-bottom:12px;flex-shrink:0}
-    .dash-kpi-card{position:relative;overflow:hidden;background:#ffffff;border:1px solid #eef1f6;border-radius:12px;padding:14px 16px 13px;box-shadow:0 1px 2px rgba(15,23,42,.04);transition:transform .16s ease,box-shadow .16s ease}
+    .dash-kpi-grid{display:grid;grid-template-columns:repeat(5,1fr);gap:8px;margin-bottom:10px;flex-shrink:0}
+    .dash-kpi-card{position:relative;overflow:hidden;background:#ffffff;border:1px solid #eef1f6;border-radius:9px;padding:8px 10px 7px;box-shadow:0 1px 2px rgba(15,23,42,.04);transition:transform .16s ease,box-shadow .16s ease}
     .dash-kpi-card:hover{transform:translateY(-2px);box-shadow:0 8px 20px rgba(15,23,42,.08)}
-    .dash-kpi-card::before{content:'';position:absolute;top:0;left:0;width:100%;height:3px;background:var(--dk-accent,#3b82f6)}
-    .dash-kpi-top{display:flex;align-items:center;justify-content:space-between;margin-bottom:10px}
-    .dash-kpi-icon{width:30px;height:30px;border-radius:9px;display:flex;align-items:center;justify-content:center;font-size:14px;background:var(--dk-accent-bg,#eff6ff)}
-    .dash-kpi-label{font-size:10.5px;font-weight:700;color:#8a94a6;text-transform:uppercase;letter-spacing:.5px}
-    .dash-kpi-value{font-size:19px;font-weight:800;color:#0f172a;letter-spacing:-.2px;line-height:1.15}
-    .dash-kpi-sub{font-size:10.5px;color:#a3acbd;margin-top:5px;font-weight:600}
+    .dash-kpi-card::before{content:'';position:absolute;top:0;left:0;width:100%;height:2px;background:var(--dk-accent,#3b82f6)}
+    .dash-kpi-top{display:flex;align-items:center;justify-content:space-between;margin-bottom:5px}
+    .dash-kpi-icon{width:20px;height:20px;border-radius:6px;display:flex;align-items:center;justify-content:center;font-size:10px;background:var(--dk-accent-bg,#eff6ff)}
+    .dash-kpi-label{font-size:8.5px;font-weight:700;color:#8a94a6;text-transform:uppercase;letter-spacing:.4px}
+    .dash-kpi-value{font-size:13.5px;font-weight:800;color:#0f172a;letter-spacing:-.2px;line-height:1.15}
+    .dash-kpi-sub{font-size:9px;color:#a3acbd;margin-top:3px;font-weight:600}
 
     .dash-row{display:grid;gap:12px;margin-bottom:12px;flex-shrink:0}
-    .dash-row-charts{grid-template-columns:1.3fr 1fr}
-    .dash-row-bottom{grid-template-columns:230px 1fr;flex:1;min-height:0;margin-bottom:0}
+    .dash-row-charts{grid-template-columns:1.3fr 1fr;min-height:300px}
+    .dash-row-bottom{grid-template-columns:230px 1fr;min-height:320px}
+    .dash-row-tall{min-height:320px}
 
     .dash-panel{background:#ffffff;border:1px solid #eef1f6;border-radius:12px;padding:16px;box-shadow:0 1px 2px rgba(15,23,42,.04);display:flex;flex-direction:column;overflow:hidden}
     .dash-panel-head{display:flex;align-items:center;justify-content:space-between;margin-bottom:12px;padding-bottom:11px;border-bottom:1px solid #f1f4f8}
     .dash-panel-title{font-size:12.5px;font-weight:700;color:#1e293b;display:flex;align-items:center;gap:7px}
     .dash-panel-badge{font-size:9.5px;font-weight:700;color:#64748b;background:#f1f5f9;padding:3px 8px;border-radius:20px;letter-spacing:.3px}
+    .dash-month-select{font-size:9.5px;font-weight:700;color:#3b82f6;background:#eff6ff;padding:3px 8px;border-radius:20px;letter-spacing:.3px;border:1px solid #dbeafe;cursor:pointer;outline:none}
+    .dash-month-select:hover{background:#dbeafe}
 
     /* Top SKU leaderboard */
     .rank-list{display:flex;flex-direction:column;gap:10px;overflow-y:auto;flex:1;padding-right:4px}
