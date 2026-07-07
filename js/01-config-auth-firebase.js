@@ -155,6 +155,26 @@ const LANG = {
     no_data_out:"Tidak ada data Stock Out",no_data_in:"Tidak ada data Stock In",no_data_transfer:"Belum ada data Transfer",no_data_ledger:"Tidak ada transaksi",
     insufficient_stock:"⚠️ Stok tidak mencukupi! Stok tersedia: ",confirm_insufficient:"pcs. Tetap lanjut?",
     same_warehouse_error:"Gudang asal dan tujuan tidak boleh sama!",
+    tab_dashboard:"Dashboard",tab_sales:"Sales Analytics",tab_reorder:"Rekomendasi Reorder",tab_settings:"Pengaturan",
+    sb_section_dashboard:"Dashboard",sb_section_operasional:"Operasional",sb_section_laporan:"Laporan",sb_section_admin:"Admin",
+    dark_mode:"Dark Mode",logout:"Logout",
+    placeholder_search_monitor:"🔍 Cari nama / SKU...",all_warehouse:"🏢 Semua Gudang",btn_export:"Export",
+    asset_title_all:"💰 Total Nilai Barang (Semua Gudang):",asset_title_wh:"🏢 Total Nilai Barang (Gudang {wh}):",
+    monitor_total_keseluruhan:"🧮 Total Keseluruhan ({n} baris — {wh}):",monitor_semua_gudang:"Semua Gudang",monitor_gudang:"Gudang {wh}",
+    tidak_ada_data:"Tidak ada data",
+    dash_kpi_nilai_stok:"Nilai Stok",dash_kpi_sku_aktif:"SKU Aktif",dash_kpi_out_bulan:"Out Bulan Ini",dash_kpi_in_bulan:"In Bulan Ini",dash_kpi_moving:"Fast / Med / Slow",
+    dash_kpi_pcs_terjual:"pcs terjual",dash_kpi_item_no_data:"item tanpa data",
+    dash_chart_out7_title:"Stock Out — 7 Hari Terakhir",dash_badge_carton:"CARTON",
+    dash_top_sku_title:"Top 15 SKU Terlaris",bulan_ini:"Bulan Ini",dash_no_data_month:"Belum ada data stock out bulan ini",
+    dash_moving_title:"Kategori Moving",dash_low_stock_title:"Stok Kritis — Ketahanan < 1 Bulan",dash_badge_avg30:"AVG 30 HARI",
+    dash_th_sku:"SKU",dash_th_nama:"Nama Barang",dash_th_gudang:"Gudang",dash_th_stok_ctn:"Stok (Ctn)",dash_th_avg_bln:"Avg/Bln (22hk)",dash_th_ketahanan:"Ketahanan",dash_th_status:"Status",
+    dash_low_stock_ok:"✅ Semua stok aman (ketahanan ≥ 1 bulan)",dash_status_kritis:"🔴 Kritis",dash_status_rendah:"🟡 Rendah",
+    dash_bestseller3m_title:"Best Seller — 3 Bulan Terakhir",dash_badge_90hari:"90 HARI",
+    dash_deadstock_title:"Dead Stock — Tidak Terjual",dash_badge_60hari:"≥ 60 HARI",dash_th_terakhir_terjual:"Terakhir Terjual",dash_th_umur:"Umur",
+    dash_deadstock_ok:"✅ Tidak ada dead stock (semua item pernah terjual dlm 60 hari terakhir)",dash_belum_pernah_terjual:"Belum pernah terjual",
+    dash_overstock_title:"Overstock / Slow Moving — SOH Terlama",dash_badge_aging:"AGING STOCK",dash_th_terakhir_stockin:"Terakhir Stock In",dash_th_umur_soh:"Umur SOH",dash_th_kategori:"Kategori",
+    dash_overstock_ok:"✅ Tidak ada overstock/slow moving saat ini",dash_tidak_ada_stockin:"Tidak ada data stock in",
+    dash_hari:"hari",dash_bln:"bln",dash_hr:"hr",
   },
   en: {
     tab_monitor:"Stock Monitor",tab_in:"Stock In",tab_out:"Stock Out",tab_transfer:"Stock Transfer",tab_ledger:"Stock Ledger",tab_analisis:"Stock Analysis",tab_planning:"PO Planning",tab_intransit:"In Transit",
@@ -182,6 +202,26 @@ const LANG = {
     no_data_out:"No Stock Out data",no_data_in:"No Stock In data",no_data_transfer:"No Transfer data",no_data_ledger:"No transactions found",
     insufficient_stock:"⚠️ Insufficient stock! Available: ",confirm_insufficient:"pcs. Continue anyway?",
     same_warehouse_error:"Source and destination warehouse cannot be the same!",
+    tab_dashboard:"Dashboard",tab_sales:"Sales Analytics",tab_reorder:"Reorder Recommendation",tab_settings:"Settings",
+    sb_section_dashboard:"Dashboard",sb_section_operasional:"Operations",sb_section_laporan:"Reports",sb_section_admin:"Admin",
+    dark_mode:"Dark Mode",logout:"Logout",
+    placeholder_search_monitor:"🔍 Search name / SKU...",all_warehouse:"🏢 All Warehouse",btn_export:"Export",
+    asset_title_all:"💰 Total Stock Value (All Warehouse):",asset_title_wh:"🏢 Total Stock Value (Warehouse {wh}):",
+    monitor_total_keseluruhan:"🧮 Grand Total ({n} rows — {wh}):",monitor_semua_gudang:"All Warehouses",monitor_gudang:"Warehouse {wh}",
+    tidak_ada_data:"No data",
+    dash_kpi_nilai_stok:"Stock Value",dash_kpi_sku_aktif:"Active SKU",dash_kpi_out_bulan:"Out This Month",dash_kpi_in_bulan:"In This Month",dash_kpi_moving:"Fast / Med / Slow",
+    dash_kpi_pcs_terjual:"pcs sold",dash_kpi_item_no_data:"items with no data",
+    dash_chart_out7_title:"Stock Out — Last 7 Days",dash_badge_carton:"CARTON",
+    dash_top_sku_title:"Top 15 Best-Selling SKU",bulan_ini:"This Month",dash_no_data_month:"No stock out data for this month yet",
+    dash_moving_title:"Moving Category",dash_low_stock_title:"Critical Stock — Duration < 1 Month",dash_badge_avg30:"AVG 30 DAYS",
+    dash_th_sku:"SKU",dash_th_nama:"Item Name",dash_th_gudang:"Warehouse",dash_th_stok_ctn:"Stock (Ctn)",dash_th_avg_bln:"Avg/Month (22wd)",dash_th_ketahanan:"Duration",dash_th_status:"Status",
+    dash_low_stock_ok:"✅ All stock is safe (duration ≥ 1 month)",dash_status_kritis:"🔴 Critical",dash_status_rendah:"🟡 Low",
+    dash_bestseller3m_title:"Best Seller — Last 3 Months",dash_badge_90hari:"90 DAYS",
+    dash_deadstock_title:"Dead Stock — Not Sold",dash_badge_60hari:"≥ 60 DAYS",dash_th_terakhir_terjual:"Last Sold",dash_th_umur:"Age",
+    dash_deadstock_ok:"✅ No dead stock (every item sold within the last 60 days)",dash_belum_pernah_terjual:"Never sold",
+    dash_overstock_title:"Overstock / Slow Moving — Oldest On Hand",dash_badge_aging:"AGING STOCK",dash_th_terakhir_stockin:"Last Stock In",dash_th_umur_soh:"Aging",dash_th_kategori:"Category",
+    dash_overstock_ok:"✅ No overstock/slow-moving items right now",dash_tidak_ada_stockin:"No stock-in data",
+    dash_hari:"days",dash_bln:"mo",dash_hr:"d",
   },
   ko: {
     tab_monitor:"재고 모니터",tab_in:"입고",tab_out:"출고",tab_transfer:"재고 이동",tab_ledger:"재고 원장",tab_analisis:"재고 분석",tab_planning:"PO 계획",tab_intransit:"운송중",
@@ -209,6 +249,26 @@ const LANG = {
     no_data_out:"출고 데이터 없음",no_data_in:"입고 데이터 없음",no_data_transfer:"이동 데이터 없음",no_data_ledger:"거래 없음",
     insufficient_stock:"⚠️ 재고 부족! 가용 재고: ",confirm_insufficient:"pcs. 계속하시겠습니까?",
     same_warehouse_error:"출발 창고와 도착 창고가 동일합니다!",
+    tab_dashboard:"대시보드",tab_sales:"판매 분석",tab_reorder:"재주문 추천",tab_settings:"설정",
+    sb_section_dashboard:"대시보드",sb_section_operasional:"운영",sb_section_laporan:"보고서",sb_section_admin:"관리자",
+    dark_mode:"다크 모드",logout:"로그아웃",
+    placeholder_search_monitor:"🔍 이름 / SKU 검색...",all_warehouse:"🏢 전체 창고",btn_export:"내보내기",
+    asset_title_all:"💰 총 재고 금액 (전체 창고):",asset_title_wh:"🏢 총 재고 금액 (창고 {wh}):",
+    monitor_total_keseluruhan:"🧮 총 합계 ({n}건 — {wh}):",monitor_semua_gudang:"전체 창고",monitor_gudang:"창고 {wh}",
+    tidak_ada_data:"데이터 없음",
+    dash_kpi_nilai_stok:"재고 금액",dash_kpi_sku_aktif:"활성 SKU",dash_kpi_out_bulan:"이번 달 출고",dash_kpi_in_bulan:"이번 달 입고",dash_kpi_moving:"Fast / Med / Slow",
+    dash_kpi_pcs_terjual:"pcs 판매됨",dash_kpi_item_no_data:"데이터 없는 품목",
+    dash_chart_out7_title:"출고 — 최근 7일",dash_badge_carton:"박스",
+    dash_top_sku_title:"베스트셀러 TOP 15",bulan_ini:"이번 달",dash_no_data_month:"이번 달 출고 데이터가 아직 없습니다",
+    dash_moving_title:"회전 분류",dash_low_stock_title:"위험 재고 — 지속 기간 < 1개월",dash_badge_avg30:"평균 30일",
+    dash_th_sku:"SKU",dash_th_nama:"품목명",dash_th_gudang:"창고",dash_th_stok_ctn:"재고 (박스)",dash_th_avg_bln:"월평균 (22근무일)",dash_th_ketahanan:"지속 기간",dash_th_status:"상태",
+    dash_low_stock_ok:"✅ 모든 재고가 안전합니다 (지속 기간 ≥ 1개월)",dash_status_kritis:"🔴 위험",dash_status_rendah:"🟡 낮음",
+    dash_bestseller3m_title:"베스트셀러 — 최근 3개월",dash_badge_90hari:"90일",
+    dash_deadstock_title:"데드스톡 — 미판매",dash_badge_60hari:"≥ 60일",dash_th_terakhir_terjual:"마지막 판매일",dash_th_umur:"경과일",
+    dash_deadstock_ok:"✅ 데드스톡 없음 (모든 품목이 최근 60일 내 판매됨)",dash_belum_pernah_terjual:"판매 이력 없음",
+    dash_overstock_title:"과잉재고 / 저회전 — 최장 보유 재고",dash_badge_aging:"에이징 재고",dash_th_terakhir_stockin:"마지막 입고일",dash_th_umur_soh:"보유 기간",dash_th_kategori:"분류",
+    dash_overstock_ok:"✅ 현재 과잉재고/저회전 품목 없음",dash_tidak_ada_stockin:"입고 데이터 없음",
+    dash_hari:"일",dash_bln:"개월",dash_hr:"일",
   }
 };
 
@@ -224,11 +284,22 @@ function setLang(lang){
     if(b.textContent.includes(lang.toUpperCase())) b.classList.add('active');
   });
   applyLang();
+  // Re-render topbar title + tab yang sedang aktif supaya konten yang dibangun lewat JS
+  // (tabel, kartu KPI, badge, dsb) ikut berganti bahasa, bukan cuma elemen statis.
+  let tt = document.getElementById('topbar-page-name');
+  if(tt && typeof tabTitle === 'function') tt.textContent = tabTitle(activeTab);
+  if(typeof renderTab === 'function') renderTab(activeTab);
 }
 
 function applyLang(){
   document.querySelectorAll('[data-i18n]').forEach(el=>{
     el.textContent = t(el.getAttribute('data-i18n'));
+  });
+  document.querySelectorAll('[data-i18n-placeholder]').forEach(el=>{
+    el.placeholder = t(el.getAttribute('data-i18n-placeholder'));
+  });
+  document.querySelectorAll('[data-i18n-title]').forEach(el=>{
+    el.title = t(el.getAttribute('data-i18n-title'));
   });
 }
 
