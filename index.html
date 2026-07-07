@@ -5,7 +5,7 @@
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <title>Inventory IC - Online</title>
   <script src="https://cdn.jsdelivr.net/npm/xlsx@0.18.5/dist/xlsx.full.min.js"></script>
-  <script src="https://cdn.jsdelivr.net/npm/chart.js@4.4.0/dist/chart.umd.min.js"></script>
+  <script src="https://cdn.jsdelivr.net/npm/apexcharts@3.49.1/dist/apexcharts.min.js"></script>
   <script src="https://cdn.jsdelivr.net/npm/jspdf@2.5.1/dist/jspdf.umd.min.js"></script>
   <script src="https://cdn.jsdelivr.net/npm/jspdf-autotable@3.8.2/dist/jspdf.plugin.autotable.js"></script>
 
@@ -124,19 +124,59 @@
 
 <!-- ===================== TAB: DASHBOARD ===================== -->
 <div id="tab-dashboard" class="page-full">
+  <!-- Row 0: Date range filter -->
+  <div class="dash-filter-row">
+    <div class="dash-daterange" id="dash-daterange-btns">
+      <button class="dr-btn" data-range="7d" onclick="setDashRange('7d')">7 Hari</button>
+      <button class="dr-btn" data-range="30d" onclick="setDashRange('30d')">30 Hari</button>
+      <button class="dr-btn active" data-range="thisMonth" onclick="setDashRange('thisMonth')">Bulan Ini</button>
+      <button class="dr-btn" data-range="lastMonth" onclick="setDashRange('lastMonth')">Bulan Lalu</button>
+      <button class="dr-btn" data-range="custom" onclick="setDashRange('custom')">📅 Custom</button>
+    </div>
+    <div class="dash-daterange-custom" id="dash-custom-inputs">
+      <input type="date" id="dash-date-from">
+      <span>—</span>
+      <input type="date" id="dash-date-to">
+      <button class="btn btn-blue" onclick="applyDashCustomRange()">Terapkan</button>
+    </div>
+    <div class="dash-period-badge" id="dash-period-badge"></div>
+  </div>
+
   <!-- Row 1: KPI Cards -->
   <div id="db-kpi-row" class="dash-kpi-grid"></div>
 
-  <!-- Row 2: Charts -->
+  <!-- Row 2: Charts — compact, kept up top, no wasted space -->
   <div class="dash-row dash-row-charts">
     <!-- Chart: Out per 7 hari -->
     <div class="dash-panel">
       <div class="dash-panel-head">
-        <div class="dash-panel-title">📤 <span data-i18n="dash_chart_out7_title">Stock Out — 7 Hari Terakhir</span></div>
+        <div class="dash-panel-title">📤 <span id="dash-out7-title" data-i18n="dash_chart_out7_title">Stock Out — 7 Hari Terakhir</span></div>
         <div class="dash-panel-badge" data-i18n="dash_badge_carton">CARTON</div>
       </div>
-      <canvas id="db-chart-out7" height="150"></canvas>
+      <div class="chart-canvas-wrap">
+        <div id="db-chart-out7" style="width:100%;height:100%"></div>
+      </div>
     </div>
+    <!-- Moving donut — now sits beside the bar chart, compact, no dead space -->
+    <div class="dash-panel dash-panel-donut">
+      <div class="dash-panel-head">
+        <div class="dash-panel-title">📊 <span data-i18n="dash_moving_title">Kategori Moving</span></div>
+      </div>
+      <div class="donut-flex">
+        <div class="donut-canvas-wrap">
+          <div id="db-chart-moving" style="width:100%;height:100%"></div>
+          <div class="donut-center">
+            <div class="donut-center-value" id="db-moving-total">0</div>
+            <div class="donut-center-label" data-i18n="dash_moving_center_label">SKU</div>
+          </div>
+        </div>
+        <div id="db-moving-legend" class="dash-legend dash-legend-inline"></div>
+      </div>
+    </div>
+  </div>
+
+  <!-- Row 3: Top 15 SKU + Low stock table -->
+  <div class="dash-row dash-row-lists">
     <!-- Top 15 SKU leaderboard -->
     <div class="dash-panel">
       <div class="dash-panel-head">
@@ -144,20 +184,6 @@
         <select id="db-top-sku-month" class="dash-month-select" onchange="tampilkanDashboard()"></select>
       </div>
       <div id="db-top-sku-list" class="rank-list"></div>
-    </div>
-  </div>
-
-  <!-- Row 3: Moving category + Low stock table -->
-  <div class="dash-row dash-row-bottom">
-    <!-- Moving donut -->
-    <div class="dash-panel">
-      <div class="dash-panel-head">
-        <div class="dash-panel-title">📊 <span data-i18n="dash_moving_title">Kategori Moving</span></div>
-      </div>
-      <div style="flex:1;display:flex;align-items:center;justify-content:center">
-        <canvas id="db-chart-moving" width="170" height="170"></canvas>
-      </div>
-      <div id="db-moving-legend" class="dash-legend"></div>
     </div>
     <!-- Low / critical stock table -->
     <div class="dash-panel">
@@ -1015,9 +1041,10 @@
     <div class="settings-card">
       <h2>🏢 Profil Perusahaan</h2>
       <div class="logo-upload-row">
-        <div class="logo-preview" id="settings-logo-preview">IC</div>
+        <label for="settings-logo-input" class="logo-preview" id="settings-logo-preview" title="Klik untuk upload logo">IC</label>
         <div style="flex:1">
-          <label>Upload Logo (PNG/JPG, otomatis diperkecil)</label>
+          <label for="settings-logo-input" class="btn btn-blue logo-upload-btn">📁 Upload Logo</label>
+          <div class="logo-upload-hint">PNG/JPG, otomatis diperkecil</div>
           <input type="file" id="settings-logo-input" accept="image/*" onchange="handleLogoUpload(event)">
         </div>
       </div>
