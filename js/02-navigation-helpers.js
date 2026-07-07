@@ -31,13 +31,14 @@ function renderTab(name){
 // =========================================================================
 // NAVIGATION
 // =========================================================================
-const _tabTitles = {
-  monitor:"📊 Monitor Stok", in:"📥 Stock In", out:"📤 Stock Out",
-  transfer:"🔄 Transfer Stok", intransit:"🚚 In Transit",
-  dashboard:"🏠 Dashboard", ledger:"📋 Stock Ledger", analisis:"📈 Analisa Stock", sales:"🛒 Sales Analytics",
-  reorder:"🔮 Rekomendasi Reorder",
-  settings:"⚙️ Pengaturan"
+const _tabIcons = {
+  monitor:"📊", in:"📥", out:"📤",
+  transfer:"🔄", intransit:"🚚",
+  dashboard:"🏠", ledger:"📋", analisis:"📈", sales:"🛒",
+  reorder:"🔮",
+  settings:"⚙️"
 };
+function tabTitle(name){ return (_tabIcons[name]||"") + " " + t("tab_"+name); }
 function switchTab(name){
   activeTab = name;
   document.querySelectorAll(".nav-tab").forEach(t=>t.classList.remove("active"));
@@ -47,7 +48,7 @@ function switchTab(name){
   let el = document.getElementById("tab-"+name);
   if(el){ el.classList.add("active"); }
   let tt = document.getElementById("topbar-page-name");
-  if(tt) tt.textContent = (_tabTitles[name]||name);
+  if(tt) tt.textContent = tabTitle(name);
   // Render setelah browser paint tab baru (terasa instan)
   requestAnimationFrame(function(){ requestAnimationFrame(function(){ renderTab(name); }); });
 }
