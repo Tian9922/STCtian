@@ -6,6 +6,8 @@
   <title>Inventory IC - Online</title>
   <script src="https://cdn.jsdelivr.net/npm/xlsx@0.18.5/dist/xlsx.full.min.js"></script>
   <script src="https://cdn.jsdelivr.net/npm/chart.js@4.4.0/dist/chart.umd.min.js"></script>
+  <script src="https://cdn.jsdelivr.net/npm/jspdf@2.5.1/dist/jspdf.umd.min.js"></script>
+  <script src="https://cdn.jsdelivr.net/npm/jspdf-autotable@3.8.2/dist/jspdf.plugin.autotable.js"></script>
 
   <!-- ===== FIREBASE SDK (Compat - lebih reliable) ===== -->
   <script src="https://www.gstatic.com/firebasejs/10.12.0/firebase-app-compat.js"></script>
@@ -86,6 +88,7 @@
     <button class="nav-tab" onclick="switchTab('ledger')" id="navbtn-ledger"><span class="tab-icon">📋</span><span data-i18n="tab_ledger">Stock Ledger</span></button>
     <button class="nav-tab" onclick="switchTab('analisis')" id="navbtn-analisis"><span class="tab-icon">📈</span><span data-i18n="tab_analisis">Analisa Stock</span></button>
     <button class="nav-tab" onclick="switchTab('sales')" id="navbtn-sales"><span class="tab-icon">🛒</span><span>Sales Analytics</span></button>
+    <button class="nav-tab" onclick="switchTab('reorder')" id="navbtn-reorder"><span class="tab-icon">🔮</span><span>Rekomendasi Reorder</span></button>
     <div class="sb-section">Admin</div>
     <button class="nav-tab" onclick="switchTab('settings')" id="navbtn-settings" style="display:none"><span class="tab-icon">⚙️</span><span>Pengaturan</span></button>
   </div>
@@ -696,6 +699,7 @@
     </div>
     <div style="display:flex;gap:4px;align-items:flex-end">
       <button class="btn btn-export" onclick="exportLedger()">⬇️ Export Excel</button>
+      <button class="btn btn-purple" onclick="exportLedgerPDF()">📄 PDF</button>
       <button class="btn btn-orange" onclick="resetLedgerFilter()">↺ Reset</button>
       <button id="btn-ledger-delete-all" class="btn btn-danger" onclick="hapusSemuaLedger()">🗑️ <span data-i18n="btn_delete_all">Hapus Semua</span></button>
     </div>
@@ -809,6 +813,7 @@
     </div>
     <div style="display:flex;gap:4px;align-items:flex-end">
       <button class="btn btn-export" onclick="exportAnalisis()">⬇️ Export</button>
+      <button class="btn btn-purple" onclick="exportAnalisisPDF()">📄 PDF</button>
     </div>
   </div>
   <div style="flex:1;background:white;border-radius:6px;padding:10px;box-shadow:0 1px 3px rgba(0,0,0,.06);display:flex;flex-direction:column;overflow:hidden">
@@ -885,6 +890,7 @@
     </div>
     <div style="display:flex;gap:4px;align-items:flex-end">
       <button class="btn btn-export" onclick="exportSales()">⬇️ Export</button>
+      <button class="btn btn-purple" onclick="exportSalesPDF()">📄 PDF</button>
     </div>
   </div>
   <div style="flex:1;background:white;border-radius:6px;padding:10px;box-shadow:0 1px 3px rgba(0,0,0,.06);display:flex;flex-direction:column;overflow:hidden">
@@ -903,6 +909,45 @@
 </div>
 
 <!-- END SALES ANALYTICS -->
+
+<!-- ===================== TAB: REKOMENDASI REORDER OTOMATIS ===================== -->
+<div id="tab-reorder" class="page-full">
+  <div class="analisis-filters">
+    <div class="fgrp">
+      <label>🎯 Target Cover Stok (hari)</label>
+      <input type="number" id="ro-target-days" value="45" min="7" onchange="tampilkanReorder()">
+    </div>
+    <div class="fgrp">
+      <label>⏱️ Tampilkan jika ketahanan &lt; (hari)</label>
+      <input type="number" id="ro-threshold-days" value="30" min="1" onchange="tampilkanReorder()">
+    </div>
+    <div class="fgrp">
+      <label>Gudang</label>
+      <select id="ro-wh" onchange="tampilkanReorder()">
+        <option value="All">Semua Gudang</option>
+        <option>Bintaro</option><option>Gunsin</option><option>MAJ</option><option>Bosco</option><option>K-Mart</option><option>Happy Wonder</option><option>Hero Supermarket</option><option>Consignment</option><option>K-Seafood</option><option>Event</option><option>Sample</option>
+      </select>
+    </div>
+    <div style="display:flex;gap:4px;align-items:flex-end">
+      <button class="btn btn-purple" onclick="exportReorderPDF()">📄 Export PDF</button>
+    </div>
+  </div>
+  <div style="font-size:11px;color:#718096;background:white;border-radius:6px;padding:8px 10px;box-shadow:0 1px 3px rgba(0,0,0,.06)">
+    ℹ️ Rekomendasi dihitung dari <strong>rata-rata Stock Out 90 hari terakhir</strong> (tren 3 bulan, lebih stabil). Qty PO disarankan = kebutuhan sampai target cover − stok saat ini (aktual + in transit + draft).
+  </div>
+  <div style="flex:1;background:white;border-radius:6px;padding:10px;box-shadow:0 1px 3px rgba(0,0,0,.06);display:flex;flex-direction:column;overflow:hidden">
+    <div class="table-container" style="flex:1">
+      <table>
+        <thead>
+          <tr><th>No</th><th>SKU</th><th>Nama Barang</th><th>Gudang</th>
+          <th style="text-align:right">Stok Saat Ini</th><th style="text-align:right">Avg Out/Hari (90hr)</th>
+          <th>Ketahanan</th><th>Status</th><th style="text-align:right">Rekomendasi PO</th><th style="text-align:center">Aksi</th></tr>
+        </thead>
+        <tbody id="tabelReorder"></tbody>
+      </table>
+    </div>
+  </div>
+</div>
 
 <!-- ===================== TAB 8: SETTINGS (Admin only) ===================== -->
 <div id="tab-settings" class="page-full">
@@ -977,6 +1022,51 @@
         </table>
       </div>
     </div>
+
+    <!-- Telegram Notification -->
+    <div class="settings-card full">
+      <h2>🔔 Notifikasi Stok Kritis (Telegram)</h2>
+      <div style="font-size:11px;color:#94a3b8;margin-bottom:10px;line-height:1.6">
+        Buat bot lewat <b>@BotFather</b> di Telegram untuk dapat Bot Token, lalu chat bot kamu sekali dan buka
+        <code>https://api.telegram.org/bot&lt;TOKEN&gt;/getUpdates</code> untuk menemukan Chat ID kamu.<br>
+        🕖 <b>Jadwal jam 19:00 WIB tiap hari</b> dijalankan oleh Cloudflare Worker terpisah (file <code>inventory-ic-telegram-alert-worker.js</code>) yang membaca konfigurasi di bawah ini — jadi cukup isi & aktifkan sekali di sini.
+        Selain itu, pengecekan tambahan juga otomatis jalan tiap kali ada yang login ke dashboard ini (maks 1x/12 jam).
+      </div>
+      <div class="form-grid">
+        <div class="form-group-full">
+          <label>Bot Token</label>
+          <input type="text" id="tg-bot-token" placeholder="123456789:ABC-DEF...">
+        </div>
+        <div>
+          <label>Chat ID</label>
+          <input type="text" id="tg-chat-id" placeholder="mis. 123456789">
+        </div>
+        <div>
+          <label>Kirim jika ketahanan &lt; (hari)</label>
+          <input type="number" id="tg-threshold-days" value="7" min="1">
+        </div>
+      </div>
+      <div style="display:flex;align-items:center;gap:8px;margin:10px 0">
+        <button class="dm-switch" id="tg-enable-switch" onclick="toggleTelegramEnabled()" style="background:#cbd5e0"></button>
+        <span style="font-size:12px;font-weight:600;color:#4a5568">Aktifkan pengecekan otomatis saat login</span>
+      </div>
+      <div style="display:flex;gap:6px">
+        <button class="btn btn-green" onclick="saveTelegramConfig()">✅ Simpan Konfigurasi</button>
+        <button class="btn btn-blue" onclick="testTelegramAlert()">🧪 Test Kirim Sekarang</button>
+      </div>
+      <div id="tg-last-sent" style="font-size:11px;color:#94a3b8;margin-top:8px"></div>
+    </div>
+
+    <!-- Audit Log -->
+    <div class="settings-card full">
+      <h2>📜 Riwayat Aktivitas (Audit Log)</h2>
+      <div class="table-container" style="max-height:280px">
+        <table class="login-history-table">
+          <thead><tr><th>Waktu</th><th>User</th><th>Role</th><th>Modul</th><th>Aksi</th><th>Detail</th></tr></thead>
+          <tbody id="audit-log-tbody"></tbody>
+        </table>
+      </div>
+    </div>
   </div>
 </div>
 
@@ -987,6 +1077,7 @@
 <script src="js/05-reports-analisis.js"></script>
 <script src="js/06-analytics-dashboard.js"></script>
 <script src="js/07-ux-settings.js"></script>
+<script src="js/08-functional-features.js"></script>
 <!-- MODAL EDIT BARANG (Monitor Stok) -->
 <div class="it-modal-overlay" id="edit-barang-modal" onclick="tutupModalEditBarang(event)">
   <div class="it-modal" onclick="event.stopPropagation()">
