@@ -325,16 +325,39 @@ window.tampilkanTabel = function(){
   let tabel = document.getElementById("tabelBarang");
   let keyword = document.getElementById("search").value.toLowerCase();
   let selWH = document.getElementById("filterWarehouse").value;
-  document.getElementById("assetTitle").innerText = selWH==="All"?"💰 Total Nilai Barang (All Warehouse):":"🏢 Total Nilai Barang (Gudang "+selWH+"):";
+  document.getElementById("assetTitle").innerText = selWH==="All" ? t('asset_title_all') : t('asset_title_wh').replace('{wh}', selWH);
   let hasil = daftarBarang.filter(b=>{
     let wh = b.warehouse||"Bintaro";
     return (selWH==="All"||wh.toUpperCase()===selWH.toUpperCase()) &&
            (b.nama.toLowerCase().includes(keyword)||b.sku.toLowerCase().includes(keyword));
   });
-  let total = 0;
-  hasil.forEach(b=>{ total+=Number(b.totalPcs)*Number(b.harga); });
+  let total = 0, totalPcsAll = 0, totalCtnAll = 0;
+  hasil.forEach(b=>{
+    let pcsB = Number(b.totalPcs)||0;
+    let isiB = Number(b.isiKarton)||1;
+    total += pcsB*Number(b.harga);
+    totalPcsAll += pcsB;
+    totalCtnAll += pcsB/isiB;
+  });
   document.getElementById("assetValue").innerText = rpFormat(total);
-  if(hasil.length===0){ tabel.innerHTML="<tr><td colspan='10' class='kosong'>Tidak ada data</td></tr>"; attachPagination(tabel,"pg-monitor",0,1,PAGE_SIZE,()=>{}); return; }
+  let tfoot = document.getElementById("tabelBarangFoot");
+  if(hasil.length===0){
+    tabel.innerHTML="<tr><td colspan='10' class='kosong'>"+t('tidak_ada_data')+"</td></tr>";
+    if(tfoot) tfoot.innerHTML = "";
+    attachPagination(tabel,"pg-monitor",0,1,PAGE_SIZE,()=>{});
+    return;
+  }
+  if(tfoot){
+    let labelWH = selWH==="All" ? t('monitor_semua_gudang') : t('monitor_gudang').replace('{wh}', selWH);
+    tfoot.innerHTML = "<tr style='font-weight:700'>"
+      + "<td colspan='5' style='text-align:right;padding:8px'>"+t('monitor_total_keseluruhan').replace('{n}', hasil.length).replace('{wh}', labelWH)+"</td>"
+      + "<td>"+totalPcsAll.toLocaleString('id-ID')+" pcs</td>"
+      + "<td>"+totalCtnAll.toFixed(1)+" ctn</td>"
+      + "<td></td>"
+      + "<td>"+rpFormat(total)+"</td>"
+      + "<td></td>"
+      + "</tr>";
+  }
   let page = _pageState.monitor;
   let sliced = hasil.slice((page-1)*PAGE_SIZE, page*PAGE_SIZE);
   let rows = sliced.map(function(b,ii){
@@ -559,11 +582,11 @@ function tampilkanDashboard() {
   // ── RENDER KPI CARDS ───────────────────────────────────
   let kpiRow = document.getElementById('db-kpi-row');
   kpiRow.innerHTML = [
-    { icon: '💰', label: 'Nilai Stok', val: rpFormat(totalNilaiStok), accent: '#3b82f6', bg: '#eff6ff' },
-    { icon: '📦', label: 'SKU Aktif', val: totalSkuAktif + ' SKU', accent: '#10b981', bg: '#ecfdf5' },
-    { icon: '📤', label: 'Out Bulan Ini', val: rpFormat(nilaiOutBulanIni), accent: '#ef4444', bg: '#fef2f2', sub: qtyOutBulanIni.toLocaleString('id-ID') + ' pcs terjual' },
-    { icon: '📥', label: 'In Bulan Ini', val: rpFormat(nilaiInBulanIni), accent: '#8b5cf6', bg: '#f5f3ff' },
-    { icon: '🚀', label: 'Fast / Med / Slow', val: cF + ' / ' + cM + ' / ' + cS, accent: '#0ea5e9', bg: '#f0f9ff', sub: cN + ' item tanpa data' },
+    { icon: '💰', label: t('dash_kpi_nilai_stok'), val: rpFormat(totalNilaiStok), accent: '#3b82f6', bg: '#eff6ff' },
+    { icon: '📦', label: t('dash_kpi_sku_aktif'), val: totalSkuAktif + ' SKU', accent: '#10b981', bg: '#ecfdf5' },
+    { icon: '📤', label: t('dash_kpi_out_bulan'), val: rpFormat(nilaiOutBulanIni), accent: '#ef4444', bg: '#fef2f2', sub: qtyOutBulanIni.toLocaleString('id-ID') + ' ' + t('dash_kpi_pcs_terjual') },
+    { icon: '📥', label: t('dash_kpi_in_bulan'), val: rpFormat(nilaiInBulanIni), accent: '#8b5cf6', bg: '#f5f3ff' },
+    { icon: '🚀', label: t('dash_kpi_moving'), val: cF + ' / ' + cM + ' / ' + cS, accent: '#0ea5e9', bg: '#f0f9ff', sub: cN + ' ' + t('dash_kpi_item_no_data') },
   ].map(k => `
     <div class="dash-kpi-card" style="--dk-accent:${k.accent};--dk-accent-bg:${k.bg}">
       <div class="dash-kpi-top">
@@ -608,9 +631,27 @@ function tampilkanDashboard() {
     }
   });
 
-  // ── TOP 15 SKU bulan ini — leaderboard list ─────────────
+  // ── TOP 15 SKU — leaderboard per bulan pilihan ──────────
+  // Isi dropdown bulan sekali saja (biar pilihan user tidak ke-reset tiap render)
+  let monthSel = document.getElementById('db-top-sku-month');
+  if (monthSel && monthSel.options.length === 0) {
+    let monthNames = { id: 'id-ID', en: 'en-US', ko: 'ko-KR' };
+    let locale = monthNames[currentLang] || 'id-ID';
+    for (let i = 0; i < 12; i++) {
+      let d = new Date(); d.setDate(1); d.setMonth(d.getMonth() - i);
+      let val = getMonthStr(d);
+      let label = d.toLocaleDateString(locale, { month: 'long', year: 'numeric' });
+      let opt = document.createElement('option');
+      opt.value = val;
+      opt.textContent = i === 0 ? label + ' (' + t('bulan_ini') + ')' : label;
+      monthSel.appendChild(opt);
+    }
+  }
+  let selectedMonth = (monthSel && monthSel.value) ? monthSel.value : thisMonth;
+  let outSelMonth = stockOutLog.filter(r => (r.tanggal || '').slice(0, 7) === selectedMonth);
+
   let skuTotals = {};
-  outBulanIni.forEach(r => {
+  outSelMonth.forEach(r => {
     let k = r.sku.toUpperCase();
     let isi = getIsiKarton(r.sku);
     skuTotals[k] = (skuTotals[k] || 0) + (r.qty || 0) / isi;
@@ -620,7 +661,7 @@ function tampilkanDashboard() {
   daftarBarang.forEach(b => { if (!labelMap[b.sku.toUpperCase()]) labelMap[b.sku.toUpperCase()] = b.nama; });
   let topSkuList = document.getElementById('db-top-sku-list');
   if (top15.length === 0) {
-    topSkuList.innerHTML = "<div style='text-align:center;color:#a0aec0;padding:24px;font-size:11.5px'>Belum ada data stock out bulan ini</div>";
+    topSkuList.innerHTML = "<div style='text-align:center;color:#a0aec0;padding:24px;font-size:11.5px'>" + t('dash_no_data_month') + "</div>";
   } else {
     let maxVal = top15[0][1] || 1;
     let rankClass = i => i === 0 ? 'r-gold' : i === 1 ? 'r-silver' : i === 2 ? 'r-bronze' : '';
@@ -678,13 +719,13 @@ function tampilkanDashboard() {
 
   let tbody = document.getElementById('db-low-stock-body');
   if (lowItems.length === 0) {
-    tbody.innerHTML = "<tr><td colspan='7' style='text-align:center;color:#a0aec0;padding:20px'>✅ Semua stok aman (ketahanan ≥ 1 bulan)</td></tr>";
+    tbody.innerHTML = "<tr><td colspan='7' style='text-align:center;color:#a0aec0;padding:20px'>" + t('dash_low_stock_ok') + "</td></tr>";
   } else {
     tbody.innerHTML = lowItems.map(({ b, stokCtn, avgBln, hariTahan }) => {
       let bln = hariTahan / 30;
       let status = hariTahan <= 7
-        ? "<span style='background:#fee2e2;color:#991b1b;padding:2px 7px;border-radius:3px;font-size:10px;font-weight:700'>🔴 Kritis</span>"
-        : "<span style='background:#fef3c7;color:#92400e;padding:2px 7px;border-radius:3px;font-size:10px;font-weight:700'>🟡 Rendah</span>";
+        ? "<span style='background:#fee2e2;color:#991b1b;padding:2px 7px;border-radius:3px;font-size:10px;font-weight:700'>" + t('dash_status_kritis') + "</span>"
+        : "<span style='background:#fef3c7;color:#92400e;padding:2px 7px;border-radius:3px;font-size:10px;font-weight:700'>" + t('dash_status_rendah') + "</span>";
       let warna = hariTahan <= 7 ? '#991b1b' : '#92400e';
       return `<tr>
         <td style="padding:6px 8px;border-bottom:1px solid #edf2f7;font-size:10px;color:#4a5568">${b.sku}</td>
@@ -696,6 +737,132 @@ function tampilkanDashboard() {
         <td style="padding:6px 8px;border-bottom:1px solid #edf2f7;text-align:center">${status}</td>
       </tr>`;
     }).join('');
+  }
+
+  // ── HELPERS: tanggal transaksi terakhir per SKU+Gudang ─
+  function getLastOutDate(sku, warehouse) {
+    let recs = stockOutLog.filter(r => r.sku.toUpperCase() === sku.toUpperCase() && (r.warehouse || 'Bintaro').toUpperCase() === (warehouse || 'Bintaro').toUpperCase());
+    if (recs.length === 0) return null;
+    return recs.map(r => r.tanggal).sort().pop();
+  }
+  function getLastInDate(sku, warehouse) {
+    let recs = stockInLog.filter(r => r.sku.toUpperCase() === sku.toUpperCase() && (r.warehouse || 'Bintaro').toUpperCase() === (warehouse || 'Bintaro').toUpperCase());
+    if (recs.length === 0) return null;
+    return recs.map(r => r.tanggal).sort().pop();
+  }
+  function daysSince(dateStr) {
+    if (!dateStr) return Infinity;
+    let d1 = new Date(dateStr + 'T00:00:00'), d2 = new Date();
+    return Math.floor((d2 - d1) / (1000 * 60 * 60 * 24));
+  }
+
+  // ── BEST SELLER — 3 BULAN TERAKHIR (90 hari) ───────────
+  let cutoff90 = getDateStr(90);
+  let out90 = stockOutLog.filter(r => (r.tanggal || '') >= cutoff90);
+  let skuTotals90 = {};
+  out90.forEach(r => {
+    let k = r.sku.toUpperCase();
+    let isi = getIsiKarton(r.sku);
+    skuTotals90[k] = (skuTotals90[k] || 0) + (r.qty || 0) / isi;
+  });
+  let top90 = Object.entries(skuTotals90).sort((a, b) => b[1] - a[1]).slice(0, 15);
+  let list90 = document.getElementById('db-top-sku-3m-list');
+  if (list90) {
+    if (top90.length === 0) {
+      list90.innerHTML = "<div style='text-align:center;color:#a0aec0;padding:24px;font-size:11.5px'>Belum ada data stock out 3 bulan terakhir</div>";
+    } else {
+      let maxVal90 = top90[0][1] || 1;
+      let rankClass90 = i => i === 0 ? 'r-gold' : i === 1 ? 'r-silver' : i === 2 ? 'r-bronze' : '';
+      list90.innerHTML = top90.map(([sku, val], i) => {
+        let nama = labelMap[sku] || sku;
+        let pct = Math.max(4, Math.round((val / maxVal90) * 100));
+        return `<div class="rank-item">
+          <div class="rank-badge ${rankClass90(i)}">${i + 1}</div>
+          <div class="rank-info">
+            <div class="rank-name-row">
+              <span class="rank-name" title="${nama}">${nama}</span>
+              <span class="rank-value">${(Math.round(val * 10) / 10).toLocaleString('id-ID')} ctn</span>
+            </div>
+            <div class="rank-bar-wrap"><div class="rank-bar-fill" style="width:${pct}%"></div></div>
+          </div>
+        </div>`;
+      }).join('');
+    }
+  }
+
+  // ── DEAD STOCK — tidak terjual ≥ 60 hari (atau belum pernah) ─
+  let deadItems = [];
+  let seenDS = {};
+  daftarBarang.forEach(b => {
+    let key = b.sku.toUpperCase() + '__' + (b.warehouse || 'Bintaro').toUpperCase();
+    if (seenDS[key]) return; seenDS[key] = true;
+    let pcs = Number(b.totalPcs) || 0;
+    if (pcs <= 0) return;
+    let lastOut = getLastOutDate(b.sku, b.warehouse || 'Bintaro');
+    let days = daysSince(lastOut);
+    if (days >= 60) {
+      let isi = Number(b.isiKarton) || 1;
+      deadItems.push({ b, stokCtn: pcs / isi, lastOut, days });
+    }
+  });
+  deadItems.sort((a, b) => b.days - a.days);
+  let tbodyDead = document.getElementById('db-dead-stock-body');
+  if (tbodyDead) {
+    if (deadItems.length === 0) {
+      tbodyDead.innerHTML = "<tr><td colspan='6' style='text-align:center;color:#a0aec0;padding:20px'>" + t('dash_deadstock_ok') + "</td></tr>";
+    } else {
+      tbodyDead.innerHTML = deadItems.slice(0, 40).map(({ b, stokCtn, lastOut, days }) => {
+        let lastTxt = lastOut ? lastOut : t('dash_belum_pernah_terjual');
+        let daysTxt = days === Infinity ? '-' : days + ' ' + t('dash_hari');
+        return `<tr>
+          <td style="padding:6px 8px;border-bottom:1px solid #edf2f7;font-size:10px;color:#4a5568">${b.sku}</td>
+          <td style="padding:6px 8px;border-bottom:1px solid #edf2f7;max-width:160px;overflow:hidden;text-overflow:ellipsis;white-space:nowrap">${b.nama}</td>
+          <td style="padding:6px 8px;border-bottom:1px solid #edf2f7"><span style="background:#4a5568;color:white;padding:2px 6px;border-radius:3px;font-size:10px">${b.warehouse || 'Bintaro'}</span></td>
+          <td style="padding:6px 8px;border-bottom:1px solid #edf2f7;text-align:right;font-weight:700">${stokCtn.toFixed(1)} ctn</td>
+          <td style="padding:6px 8px;border-bottom:1px solid #edf2f7;font-size:10px">${lastTxt}</td>
+          <td style="padding:6px 8px;border-bottom:1px solid #edf2f7;text-align:center;font-weight:700;color:#991b1b">${daysTxt}</td>
+        </tr>`;
+      }).join('');
+    }
+  }
+
+  // ── OVERSTOCK / SLOW MOVING — SOH TERLAMA (aging inventory) ─
+  let overItems = [];
+  let seenOV = {};
+  daftarBarang.forEach(b => {
+    let key = b.sku.toUpperCase() + '__' + (b.warehouse || 'Bintaro').toUpperCase();
+    if (seenOV[key]) return; seenOV[key] = true;
+    let pcs = Number(b.totalPcs) || 0;
+    if (pcs <= 0) return;
+    let avg = hitungAvgOutKarton(b.sku, b.warehouse || 'Bintaro', 30).avgPerHariCtn;
+    let cat = getMovingCategory(avg);
+    if (cat !== 'Slow' && cat !== 'NoData') return;
+    let lastIn = getLastInDate(b.sku, b.warehouse || 'Bintaro');
+    let days = daysSince(lastIn);
+    let isi = Number(b.isiKarton) || 1;
+    overItems.push({ b, stokCtn: pcs / isi, lastIn, days, cat });
+  });
+  overItems.sort((a, b) => b.days - a.days);
+  let tbodyOver = document.getElementById('db-overstock-body');
+  if (tbodyOver) {
+    if (overItems.length === 0) {
+      tbodyOver.innerHTML = "<tr><td colspan='7' style='text-align:center;color:#a0aec0;padding:20px'>" + t('dash_overstock_ok') + "</td></tr>";
+    } else {
+      tbodyOver.innerHTML = overItems.slice(0, 40).map(({ b, stokCtn, lastIn, days, cat }) => {
+        let badge = cat === 'Slow' ? "<span class='badge-slow'>🐢 Slow</span>" : "<span class='badge-nodata'>⚪ No Data</span>";
+        let lastTxt = lastIn ? lastIn : t('dash_tidak_ada_stockin');
+        let daysTxt = days === Infinity ? '-' : days + ' ' + t('dash_hari');
+        return `<tr>
+          <td style="padding:6px 8px;border-bottom:1px solid #edf2f7;font-size:10px;color:#4a5568">${b.sku}</td>
+          <td style="padding:6px 8px;border-bottom:1px solid #edf2f7;max-width:160px;overflow:hidden;text-overflow:ellipsis;white-space:nowrap">${b.nama}</td>
+          <td style="padding:6px 8px;border-bottom:1px solid #edf2f7"><span style="background:#4a5568;color:white;padding:2px 6px;border-radius:3px;font-size:10px">${b.warehouse || 'Bintaro'}</span></td>
+          <td style="padding:6px 8px;border-bottom:1px solid #edf2f7;text-align:right;font-weight:700">${stokCtn.toFixed(1)} ctn</td>
+          <td style="padding:6px 8px;border-bottom:1px solid #edf2f7;font-size:10px">${lastTxt}</td>
+          <td style="padding:6px 8px;border-bottom:1px solid #edf2f7;text-align:center;font-weight:700;color:#92400e">${daysTxt}</td>
+          <td style="padding:6px 8px;border-bottom:1px solid #edf2f7;text-align:center">${badge}</td>
+        </tr>`;
+      }).join('');
+    }
   }
 }
 
