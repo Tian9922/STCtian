@@ -363,9 +363,37 @@ let editingTrId = null;
 const FB_KEYS = ["customMasterData","barang","stockInLog","stockOutLog","transferLog","intransitLog"];
 
 // Simpan satu key ke Firebase
+const _auditPrevLen = {};
+const _AUDIT_LABEL = { barang:"Monitor Stok", stockInLog:"Stock In", stockOutLog:"Stock Out", transferLog:"Transfer Stok", intransitLog:"In Transit" };
 function fbSave(key, data){
   if(!window._db) return;
+  _trackAudit(key, data);
   window._db.ref("inventory/"+key).set(data).catch(e=>console.error("Firebase save error:",e));
+}
+// Deteksi otomatis jenis perubahan (tambah/hapus/edit) berdasar perubahan panjang array,
+// lalu catat ke Firebase "auditLog" — dipakai di halaman Settings > Riwayat Aktivitas.
+function _trackAudit(key, data){
+  let label = _AUDIT_LABEL[key];
+  if(!label || !currentRole) return;
+  let newLen = Array.isArray(data) ? data.length : 0;
+  let prevLen = _auditPrevLen[key];
+  let action = "✏️ Edit data";
+  if(prevLen!==undefined){
+    if(newLen > prevLen) action = "➕ Tambah data";
+    else if(newLen < prevLen) action = "🗑️ Hapus data";
+  }
+  _auditPrevLen[key] = newLen;
+  logAudit(label, action, newLen+" baris total");
+}
+// Dipanggil generic dari mana saja (mutasi stok otomatis, atau aksi Settings manual)
+function logAudit(module, action, detail){
+  if(!window._db) return;
+  let user = sessionStorage.getItem("icUser") || "system";
+  let entry = { time:new Date().toISOString(), user, role:currentRole||"-", module, action, detail:detail||"" };
+  let log = (window._auditLog || []).slice(-49); // simpan maksimal 50 entri terakhir
+  log.push(entry);
+  window._auditLog = log;
+  window._db.ref("auditLog").set(log).catch(()=>{});
 }
 
 // Shortcut — dipanggil menggantikan banyak localStorage.setItem
@@ -420,22 +448,27 @@ function initFirebaseListeners(){
   });
   db.ref("inventory/barang").on("value", snap => {
     daftarBarang = snap.val() || []; onLoaded();
+    _auditPrevLen["barang"] = daftarBarang.length;
     markDirty("monitor","ledger","analisis","dashboard"); renderTab(activeTab);
   });
   db.ref("inventory/stockInLog").on("value", snap => {
     stockInLog = snap.val() || []; onLoaded();
+    _auditPrevLen["stockInLog"] = stockInLog.length;
     markDirty("in","ledger","analisis","dashboard"); renderTab(activeTab);
   });
   db.ref("inventory/stockOutLog").on("value", snap => {
     stockOutLog = snap.val() || []; onLoaded();
+    _auditPrevLen["stockOutLog"] = stockOutLog.length;
     markDirty("out","ledger","analisis","dashboard"); renderTab(activeTab);
   });
   db.ref("inventory/transferLog").on("value", snap => {
     transferLog = snap.val() || []; onLoaded();
+    _auditPrevLen["transferLog"] = transferLog.length;
     markDirty("transfer","ledger"); renderTab(activeTab);
   });
   db.ref("inventory/intransitLog").on("value", snap => {
     intransitLog = snap.val() || []; onLoaded();
+    _auditPrevLen["intransitLog"] = intransitLog.length;
     markDirty("intransit","analisis"); renderTab(activeTab);
   });
 
@@ -447,6 +480,13 @@ function initFirebaseListeners(){
     window._loginHistory = s.loginHistory || [];
     if(typeof applyCompanyBranding==="function") applyCompanyBranding();
     if(activeTab==="settings" && typeof renderSettingsPage==="function") renderSettingsPage();
+    if(typeof maybeAutoSendTelegramAlert==="function") maybeAutoSendTelegramAlert();
+  });
+
+  // ---- AUDIT LOG (riwayat aktivitas) ----
+  db.ref("auditLog").on("value", snap => {
+    window._auditLog = snap.val() || [];
+    if(activeTab==="settings" && typeof renderAuditLogTable==="function") renderAuditLogTable();
   });
 }
 
