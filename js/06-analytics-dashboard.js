@@ -539,8 +539,123 @@ function getDateStr(daysAgo) {
   return d.toISOString().slice(0, 10);
 }
 
+// ── Dashboard date-range filter ─────────────────────────────
+let _dashRange = { mode: 'thisMonth', from: null, to: null };
+
+function setDashRange(mode) {
+  _dashRange.mode = mode;
+  document.querySelectorAll('#dash-daterange-btns .dr-btn').forEach(b => b.classList.toggle('active', b.dataset.range === mode));
+  let customBox = document.getElementById('dash-custom-inputs');
+  if (mode === 'custom') {
+    customBox.classList.add('show');
+    if (!_dashRange.from) {
+      document.getElementById('dash-date-to').value = getDateStr(0);
+      document.getElementById('dash-date-from').value = getDateStr(6);
+    }
+    return; // tunggu user klik "Terapkan"
+  }
+  customBox.classList.remove('show');
+  tampilkanDashboard();
+}
+
+function applyDashCustomRange() {
+  let from = document.getElementById('dash-date-from').value;
+  let to = document.getElementById('dash-date-to').value;
+  if (!from || !to) { showToast('⚠️ Pilih tanggal awal & akhir dulu.', 'warning'); return; }
+  if (from > to) { showToast('⚠️ Tanggal awal harus sebelum tanggal akhir.', 'warning'); return; }
+  _dashRange.from = from; _dashRange.to = to;
+  tampilkanDashboard();
+}
+
+function getDashRangeDates() {
+  let today = new Date();
+  if (_dashRange.mode === '7d') return { from: getDateStr(6), to: getDateStr(0) };
+  if (_dashRange.mode === '30d') return { from: getDateStr(29), to: getDateStr(0) };
+  if (_dashRange.mode === 'lastMonth') {
+    let firstThis = new Date(today.getFullYear(), today.getMonth(), 1);
+    let lastMonthEnd = new Date(firstThis.getTime() - 86400000);
+    let lastMonthStart = new Date(lastMonthEnd.getFullYear(), lastMonthEnd.getMonth(), 1);
+    return { from: lastMonthStart.toISOString().slice(0, 10), to: lastMonthEnd.toISOString().slice(0, 10) };
+  }
+  if (_dashRange.mode === 'custom' && _dashRange.from && _dashRange.to) {
+    return { from: _dashRange.from, to: _dashRange.to };
+  }
+  // default: thisMonth (juga fallback)
+  let first = new Date(today.getFullYear(), today.getMonth(), 1);
+  return { from: first.toISOString().slice(0, 10), to: getDateStr(0) };
+}
+
+function fmtTgl(dStr) {
+  return new Date(dStr + 'T00:00:00').toLocaleDateString('id-ID', { day: 'numeric', month: 'short', year: 'numeric' });
+}
+
+// Bucket transaksi Stock Out ke dalam grup harian / mingguan / bulanan
+// tergantung panjang rentang, supaya chart tetap enak dibaca untuk periode apa pun.
+function buildOut7ChartData(range, getIsiKarton) {
+  let from = new Date(range.from + 'T00:00:00');
+  let to = new Date(range.to + 'T00:00:00');
+  let totalDays = Math.round((to - from) / 86400000) + 1;
+  let labels = [], data = [];
+
+  function ctnForRange(dFrom, dTo) {
+    let fromStr = dFrom.toISOString().slice(0, 10), toStr = dTo.toISOString().slice(0, 10);
+    let recs = stockOutLog.filter(r => r.tanggal >= fromStr && r.tanggal <= toStr);
+    return recs.reduce((s, r) => s + (r.qty || 0) / getIsiKarton(r.sku), 0);
+  }
+
+  if (totalDays <= 14) {
+    // harian
+    for (let d = new Date(from); d <= to; d.setDate(d.getDate() + 1)) {
+      labels.push(d.toLocaleDateString('id-ID', { weekday: 'short', day: 'numeric', month: 'short' }));
+      data.push(Math.round(ctnForRange(d, d) * 10) / 10);
+    }
+  } else if (totalDays <= 90) {
+    // mingguan
+    let cursor = new Date(from);
+    while (cursor <= to) {
+      let weekEnd = new Date(cursor); weekEnd.setDate(weekEnd.getDate() + 6);
+      if (weekEnd > to) weekEnd = new Date(to);
+      labels.push(cursor.toLocaleDateString('id-ID', { day: 'numeric', month: 'short' }) + '–' + weekEnd.toLocaleDateString('id-ID', { day: 'numeric', month: 'short' }));
+      data.push(Math.round(ctnForRange(cursor, weekEnd) * 10) / 10);
+      cursor.setDate(cursor.getDate() + 7);
+    }
+  } else {
+    // bulanan
+    let cursor = new Date(from.getFullYear(), from.getMonth(), 1);
+    while (cursor <= to) {
+      let monthEnd = new Date(cursor.getFullYear(), cursor.getMonth() + 1, 0);
+      let bucketEnd = monthEnd > to ? to : monthEnd;
+      let bucketStart = cursor < from ? from : cursor;
+      labels.push(cursor.toLocaleDateString('id-ID', { month: 'short', year: 'numeric' }));
+      data.push(Math.round(ctnForRange(bucketStart, bucketEnd) * 10) / 10);
+      cursor.setMonth(cursor.getMonth() + 1);
+    }
+  }
+  return { labels, data };
+}
+
 function getMonthStr(d) {
   return d.toISOString().slice(0, 7); // YYYY-MM
+}
+
+// Smooth count-up animation for KPI / donut-center numbers — gives the dashboard a "live" feel
+function animateCountUp(el, endVal, opts) {
+  if (!el) return;
+  opts = opts || {};
+  let duration = opts.duration || 900;
+  let formatter = opts.formatter || (v => Math.round(v).toLocaleString('id-ID'));
+  let startVal = 0;
+  let startTime = null;
+  function step(ts) {
+    if (!startTime) startTime = ts;
+    let progress = Math.min((ts - startTime) / duration, 1);
+    let eased = 1 - Math.pow(1 - progress, 3); // easeOutCubic
+    let current = startVal + (endVal - startVal) * eased;
+    el.textContent = formatter(current);
+    if (progress < 1) requestAnimationFrame(step);
+    else el.textContent = formatter(endVal);
+  }
+  requestAnimationFrame(step);
 }
 
 function tampilkanDashboard() {
@@ -554,19 +669,23 @@ function tampilkanDashboard() {
 
   let today = new Date();
   let thisMonth = getMonthStr(today);
-  let last30 = getDateStr(30);
+  let dashRange = getDashRangeDates();
 
   // ── KPI DATA ────────────────────────────────────────────
   let totalNilaiStok = daftarBarang.reduce((s, b) => s + (Number(b.totalPcs) || 0) * (Number(b.harga) || 0), 0);
 
   let totalSkuAktif = [...new Set(daftarBarang.map(b => b.sku.toUpperCase()))].length;
 
-  let outBulanIni = stockOutLog.filter(r => (r.tanggal || '').slice(0, 7) === thisMonth);
+  let outBulanIni = stockOutLog.filter(r => r.tanggal >= dashRange.from && r.tanggal <= dashRange.to);
   let nilaiOutBulanIni = outBulanIni.reduce((s, r) => s + (r.qty || 0) * (r.harga || 0), 0);
   let qtyOutBulanIni = outBulanIni.reduce((s, r) => s + (r.qty || 0), 0);
 
-  let inBulanIni = stockInLog.filter(r => (r.tanggal || '').slice(0, 7) === thisMonth);
+  let inBulanIni = stockInLog.filter(r => r.tanggal >= dashRange.from && r.tanggal <= dashRange.to);
   let nilaiInBulanIni = inBulanIni.reduce((s, r) => s + (r.qty || 0) * (r.harga || 0), 0);
+
+  // update period badge di atas dashboard
+  let periodBadge = document.getElementById('dash-period-badge');
+  if (periodBadge) periodBadge.textContent = '📅 ' + fmtTgl(dashRange.from) + ' — ' + fmtTgl(dashRange.to);
 
   // moving categories
   let cF = 0, cM = 0, cS = 0, cN = 0;
@@ -579,57 +698,65 @@ function tampilkanDashboard() {
     if (cat === 'Fast') cF++; else if (cat === 'Medium') cM++; else if (cat === 'Slow') cS++; else cN++;
   });
 
-  // ── RENDER KPI CARDS ───────────────────────────────────
+  // ── RENDER KPI CARDS (animated count-up for a "live" feel) ─
   let kpiRow = document.getElementById('db-kpi-row');
-  kpiRow.innerHTML = [
-    { icon: '💰', label: t('dash_kpi_nilai_stok'), val: rpFormat(totalNilaiStok), accent: '#3b82f6', bg: '#eff6ff' },
-    { icon: '📦', label: t('dash_kpi_sku_aktif'), val: totalSkuAktif + ' SKU', accent: '#10b981', bg: '#ecfdf5' },
-    { icon: '📤', label: t('dash_kpi_out_bulan'), val: rpFormat(nilaiOutBulanIni), accent: '#ef4444', bg: '#fef2f2', sub: qtyOutBulanIni.toLocaleString('id-ID') + ' ' + t('dash_kpi_pcs_terjual') },
-    { icon: '📥', label: t('dash_kpi_in_bulan'), val: rpFormat(nilaiInBulanIni), accent: '#8b5cf6', bg: '#f5f3ff' },
+  let kpiData = [
+    { icon: '💰', label: t('dash_kpi_nilai_stok'), raw: totalNilaiStok, fmt: 'rp', accent: '#3b82f6', bg: '#eff6ff' },
+    { icon: '📦', label: t('dash_kpi_sku_aktif'), raw: totalSkuAktif, fmt: 'sku', accent: '#10b981', bg: '#ecfdf5' },
+    { icon: '📤', label: t('dash_kpi_out_bulan'), raw: nilaiOutBulanIni, fmt: 'rp', accent: '#ef4444', bg: '#fef2f2', sub: qtyOutBulanIni.toLocaleString('id-ID') + ' ' + t('dash_kpi_pcs_terjual') },
+    { icon: '📥', label: t('dash_kpi_in_bulan'), raw: nilaiInBulanIni, fmt: 'rp', accent: '#8b5cf6', bg: '#f5f3ff' },
     { icon: '🚀', label: t('dash_kpi_moving'), val: cF + ' / ' + cM + ' / ' + cS, accent: '#0ea5e9', bg: '#f0f9ff', sub: cN + ' ' + t('dash_kpi_item_no_data') },
-  ].map(k => `
+  ];
+  kpiRow.innerHTML = kpiData.map((k, i) => `
     <div class="dash-kpi-card" style="--dk-accent:${k.accent};--dk-accent-bg:${k.bg}">
       <div class="dash-kpi-top">
         <div class="dash-kpi-icon">${k.icon}</div>
       </div>
       <div class="dash-kpi-label">${k.label}</div>
-      <div class="dash-kpi-value">${k.val}</div>
+      <div class="dash-kpi-value" id="db-kpi-val-${i}">${k.val || 0}</div>
       ${k.sub ? `<div class="dash-kpi-sub">${k.sub}</div>` : ''}
     </div>`).join('');
-
-  // ── CHART 1: Stock Out 7 hari terakhir (ctn) ──────────
-  destroyChart('out7');
-  let labels7 = [], data7 = [];
-  for (let i = 6; i >= 0; i--) {
-    let dStr = getDateStr(i);
-    let label = new Date(dStr + 'T00:00:00').toLocaleDateString('id-ID', { weekday: 'short', day: 'numeric', month: 'short' });
-    labels7.push(label);
-    let dayOut = stockOutLog.filter(r => r.tanggal === dStr);
-    let ctn = dayOut.reduce((s, r) => {
-      let isi = getIsiKarton(r.sku);
-      return s + (r.qty || 0) / isi;
-    }, 0);
-    data7.push(Math.round(ctn * 10) / 10);
-  }
-  let ctx7 = document.getElementById('db-chart-out7').getContext('2d');
-  let grad7 = ctx7.createLinearGradient(0, 0, 0, 150);
-  grad7.addColorStop(0, 'rgba(59,130,246,.9)');
-  grad7.addColorStop(1, 'rgba(59,130,246,.35)');
-  _dbCharts['out7'] = new Chart(ctx7, {
-    type: 'bar',
-    data: {
-      labels: labels7,
-      datasets: [{ label: 'Ctn Keluar', data: data7, backgroundColor: grad7, borderRadius: 6, maxBarThickness: 38 }]
-    },
-    options: {
-      responsive: true,
-      plugins: { legend: { display: false }, tooltip: { backgroundColor: '#0f172a', padding: 10, cornerRadius: 8, titleFont: { size: 11 }, bodyFont: { size: 11 } } },
-      scales: {
-        y: { beginAtZero: true, grid: { color: '#f1f5f9' }, ticks: { font: { size: 10 }, color: '#94a3b8' } },
-        x: { grid: { display: false }, ticks: { font: { size: 10 }, color: '#94a3b8' } }
-      }
-    }
+  kpiData.forEach((k, i) => {
+    if (k.raw === undefined) return; // static composite value (moving ratio) — no count-up
+    let el = document.getElementById('db-kpi-val-' + i);
+    let formatter = k.fmt === 'rp' ? (v => rpFormat(Math.round(v))) : (v => Math.round(v).toLocaleString('id-ID') + ' SKU');
+    animateCountUp(el, k.raw, { duration: 1000, formatter });
   });
+
+  // ── CHART 1: Stock Out — mengikuti filter tanggal dashboard ──
+  destroyChart('out7');
+  let { labels: labels7, data: data7 } = buildOut7ChartData(dashRange, getIsiKarton);
+  let out7TitleEl = document.getElementById('dash-out7-title');
+  if (out7TitleEl) {
+    let rangeLabelMap = { '7d': '7 Hari Terakhir', '30d': '30 Hari Terakhir', thisMonth: 'Bulan Ini', lastMonth: 'Bulan Lalu' };
+    out7TitleEl.textContent = 'Stock Out — ' + (rangeLabelMap[_dashRange.mode] || (fmtTgl(dashRange.from) + ' – ' + fmtTgl(dashRange.to)));
+  }
+  let elOut7 = document.getElementById('db-chart-out7');
+  _dbCharts['out7'] = new ApexCharts(elOut7, {
+    chart: {
+      type: 'bar', height: '100%', fontFamily: 'inherit', toolbar: { show: false },
+      animations: { enabled: true, easing: 'easeout', speed: 700, animateGradually: { enabled: true, delay: 90 }, dynamicAnimation: { enabled: true, speed: 300 } }
+    },
+    series: [{ name: 'Ctn Keluar', data: data7 }],
+    xaxis: {
+      categories: labels7,
+      axisBorder: { color: '#eef1f6' },
+      axisTicks: { show: false },
+      labels: { style: { colors: '#94a3b8', fontSize: '10px' } }
+    },
+    yaxis: { labels: { style: { colors: '#94a3b8', fontSize: '10px' } } },
+    grid: { borderColor: '#f1f5f9', strokeDashArray: 0, padding: { left: 4, right: 4 } },
+    plotOptions: { bar: { borderRadius: 7, borderRadiusApplication: 'end', columnWidth: '52%' } },
+    fill: {
+      type: 'gradient',
+      gradient: { shade: 'light', type: 'vertical', shadeIntensity: .3, gradientToColors: ['rgba(59,130,246,.3)'], inverseColors: false, opacityFrom: .95, opacityTo: .5, stops: [0, 100] }
+    },
+    colors: ['#3b82f6'],
+    dataLabels: { enabled: false },
+    tooltip: { theme: 'dark', y: { formatter: v => v.toLocaleString('id-ID') + ' ctn' } },
+    states: { hover: { filter: { type: 'lighten', value: .12 } } }
+  });
+  _dbCharts['out7'].render();
 
   // ── TOP 15 SKU — leaderboard per bulan pilihan ──────────
   // Isi dropdown bulan sekali saja (biar pilihan user tidak ke-reset tiap render)
@@ -681,23 +808,47 @@ function tampilkanDashboard() {
     }).join('');
   }
 
-  // ── CHART 3: Donut Moving ──────────────────────────────
+  // ── CHART 3: Donut Moving — compact, animated, center total ──
   destroyChart('moving');
-  let ctxM = document.getElementById('db-chart-moving').getContext('2d');
-  _dbCharts['moving'] = new Chart(ctxM, {
-    type: 'doughnut',
-    data: {
-      labels: ['Fast', 'Medium', 'Slow', 'No Data'],
-      datasets: [{ data: [cF, cM, cS, cN], backgroundColor: ['#10b981', '#f59e0b', '#ef4444', '#d1d5db'], borderWidth: 2 }]
-    },
-    options: { responsive: false, plugins: { legend: { display: false } }, cutout: '65%' }
-  });
-  document.getElementById('db-moving-legend').innerHTML = [
+  let totalMoving = cF + cM + cS + cN;
+  let movingLegendData = [
     { c: '#10b981', l: 'Fast', v: cF }, { c: '#f59e0b', l: 'Medium', v: cM },
     { c: '#ef4444', l: 'Slow', v: cS }, { c: '#d1d5db', l: 'No Data', v: cN }
-  ].map(x => `<div class="dash-legend-item">
-    <div class="dash-legend-dot" style="background:${x.c}"></div>
-    <span class="dash-legend-label">${x.l}</span><span class="dash-legend-val">${x.v}</span></div>`).join('');
+  ];
+  let elMoving = document.getElementById('db-chart-moving');
+  _dbCharts['moving'] = new ApexCharts(elMoving, {
+    chart: {
+      type: 'donut', height: '100%', fontFamily: 'inherit',
+      animations: { enabled: true, easing: 'easeout', speed: 800, animateGradually: { enabled: true, delay: 100 } }
+    },
+    series: movingLegendData.map(x => x.v),
+    labels: movingLegendData.map(x => x.l),
+    colors: movingLegendData.map(x => x.c),
+    legend: { show: false },
+    dataLabels: { enabled: false },
+    stroke: { width: 3, colors: ['#fff'] },
+    plotOptions: { pie: { donut: { size: '70%', labels: { show: false } }, expandOnClick: true } },
+    tooltip: { theme: 'dark', y: { formatter: v => v } },
+    states: { hover: { filter: { type: 'darken', value: .08 } } }
+  });
+  _dbCharts['moving'].render();
+  animateCountUp(document.getElementById('db-moving-total'), totalMoving, { duration: 1000, formatter: v => Math.round(v) });
+  document.getElementById('db-moving-legend').innerHTML = movingLegendData.map(x => {
+    let pct = totalMoving > 0 ? Math.round((x.v / totalMoving) * 100) : 0;
+    return `<div class="dash-legend-item" style="--dot-color:${x.c}">
+      <div class="dash-legend-dot" style="background:${x.c}"></div>
+      <span class="dash-legend-label">${x.l}</span>
+      <div class="dash-legend-bar"><div class="dash-legend-bar-fill" style="width:0%;background:${x.c}"></div></div>
+      <span class="dash-legend-val">${x.v}</span>
+    </div>`;
+  }).join('');
+  // animate the mini bars in on next frame (so the width transition actually plays)
+  requestAnimationFrame(() => {
+    document.querySelectorAll('#db-moving-legend .dash-legend-bar-fill').forEach((el, i) => {
+      let pct = totalMoving > 0 ? Math.round((movingLegendData[i].v / totalMoving) * 100) : 0;
+      el.style.width = pct + '%';
+    });
+  });
 
   // ── TABLE: Low / Critical Stock ────────────────────────
   let lowItems = [];
