@@ -76,25 +76,25 @@
     </div>
   </div>
   <div id="sidebar-nav">
-    <div class="sb-section">Dashboard</div>
-    <button class="nav-tab" onclick="switchTab('dashboard')" id="navbtn-dashboard"><span class="tab-icon">🏠</span><span>Dashboard</span></button>
-    <div class="sb-section">Operasional</div>
+    <div class="sb-section" data-i18n="sb_section_dashboard">Dashboard</div>
+    <button class="nav-tab" onclick="switchTab('dashboard')" id="navbtn-dashboard"><span class="tab-icon">🏠</span><span data-i18n="tab_dashboard">Dashboard</span></button>
+    <div class="sb-section" data-i18n="sb_section_operasional">Operasional</div>
     <button class="nav-tab active" onclick="switchTab('monitor')" id="navbtn-monitor"><span class="tab-icon">📊</span><span data-i18n="tab_monitor">Monitor Stok</span></button>
     <button class="nav-tab" onclick="switchTab('in')" id="navbtn-in"><span class="tab-icon">📥</span><span data-i18n="tab_in">Stock In</span></button>
     <button class="nav-tab" onclick="switchTab('out')" id="navbtn-out"><span class="tab-icon">📤</span><span data-i18n="tab_out">Stock Out</span></button>
     <button class="nav-tab" onclick="switchTab('transfer')" id="navbtn-transfer"><span class="tab-icon">🔄</span><span data-i18n="tab_transfer">Transfer Stok</span></button>
     <button class="nav-tab" onclick="switchTab('intransit')" id="navbtn-intransit"><span class="tab-icon">🚚</span><span data-i18n="tab_intransit">In Transit</span></button>
-    <div class="sb-section">Laporan</div>
+    <div class="sb-section" data-i18n="sb_section_laporan">Laporan</div>
     <button class="nav-tab" onclick="switchTab('ledger')" id="navbtn-ledger"><span class="tab-icon">📋</span><span data-i18n="tab_ledger">Stock Ledger</span></button>
     <button class="nav-tab" onclick="switchTab('analisis')" id="navbtn-analisis"><span class="tab-icon">📈</span><span data-i18n="tab_analisis">Analisa Stock</span></button>
-    <button class="nav-tab" onclick="switchTab('sales')" id="navbtn-sales"><span class="tab-icon">🛒</span><span>Sales Analytics</span></button>
-    <button class="nav-tab" onclick="switchTab('reorder')" id="navbtn-reorder"><span class="tab-icon">🔮</span><span>Rekomendasi Reorder</span></button>
-    <div class="sb-section">Admin</div>
-    <button class="nav-tab" onclick="switchTab('settings')" id="navbtn-settings" style="display:none"><span class="tab-icon">⚙️</span><span>Pengaturan</span></button>
+    <button class="nav-tab" onclick="switchTab('sales')" id="navbtn-sales"><span class="tab-icon">🛒</span><span data-i18n="tab_sales">Sales Analytics</span></button>
+    <button class="nav-tab" onclick="switchTab('reorder')" id="navbtn-reorder"><span class="tab-icon">🔮</span><span data-i18n="tab_reorder">Rekomendasi Reorder</span></button>
+    <div class="sb-section" data-i18n="sb_section_admin">Admin</div>
+    <button class="nav-tab" onclick="switchTab('settings')" id="navbtn-settings" style="display:none"><span class="tab-icon">⚙️</span><span data-i18n="tab_settings">Pengaturan</span></button>
   </div>
   <div id="sidebar-footer">
     <div id="dark-toggle-row">
-      <span>🌙 Dark Mode</span>
+      <span>🌙 <span data-i18n="dark_mode">Dark Mode</span></span>
       <button class="dm-switch" id="dm-switch-btn" onclick="toggleDarkMode()"></button>
     </div>
     <div class="sb-lang">
@@ -111,7 +111,7 @@
       </div>
     </div>
     <button id="sb-template-btn" onclick="downloadTemplateSistem()">📥 <span data-i18n="btn_template">Template</span></button>
-    <button id="sb-logout-btn" onclick="doLogout()">↩ Logout</button>
+    <button id="sb-logout-btn" onclick="doLogout()">↩ <span data-i18n="logout">Logout</span></button>
   </div>
 </div>
 <!-- ===== MAIN AREA ===== -->
@@ -132,16 +132,16 @@
     <!-- Chart: Out per 7 hari -->
     <div class="dash-panel">
       <div class="dash-panel-head">
-        <div class="dash-panel-title">📤 Stock Out — 7 Hari Terakhir</div>
-        <div class="dash-panel-badge">CARTON</div>
+        <div class="dash-panel-title">📤 <span data-i18n="dash_chart_out7_title">Stock Out — 7 Hari Terakhir</span></div>
+        <div class="dash-panel-badge" data-i18n="dash_badge_carton">CARTON</div>
       </div>
       <canvas id="db-chart-out7" height="150"></canvas>
     </div>
     <!-- Top 15 SKU leaderboard -->
     <div class="dash-panel">
       <div class="dash-panel-head">
-        <div class="dash-panel-title">🏆 Top 15 SKU Terlaris</div>
-        <div class="dash-panel-badge">BULAN INI</div>
+        <div class="dash-panel-title">🏆 <span data-i18n="dash_top_sku_title">Top 15 SKU Terlaris</span></div>
+        <select id="db-top-sku-month" class="dash-month-select" onchange="tampilkanDashboard()"></select>
       </div>
       <div id="db-top-sku-list" class="rank-list"></div>
     </div>
@@ -152,7 +152,7 @@
     <!-- Moving donut -->
     <div class="dash-panel">
       <div class="dash-panel-head">
-        <div class="dash-panel-title">📊 Kategori Moving</div>
+        <div class="dash-panel-title">📊 <span data-i18n="dash_moving_title">Kategori Moving</span></div>
       </div>
       <div style="flex:1;display:flex;align-items:center;justify-content:center">
         <canvas id="db-chart-moving" width="170" height="170"></canvas>
@@ -162,23 +162,81 @@
     <!-- Low / critical stock table -->
     <div class="dash-panel">
       <div class="dash-panel-head">
-        <div class="dash-panel-title">⚠️ Stok Kritis — Ketahanan &lt; 1 Bulan</div>
-        <div class="dash-panel-badge">AVG 30 HARI</div>
+        <div class="dash-panel-title">⚠️ <span data-i18n="dash_low_stock_title">Stok Kritis — Ketahanan &lt; 1 Bulan</span></div>
+        <div class="dash-panel-badge" data-i18n="dash_badge_avg30">AVG 30 HARI</div>
       </div>
       <div class="dash-table-wrap">
         <table class="dash-table">
           <thead>
             <tr>
-              <th>SKU</th>
-              <th>Nama Barang</th>
-              <th>Gudang</th>
-              <th style="text-align:right">Stok (Ctn)</th>
-              <th style="text-align:right">Avg/Bln (22hk)</th>
-              <th style="text-align:right">Ketahanan</th>
-              <th style="text-align:center">Status</th>
+              <th data-i18n="dash_th_sku">SKU</th>
+              <th data-i18n="dash_th_nama">Nama Barang</th>
+              <th data-i18n="dash_th_gudang">Gudang</th>
+              <th style="text-align:right" data-i18n="dash_th_stok_ctn">Stok (Ctn)</th>
+              <th style="text-align:right" data-i18n="dash_th_avg_bln">Avg/Bln (22hk)</th>
+              <th style="text-align:right" data-i18n="dash_th_ketahanan">Ketahanan</th>
+              <th style="text-align:center" data-i18n="dash_th_status">Status</th>
             </tr>
           </thead>
           <tbody id="db-low-stock-body"></tbody>
+        </table>
+      </div>
+    </div>
+  </div>
+
+  <!-- Row 4: Best Seller 3 Bulan Terakhir + Dead Stock -->
+  <div class="dash-row dash-row-tall" style="grid-template-columns:1fr 1fr">
+    <div class="dash-panel">
+      <div class="dash-panel-head">
+        <div class="dash-panel-title">🥇 <span data-i18n="dash_bestseller3m_title">Best Seller — 3 Bulan Terakhir</span></div>
+        <div class="dash-panel-badge" data-i18n="dash_badge_90hari">90 HARI</div>
+      </div>
+      <div id="db-top-sku-3m-list" class="rank-list"></div>
+    </div>
+    <div class="dash-panel">
+      <div class="dash-panel-head">
+        <div class="dash-panel-title">💤 <span data-i18n="dash_deadstock_title">Dead Stock — Tidak Terjual</span></div>
+        <div class="dash-panel-badge" data-i18n="dash_badge_60hari">≥ 60 HARI</div>
+      </div>
+      <div class="dash-table-wrap">
+        <table class="dash-table">
+          <thead>
+            <tr>
+              <th data-i18n="dash_th_sku">SKU</th>
+              <th data-i18n="dash_th_nama">Nama Barang</th>
+              <th data-i18n="dash_th_gudang">Gudang</th>
+              <th style="text-align:right" data-i18n="dash_th_stok_ctn">Stok (Ctn)</th>
+              <th data-i18n="dash_th_terakhir_terjual">Terakhir Terjual</th>
+              <th style="text-align:center" data-i18n="dash_th_umur">Umur</th>
+            </tr>
+          </thead>
+          <tbody id="db-dead-stock-body"></tbody>
+        </table>
+      </div>
+    </div>
+  </div>
+
+  <!-- Row 5: Overstock / Slow Moving - SOH Terlama (aging inventory) -->
+  <div class="dash-row dash-row-tall" style="grid-template-columns:1fr">
+    <div class="dash-panel">
+      <div class="dash-panel-head">
+        <div class="dash-panel-title">📦 <span data-i18n="dash_overstock_title">Overstock / Slow Moving — SOH Terlama</span></div>
+        <div class="dash-panel-badge" data-i18n="dash_badge_aging">AGING STOCK</div>
+      </div>
+      <div class="dash-table-wrap">
+        <table class="dash-table">
+          <thead>
+            <tr>
+              <th data-i18n="dash_th_sku">SKU</th>
+              <th data-i18n="dash_th_nama">Nama Barang</th>
+              <th data-i18n="dash_th_gudang">Gudang</th>
+              <th style="text-align:right" data-i18n="dash_th_stok_ctn">Stok (Ctn)</th>
+              <th data-i18n="dash_th_terakhir_stockin">Terakhir Stock In</th>
+              <th style="text-align:center" data-i18n="dash_th_umur_soh">Umur SOH</th>
+              <th style="text-align:center" data-i18n="dash_th_kategori">Kategori</th>
+            </tr>
+          </thead>
+          <tbody id="db-overstock-body"></tbody>
         </table>
       </div>
     </div>
@@ -193,12 +251,12 @@
       <div class="asset-summary-value" id="assetValue">Rp 0</div>
     </div>
     <div class="filter-row">
-      <input type="text" class="search-box" id="search" placeholder="🔍 Cari nama / SKU..." oninput="debounce('monitor',tampilkanTabel,250)">
+      <input type="text" class="search-box" id="search" data-i18n-placeholder="placeholder_search_monitor" placeholder="🔍 Cari nama / SKU..." oninput="debounce('monitor',tampilkanTabel,250)">
       <select id="filterWarehouse" onchange="tampilkanTabel()">
-        <option value="All">🏢 All Warehouse</option>
+        <option value="All" data-i18n="all_warehouse">🏢 All Warehouse</option>
         <option>Bintaro</option><option>Gunsin</option><option>MAJ</option><option>Bosco</option><option>K-Mart</option><option>Happy Wonder</option><option>Hero Supermarket</option><option>Consignment</option><option>K-Seafood</option><option>Event</option><option>Sample</option>
       </select>
-      <button class="btn btn-export" onclick="exportMonitorStok()">⬇️ Export</button>
+      <button class="btn btn-export" onclick="exportMonitorStok()">⬇️ <span data-i18n="btn_export">Export</span></button>
       <button id="btn-hapus-semua-monitor" class="btn btn-danger" onclick="hapusSemuaBarang()">🗑️ <span data-i18n="btn_delete_all">Hapus Semua</span></button>
     </div>
     <div class="table-container">
@@ -208,6 +266,7 @@
           <th style="width:90px;text-align:center" data-i18n="th_aksi">Aksi</th>
         </tr></thead>
         <tbody id="tabelBarang"></tbody>
+        <tfoot id="tabelBarangFoot"></tfoot>
       </table>
     </div>
   </div>
