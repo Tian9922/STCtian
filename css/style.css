@@ -32,7 +32,22 @@
     ::-webkit-scrollbar-corner{background:transparent}
 
     /* ===== SIDEBAR ===== */
-    #sidebar{width:210px;min-width:210px;background:#0f172a;display:flex;flex-direction:column;height:100vh;position:relative;z-index:100}
+    #sidebar{width:210px;min-width:210px;background:#0f172a;display:flex;flex-direction:column;height:100vh;position:relative;z-index:100;transition:width .22s ease;overflow:hidden}
+    #sidebar.collapsed{width:64px;min-width:64px}
+    #sidebar.collapsed .sb-brand-text,
+    #sidebar.collapsed .sb-section,
+    #sidebar.collapsed .nav-tab span:not(.tab-icon),
+    #sidebar.collapsed .sb-lang,
+    #sidebar.collapsed #sync-status,
+    #sidebar.collapsed #dark-toggle-row span,
+    #sidebar.collapsed #sb-user-row > div:not(#sb-avatar),
+    #sidebar.collapsed #sb-template-btn span,
+    #sidebar.collapsed #sb-logout-btn span{display:none}
+    #sidebar.collapsed .nav-tab{justify-content:center;padding:10px 0}
+    #sidebar.collapsed #dark-toggle-row{justify-content:center}
+    #sidebar.collapsed #sidebar-brand .sb-logo{justify-content:center}
+    #sidebar.collapsed #sb-user-row{justify-content:center}
+    #sidebar.collapsed #sb-template-btn,#sidebar.collapsed #sb-logout-btn{justify-content:center;text-align:center}
     #sidebar-brand{padding:14px 12px 10px;border-bottom:1px solid rgba(255,255,255,.08)}
     #sidebar-brand .sb-logo{display:flex;align-items:center;gap:8px}
     #sidebar-brand .sb-icon{width:32px;height:32px;background:#3b82f6;border-radius:8px;display:flex;align-items:center;justify-content:center;font-size:14px;font-weight:700;color:white;flex-shrink:0}
