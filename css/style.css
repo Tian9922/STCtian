@@ -421,6 +421,7 @@ body.dark-mode .kosong{color:#5b6b85}
 body.dark-mode .empty-state-title{color:#94a3b8}
 body.dark-mode .empty-state-sub{color:#5b6b85}
 body.dark-mode .badge-nodata{background:#1e293b;color:#94a3b8}
+body.dark-mode .cat-card .cc-label{color:#334155!important}
 body.dark-mode .analisis-filters div[style*="color:#718096"]{color:#8291a8!important}
 body.dark-mode .po-result-box{background:#0f1c30;border-color:#1e3a2f}
 body.dark-mode .po-info-item{background:#0f1c30;border-color:#1e2f45}
