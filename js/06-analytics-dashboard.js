@@ -4,7 +4,6 @@
 // ==================== SALES ANALYTICS - VERSION WITH CARTON ====================
 function tampilkanSales() {
     let keyword = document.getElementById("sa-search").value.toLowerCase();
-    let wh = document.getElementById("sa-wh").value;
     let from = document.getElementById("sa-from").value;
     let to = document.getElementById("sa-to").value;
     let tipeF = document.getElementById("sa-tipe").value;
@@ -15,7 +14,7 @@ function tampilkanSales() {
 
     let hasil = stockOutLog.filter(r => {
         let matchK = r.sku.toLowerCase().includes(keyword) || r.nama.toLowerCase().includes(keyword);
-        let matchW = wh === "All" || (r.warehouse || "Bintaro").toUpperCase() === wh.toUpperCase();
+        let matchW = matchWarehouseMulti("sa-wh", r.warehouse);
         let matchF = !from || r.tanggal >= from;
         let matchT = !to || r.tanggal <= to;
         let matchTipe = tipeF === "All" || (r.tipe || "Stock Out") === tipeF;
@@ -68,7 +67,7 @@ function tampilkanSales() {
     let rows;
 
     if (viewMode === "rekap") {
-        thead.innerHTML = "<tr><th>No</th><th>SKU</th><th>Nama Barang</th><th>Gudang</th><th>Total Transaksi</th><th>Total Qty Keluar (Karton)</th><th>Total Qty Keluar (Pcs)</th><th>Konversi</th><th>Total Nilai</th><th>Tgl Pertama</th><th>Tgl Terakhir</th></tr>";
+        thead.innerHTML = "<tr><th>No</th><th>"+t("th_sku")+"</th><th>"+t("th_nama")+"</th><th>"+t("th_gudang")+"</th><th>"+t("sa_th_total_transaksi")+"</th><th>"+t("sa_th_total_qty_ctn")+"</th><th>"+t("sa_th_total_qty_pcs")+"</th><th>"+t("th_konversi")+"</th><th>"+t("th_total_nilai")+"</th><th>"+t("sa_th_tgl_pertama")+"</th><th>"+t("sa_th_tgl_terakhir")+"</th></tr>";
         
         let grouped = {};
         hasil.forEach(r => {
@@ -98,7 +97,7 @@ function tampilkanSales() {
         
         let grpRows = Object.values(grouped).sort((a, b) => b.qtyCtn - a.qtyCtn);
         if (grpRows.length === 0) {
-            tbody.innerHTML = "<tr><td colspan='11' class='kosong'>Tidak ada data penjualan</td></tr>";
+            tbody.innerHTML = "<tr><td colspan='11' class='kosong'>"+t("tidak_ada_data_penjualan")+"</td></tr>";
             return;
         }
         
@@ -120,10 +119,10 @@ function tampilkanSales() {
                 "</tr>";
         });
     } else {
-        thead.innerHTML = "<tr><th>No</th><th>Tanggal</th><th>Tipe</th><th>SKU</th><th>Nama Barang</th><th>Gudang</th><th>Qty Keluar (Karton)</th><th>Qty Keluar (Pcs)</th><th>Konversi</th><th>Harga Satuan</th><th>Total Nilai</th><th>Keterangan</th></tr>";
+        thead.innerHTML = "<tr><th>No</th><th>"+t("th_tanggal")+"</th><th>Tipe</th><th>"+t("th_sku")+"</th><th>"+t("th_nama")+"</th><th>"+t("th_gudang")+"</th><th>"+t("sa_th_qty_ctn")+"</th><th>"+t("sa_th_qty_pcs")+"</th><th>"+t("th_konversi")+"</th><th>"+t("sa_th_harga_satuan")+"</th><th>"+t("th_total_nilai")+"</th><th>"+t("th_keterangan")+"</th></tr>";
         
         if (hasil.length === 0) {
-            tbody.innerHTML = "<tr><td colspan='12' class='kosong'>Tidak ada data penjualan</td></tr>";
+            tbody.innerHTML = "<tr><td colspan='12' class='kosong'>"+t("tidak_ada_data_penjualan")+"</td></tr>";
             return;
         }
         
@@ -134,9 +133,9 @@ function tampilkanSales() {
             let uom = hitungUOM(r.qty, isiKarton);
             let nilai = r.qty * r.harga;
             let tipe = r.tipe || "Stock Out";
-            let tipeBadge = tipe === "Expired" ? "<span class='badge' style='background:#fef3c7;color:#92400e'>⚠️ Expired</span>" :
-                            tipe === "Damage" ? "<span class='badge' style='background:#f3e8ff;color:#6b21a8'>💥 Damage</span>" :
-                            "<span class='badge badge-out'>📤 Stock Out</span>";
+            let tipeBadge = tipe === "Expired" ? "<span class='badge' style='background:#fef3c7;color:#92400e'>⚠️ "+t("badge_expired")+"</span>" :
+                            tipe === "Damage" ? "<span class='badge' style='background:#f3e8ff;color:#6b21a8'>💥 "+t("badge_damage")+"</span>" :
+                            "<span class='badge badge-out'>📤 "+t("badge_stockout")+"</span>";
             return "<tr>" +
                 "<td>" + (i + 1) + "</td>" +
                 "<td>" + r.tanggal + "</td>" +
@@ -160,7 +159,6 @@ function tampilkanSales() {
 // ==================== EXPORT SALES ANALYTICS (KARTON VERSION) ====================
 function exportSales() {
     let keyword = document.getElementById("sa-search").value.toLowerCase();
-    let wh = document.getElementById("sa-wh").value;
     let from = document.getElementById("sa-from").value;
     let to = document.getElementById("sa-to").value;
     let tipeF = document.getElementById("sa-tipe").value;
@@ -170,7 +168,7 @@ function exportSales() {
     
     let hasil = stockOutLog.filter(r => {
         let matchK = r.sku.toLowerCase().includes(keyword) || r.nama.toLowerCase().includes(keyword);
-        let matchW = wh === "All" || (r.warehouse || "Bintaro").toUpperCase() === wh.toUpperCase();
+        let matchW = matchWarehouseMulti("sa-wh", r.warehouse);
         let matchF = !from || r.tanggal >= from;
         let matchT = !to || r.tanggal <= to;
         let matchTipe = tipeF === "All" || (r.tipe || "Stock Out") === tipeF;
@@ -370,7 +368,7 @@ window.tampilkanTabel = function(){
     let stokCell = isNeg
       ? "<span style='color:#c53030;font-weight:700;background:#fff5f5;padding:2px 6px;border-radius:4px;border:1px solid #fc8181'>⚠️ "+pcs+" pcs (selisih)</span>"
       : pcs+" pcs";
-    return "<tr style='"+(isNeg?"background:#fff5f5":"")+"'><td>"+(i+1)+"</td><td title='"+b.sku+"'>"+b.sku+"</td><td title='"+b.nama+"'>"+b.nama+"</td><td title='"+b.kategori+"'>"+b.kategori+"</td><td><span class='badge badge-gudang'>"+(b.warehouse||"Bintaro")+"</span></td><td>"+stokCell+"</td><td><strong>"+uom+"</strong></td><td>"+rpFormat(b.harga)+"</td><td><strong>"+rpFormat(nilaiB)+"</strong></td><td style='text-align:center'>"+(isAdmin()?"<button class='btn-action btn-edit' onclick='editBarang("+idx+")'>Edit</button> <button class='btn-action btn-hapus' onclick='hapusBarang("+idx+")'>Hapus</button>":"<span style='color:#a0aec0;font-size:10px'>-</span>")+"</td></tr>";
+    return "<tr style='"+(isNeg?"background:#fff5f5":"")+"'><td>"+(i+1)+"</td><td title='"+b.sku+"'>"+b.sku+"</td><td title='"+b.nama+"'>"+b.nama+"</td><td title='"+b.kategori+"'>"+b.kategori+"</td><td><span class='badge badge-gudang'>"+(b.warehouse||"Bintaro")+"</span></td><td>"+stokCell+"</td><td><strong>"+uom+"</strong></td><td>"+rpFormat(b.harga)+"</td><td><strong>"+rpFormat(nilaiB)+"</strong></td><td style='text-align:center'>"+(isAdmin()?"<button class='btn-action btn-edit' onclick='editBarang("+idx+")'>"+t("btn_edit")+"</button> <button class='btn-action btn-hapus' onclick='hapusBarang("+idx+")'>"+t("btn_hapus")+"</button>":"<span style='color:#a0aec0;font-size:10px'>-</span>")+"</td></tr>";
   });
   tabel.innerHTML = "";
   tabel.appendChild(buildRows(rows));
@@ -396,7 +394,7 @@ window.tampilkanStockIn = function(){
     let i = (page-1)*PAGE_SIZE+ii;
     let uom = hitungUOM(r.qty,r.isiKarton);
     let nilai = r.qty*r.harga;
-    return "<tr><td>"+(i+1)+"</td><td>"+r.tanggal+"</td><td title='"+r.sku+"'>"+r.sku+"</td><td title='"+r.nama+"'>"+r.nama+"</td><td><span class='badge badge-gudang'>"+r.warehouse+"</span></td><td><span class='badge badge-in'>+"+r.qty+" pcs</span></td><td><strong>"+uom+"</strong></td><td>"+rpFormat(r.harga)+"</td><td><strong>"+rpFormat(nilai)+"</strong></td><td title='"+(r.keterangan||"-")+"'>"+(r.keterangan||"-")+"</td><td style='text-align:center'>"+(isAdmin()?"<button class='btn-action btn-edit' onclick='editStockIn(\""+r.id+"\")'>Edit</button> <button class='btn-action btn-hapus' onclick='hapusStockIn(\""+r.id+"\")'>Hapus</button>":"<span style='color:#a0aec0;font-size:10px'>-</span>")+"</td></tr>";
+    return "<tr><td>"+(i+1)+"</td><td>"+r.tanggal+"</td><td title='"+r.sku+"'>"+r.sku+"</td><td title='"+r.nama+"'>"+r.nama+"</td><td><span class='badge badge-gudang'>"+r.warehouse+"</span></td><td><span class='badge badge-in'>+"+r.qty+" pcs</span></td><td><strong>"+uom+"</strong></td><td>"+rpFormat(r.harga)+"</td><td><strong>"+rpFormat(nilai)+"</strong></td><td title='"+(r.keterangan||"-")+"'>"+(r.keterangan||"-")+"</td><td style='text-align:center'>"+(isAdmin()?"<button class='btn-action btn-edit' onclick='editStockIn(\""+r.id+"\")'>"+t("btn_edit")+"</button> <button class='btn-action btn-hapus' onclick='hapusStockIn(\""+r.id+"\")'>"+t("btn_hapus")+"</button>":"<span style='color:#a0aec0;font-size:10px'>-</span>")+"</td></tr>";
   });
   tbody.innerHTML = "";
   tbody.appendChild(buildRows(rows));
@@ -425,8 +423,8 @@ window.tampilkanStockOut = function(){
     let uom = hitungUOM(r.qty,r.isiKarton);
     let nilai = r.qty*r.harga;
     let tipe = r.tipe||"Stock Out";
-    let tipeBadge = tipe==="Expired"?"<span class='badge' style='background:#fef3c7;color:#92400e'>⚠️ Expired</span>":tipe==="Damage"?"<span class='badge' style='background:#f3e8ff;color:#6b21a8'>💥 Damage</span>":"<span class='badge badge-out'>📤 Stock Out</span>";
-    return "<tr><td>"+(i+1)+"</td><td>"+r.tanggal+"</td><td>"+tipeBadge+"</td><td title='"+r.sku+"'>"+r.sku+"</td><td title='"+r.nama+"'>"+r.nama+"</td><td><span class='badge badge-gudang'>"+r.warehouse+"</span></td><td><span class='badge badge-out'>-"+r.qty+" pcs</span></td><td><strong>"+uom+"</strong></td><td>"+rpFormat(r.harga)+"</td><td><strong>"+rpFormat(nilai)+"</strong></td><td title='"+r.ref+"'>"+r.ref+"</td><td style='text-align:center'>"+(isAdmin()?"<button class='btn-action btn-edit' onclick='editStockOut(\""+r.id+"\")'>Edit</button> <button class='btn-action btn-hapus' onclick='hapusStockOut(\""+r.id+"\")'>Hapus</button>":"<span style='color:#a0aec0;font-size:10px'>-</span>")+"</td></tr>";
+    let tipeBadge = tipe==="Expired"?"<span class='badge' style='background:#fef3c7;color:#92400e'>⚠️ "+t("badge_expired")+"</span>":tipe==="Damage"?"<span class='badge' style='background:#f3e8ff;color:#6b21a8'>💥 "+t("badge_damage")+"</span>":"<span class='badge badge-out'>📤 "+t("badge_stockout")+"</span>";
+    return "<tr><td>"+(i+1)+"</td><td>"+r.tanggal+"</td><td>"+tipeBadge+"</td><td title='"+r.sku+"'>"+r.sku+"</td><td title='"+r.nama+"'>"+r.nama+"</td><td><span class='badge badge-gudang'>"+r.warehouse+"</span></td><td><span class='badge badge-out'>-"+r.qty+" pcs</span></td><td><strong>"+uom+"</strong></td><td>"+rpFormat(r.harga)+"</td><td><strong>"+rpFormat(nilai)+"</strong></td><td title='"+r.ref+"'>"+r.ref+"</td><td style='text-align:center'>"+(isAdmin()?"<button class='btn-action btn-edit' onclick='editStockOut(\""+r.id+"\")'>"+t("btn_edit")+"</button> <button class='btn-action btn-hapus' onclick='hapusStockOut(\""+r.id+"\")'>"+t("btn_hapus")+"</button>":"<span style='color:#a0aec0;font-size:10px'>-</span>")+"</td></tr>";
   });
   tbody.innerHTML = "";
   tbody.appendChild(buildRows(rows));
@@ -451,7 +449,7 @@ window.tampilkanTransfer = function(){
   let rows = sliced.map(function(r,ii){
     let i = (page-1)*PAGE_SIZE+ii;
     let uom = hitungUOM(r.qty,r.isiKarton);
-    return "<tr><td>"+(i+1)+"</td><td>"+r.tanggal+"</td><td title='"+r.sku+"'>"+r.sku+"</td><td title='"+r.nama+"'>"+r.nama+"</td><td><span class='badge badge-gudang'>"+r.fromWh+"</span></td><td style='text-align:center;color:#7c3aed;font-weight:700'>→</td><td><span class='badge badge-gudang' style='background:#553c9a'>"+r.toWh+"</span></td><td><span class='badge badge-transfer'>"+r.qty+" pcs</span></td><td><strong>"+uom+"</strong></td><td title='"+r.ref+"'>"+r.ref+"</td><td style='text-align:center'>"+(isAdmin()?"<button class='btn-action btn-edit' onclick='editTransfer(\""+r.id+"\")'>Edit</button> <button class='btn-action btn-hapus' onclick='hapusTransfer(\""+r.id+"\")'>Hapus</button>":"<span style='color:#a0aec0;font-size:10px'>-</span>")+"</td></tr>";
+    return "<tr><td>"+(i+1)+"</td><td>"+r.tanggal+"</td><td title='"+r.sku+"'>"+r.sku+"</td><td title='"+r.nama+"'>"+r.nama+"</td><td><span class='badge badge-gudang'>"+r.fromWh+"</span></td><td style='text-align:center;color:#7c3aed;font-weight:700'>→</td><td><span class='badge badge-gudang' style='background:#553c9a'>"+r.toWh+"</span></td><td><span class='badge badge-transfer'>"+r.qty+" pcs</span></td><td><strong>"+uom+"</strong></td><td title='"+r.ref+"'>"+r.ref+"</td><td style='text-align:center'>"+(isAdmin()?"<button class='btn-action btn-edit' onclick='editTransfer(\""+r.id+"\")'>"+t("btn_edit")+"</button> <button class='btn-action btn-hapus' onclick='hapusTransfer(\""+r.id+"\")'>"+t("btn_hapus")+"</button>":"<span style='color:#a0aec0;font-size:10px'>-</span>")+"</td></tr>";
   });
   tbody.innerHTML = "";
   tbody.appendChild(buildRows(rows));
@@ -812,8 +810,8 @@ function tampilkanDashboard() {
   destroyChart('moving');
   let totalMoving = cF + cM + cS + cN;
   let movingLegendData = [
-    { c: '#10b981', l: 'Fast', v: cF }, { c: '#f59e0b', l: 'Medium', v: cM },
-    { c: '#ef4444', l: 'Slow', v: cS }, { c: '#d1d5db', l: 'No Data', v: cN }
+    { c: '#10b981', l: t('badge_fast'), v: cF }, { c: '#f59e0b', l: t('badge_medium'), v: cM },
+    { c: '#ef4444', l: t('badge_slow'), v: cS }, { c: '#d1d5db', l: t('badge_nodata'), v: cN }
   ];
   let elMoving = document.getElementById('db-chart-moving');
   _dbCharts['moving'] = new ApexCharts(elMoving, {
@@ -884,7 +882,7 @@ function tampilkanDashboard() {
         <td style="padding:6px 8px;border-bottom:1px solid #edf2f7"><span style="background:#4a5568;color:white;padding:2px 6px;border-radius:3px;font-size:10px">${b.warehouse || 'Bintaro'}</span></td>
         <td style="padding:6px 8px;border-bottom:1px solid #edf2f7;text-align:right;font-weight:700">${stokCtn.toFixed(1)}</td>
         <td style="padding:6px 8px;border-bottom:1px solid #edf2f7;text-align:right">${avgBln.toFixed(1)} ctn</td>
-        <td style="padding:6px 8px;border-bottom:1px solid #edf2f7;text-align:right;font-weight:700;color:${warna}">${bln.toFixed(1)} bln (${Math.round(hariTahan)} hr)</td>
+        <td style="padding:6px 8px;border-bottom:1px solid #edf2f7;text-align:right;font-weight:700;color:${warna}">${bln.toFixed(1)} ${t("dash_bln")} (${Math.round(hariTahan)} ${t("dash_hr")})</td>
         <td style="padding:6px 8px;border-bottom:1px solid #edf2f7;text-align:center">${status}</td>
       </tr>`;
     }).join('');
@@ -920,7 +918,7 @@ function tampilkanDashboard() {
   let list90 = document.getElementById('db-top-sku-3m-list');
   if (list90) {
     if (top90.length === 0) {
-      list90.innerHTML = "<div style='text-align:center;color:#a0aec0;padding:24px;font-size:11.5px'>Belum ada data stock out 3 bulan terakhir</div>";
+      list90.innerHTML = "<div style='text-align:center;color:#a0aec0;padding:24px;font-size:11.5px'>"+t("belum_ada_stockout_3bln")+"</div>";
     } else {
       let maxVal90 = top90[0][1] || 1;
       let rankClass90 = i => i === 0 ? 'r-gold' : i === 1 ? 'r-silver' : i === 2 ? 'r-bronze' : '';
@@ -1000,7 +998,7 @@ function tampilkanDashboard() {
       tbodyOver.innerHTML = "<tr><td colspan='7' style='text-align:center;color:#a0aec0;padding:20px'>" + t('dash_overstock_ok') + "</td></tr>";
     } else {
       tbodyOver.innerHTML = overItems.slice(0, 40).map(({ b, stokCtn, lastIn, days, cat }) => {
-        let badge = cat === 'Slow' ? "<span class='badge-slow'>🐢 Slow</span>" : "<span class='badge-nodata'>⚪ No Data</span>";
+        let badge = cat === 'Slow' ? "<span class='badge-slow'>🐢 "+t("badge_slow")+"</span>" : "<span class='badge-nodata'>⚪ "+t("badge_nodata")+"</span>";
         let lastTxt = lastIn ? lastIn : t('dash_tidak_ada_stockin');
         let daysTxt = days === Infinity ? '-' : days + ' ' + t('dash_hari');
         return `<tr>
