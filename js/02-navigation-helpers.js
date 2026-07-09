@@ -71,5 +71,43 @@ function hitungUOM(totalPcs, isiKarton){
 function rpFormat(n){ return "Rp "+Number(n).toLocaleString("id-ID"); }
 
 // =========================================================================
+// SIDEBAR AUTO-MINIMIZE
+// Sidebar otomatis mengecil (icon-only) kalau tidak disentuh beberapa detik,
+// lalu melebar lagi begitu mouse hover/klik di area sidebar.
+// =========================================================================
+(function initSidebarAutoCollapse(){
+  const IDLE_MS = 3500;
+  let sidebarIdleTimer = null;
+  let sidebarEl = null;
+
+  function expandSidebar(){
+    clearTimeout(sidebarIdleTimer);
+    if(sidebarEl) sidebarEl.classList.remove("collapsed");
+  }
+  function scheduleSidebarCollapse(){
+    clearTimeout(sidebarIdleTimer);
+    sidebarIdleTimer = setTimeout(function(){
+      if(sidebarEl) sidebarEl.classList.add("collapsed");
+    }, IDLE_MS);
+  }
+
+  function setup(){
+    sidebarEl = document.getElementById("sidebar");
+    if(!sidebarEl) return;
+    sidebarEl.addEventListener("mouseenter", expandSidebar);
+    sidebarEl.addEventListener("mouseleave", scheduleSidebarCollapse);
+    sidebarEl.addEventListener("click", expandSidebar);
+    // Mulai idle timer begitu halaman dimuat
+    scheduleSidebarCollapse();
+  }
+
+  if(document.readyState === "loading"){
+    document.addEventListener("DOMContentLoaded", setup);
+  } else {
+    setup();
+  }
+})();
+
+// =========================================================================
 // TEMPLATE DOWNLOAD
 // =========================================================================
