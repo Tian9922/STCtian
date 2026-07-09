@@ -59,7 +59,7 @@ function tampilkanLedger(){
   document.getElementById("led-total-trx").innerText  = hasil.length;
 
   if(hasil.length===0){
-    tbody.innerHTML=emptyStateRow(11,"📋",t("no_data_ledger"),"Semua histori transaksi stok akan tercatat di sini.");
+    tbody.innerHTML=emptyStateRow(11,"📋",t("no_data_ledger"),t("hint_ledger_muncul"));
     return;
   }
 
@@ -108,7 +108,7 @@ function resetLedgerFilter(){
 }
 
 function hapusSemuaLedger(){
-  if(!isAdmin()){ alert("⛔ Akses ditolak. Fitur ini hanya untuk Admin."); return; }
+  if(!isAdmin()){ alert(t("access_denied_admin")); return; }
   if(!confirm(t("confirm_delete_all"))) return;
   let wh=document.getElementById("led-wh").value;
   let type=document.getElementById("led-type").value;
@@ -297,7 +297,6 @@ function tampilkanAnalisis() {
         kats.forEach(k => { let o = document.createElement("option"); o.value = k; o.text = k; katSel.appendChild(o); });
     }
     let keyword = document.getElementById("an-search").value.toLowerCase();
-    let wh = document.getElementById("an-wh").value;
     let kat = document.getElementById("an-kategori").value;
     let movFilter = document.getElementById("an-moving").value;
     let periode = parseInt(document.getElementById("an-periode").value) || 0;
@@ -308,7 +307,7 @@ function tampilkanAnalisis() {
     });
     let hasil = items.filter(b => {
         let matchK = b.sku.toLowerCase().includes(keyword) || b.nama.toLowerCase().includes(keyword);
-        let matchW = wh === "All" || (b.warehouse || "Bintaro").toUpperCase() === wh.toUpperCase();
+        let matchW = matchWarehouseMulti("an-wh", b.warehouse);
         let matchKat = kat === "All" || b.kategori === kat;
         return matchK && matchW && matchKat;
     });
@@ -341,7 +340,7 @@ function tampilkanAnalisis() {
     }
 
     let tbody = document.getElementById("tabelAnalisis");
-    if (hasil.length === 0) { tbody.innerHTML = "<tr><td colspan='12' class='kosong'>Tidak ada data</td></tr>"; return; }
+    if (hasil.length === 0) { tbody.innerHTML = "<tr><td colspan='12' class='kosong'>"+t("tidak_ada_data")+"</td></tr>"; return; }
     
     // Sort berdasarkan avg keluar per hari (dalam KARTON)
     hasil.sort((a, b) => cachedAvg(b.sku, b.warehouse || "Bintaro", periode).avgPerHariCtn - cachedAvg(a.sku, a.warehouse || "Bintaro", periode).avgPerHariCtn);
@@ -353,10 +352,10 @@ function tampilkanAnalisis() {
         let avg3Bln = cachedAvg(b.sku, wh2, 90).avgPerHariCtn;
         let avgPcsPerHari = hitungAvgOut(b.sku, wh2, periode).avgPerHari;
         let cat = getMovingCategory(avgPerHariCtn);
-        let badgeHtml = cat === "Fast" ? "<span class='badge-fast'>🚀 Fast</span>" :
-                        cat === "Medium" ? "<span class='badge-medium'>🔄 Medium</span>" :
-                        cat === "Slow" ? "<span class='badge-slow'>🐢 Slow</span>" :
-                        "<span class='badge-nodata'>⚪ No Data</span>";
+        let badgeHtml = cat === "Fast" ? "<span class='badge-fast'>🚀 "+t("badge_fast")+"</span>" :
+                        cat === "Medium" ? "<span class='badge-medium'>🔄 "+t("badge_medium")+"</span>" :
+                        cat === "Slow" ? "<span class='badge-slow'>🐢 "+t("badge_slow")+"</span>" :
+                        "<span class='badge-nodata'>⚪ "+t("badge_nodata")+"</span>";
         
         let stokAktualPcs = Number(b.totalPcs);
         let isiKarton = Number(b.isiKarton) || 1;
@@ -393,8 +392,8 @@ function tampilkanAnalisis() {
             let blnTahan  = hariTahan / 30;
             let warnaKet  = blnTahan >= 3 ? "#38a169" : blnTahan >= 1 ? "#d69e2e" : "#e53e3e";
             ketahananHtml = "<strong>" + totalStokCtn.toFixed(1) + " ctn</strong>"
-                          + "<br><span style='font-weight:700;color:" + warnaKet + "'>" + blnTahan.toFixed(1) + " bln</span>"
-                          + "<span style='font-weight:400;font-size:10px;color:#718096'> (" + Math.round(hariTahan) + " hr)</span>";
+                          + "<br><span style='font-weight:700;color:" + warnaKet + "'>" + blnTahan.toFixed(1) + " "+t("dash_bln")+"</span>"
+                          + "<span style='font-weight:400;font-size:10px;color:#718096'> (" + Math.round(hariTahan) + " "+t("dash_hr")+")</span>";
         } else {
             ketahananHtml = "<strong>" + totalStokCtn.toFixed(1) + " ctn</strong>"
                           + "<br><span style='color:#a0aec0;font-size:11px'>∞</span>";
@@ -422,7 +421,6 @@ function tampilkanAnalisis() {
 // ==================== FUNGSI EXPORT ANALISIS (REPLACE) ====================
 function exportAnalisis() {
     let periode = parseInt(document.getElementById("an-periode").value) || 0;
-    let wh = document.getElementById("an-wh").value;
     let seen = {}; let items = [];
     daftarBarang.forEach(b => {
         let key = b.sku.toUpperCase() + "__" + (b.warehouse || "Bintaro").toUpperCase();
@@ -430,7 +428,7 @@ function exportAnalisis() {
     });
     let rows = [["SKU", "Nama Barang", "Gudang", "Stok (Karton)", "Stok (Pcs)", "Total Out Periode (Karton)", "Total Out Periode (Pcs)", "Avg Out/Hari (Karton)", "Kategori Moving", "Ketahanan (Bulan)", "Ketahanan (Hari)"]];
     
-    items.filter(b => wh === "All" || (b.warehouse || "Bintaro").toUpperCase() === wh.toUpperCase()).forEach(b => {
+    items.filter(b => matchWarehouseMulti("an-wh", b.warehouse)).forEach(b => {
         let isiK = Number(b.isiKarton) || 1;
         let { totalQtyPcs, totalQtyCtn, avgPerHariCtn } = hitungAvgOutKarton(b.sku, b.warehouse || "Bintaro", periode);
         let avgPcsPerHari = hitungAvgOut(b.sku, b.warehouse || "Bintaro", periode).avgPerHari;
@@ -493,15 +491,15 @@ function anHitungPO(){
   } else {
     let hNow=stokPcs/avgOut;
     let hAfter=afterPcs/avgOut;
-    document.getElementById("an-po-res-dur-now").innerText=(hNow/30).toFixed(1)+" bln ("+Math.round(hNow)+" hr)";
-    document.getElementById("an-po-res-dur-after").innerText=(hAfter/30).toFixed(1)+" bln ("+Math.round(hAfter)+" hr)";
+    document.getElementById("an-po-res-dur-now").innerText=(hNow/30).toFixed(1)+" "+t("dash_bln")+" ("+Math.round(hNow)+" "+t("dash_hr")+")";
+    document.getElementById("an-po-res-dur-after").innerText=(hAfter/30).toFixed(1)+" "+t("dash_bln")+" ("+Math.round(hAfter)+" "+t("dash_hr")+")";
   }
 }
 
 function anSimpanPOKeDraft(){
-  if(!anPOCurrentItem){ alert("Tidak ada item yang dipilih!"); return; }
+  if(!anPOCurrentItem){ alert(t("tidak_ada_item_dipilih")); return; }
   let qtyCtn=parseInt(document.getElementById("an-po-qty-ctn").value)||0;
-  if(qtyCtn<=0){ alert("Masukkan jumlah karton PO!"); return; }
+  if(qtyCtn<=0){ alert(t("masukkan_jumlah_ctn")); return; }
   let isiK=anPOCurrentItem.isiKarton||1;
   let qtyPcs=qtyCtn*isiK;
   let today=new Date().toISOString().split("T")[0];
@@ -527,7 +525,7 @@ function anSimpanPOKeDraft(){
   markDirty("intransit","analisis");
   tutupAnPOPanel();
   tampilkanAnalisis();
-  alert("✅ PO berhasil disimpan ke InTransit sebagai Draft!\n\nUbah status ke 'InTransit' agar masuk ke analisis stok aktual,\natau ke 'Complete' agar masuk ke stok gudang.");
+  alert(t("po_disimpan_draft")+"\n\n"+t("po_disimpan_draft_hint"));
 }
 
 // =========================================================================
@@ -651,7 +649,7 @@ function simpanIntransit(){
   let warehouse=document.getElementById("it-warehouse").value;
   let editId=document.getElementById("it-edit-id").value;
 
-  if(!tanggal||!skuInput||!nama||qty<=0){ alert("Lengkapi semua field!"); return; }
+  if(!tanggal||!skuInput||!nama||qty<=0){ alert(t("alert_fill_all")); return; }
 
   // If status Complete, move stock to warehouse
   if(status==="Complete"){
@@ -712,7 +710,7 @@ function simpanIntransit(){
   tutupModalIntransit(null);
   tampilkanIntransit();
   markDirty("analisis");
-  alert("✅ Berhasil disimpan!");
+  alert(t("alert_ok"));
 }
 
 function tampilkanIntransit(){
@@ -737,15 +735,15 @@ function tampilkanIntransit(){
   document.getElementById("it-cnt-planning").innerText=intransitLog.filter(r=>r.status==="Draft"&&r.fromPlanning).length+" item";
   cekNotifIntransit();
 
-  if(hasil.length===0){ tbody.innerHTML=emptyStateRow(11,"🚚","Belum ada data In Transit","PO yang sedang dalam pengiriman akan muncul di sini."); return; }
+  if(hasil.length===0){ tbody.innerHTML=emptyStateRow(11,"🚚",t("belum_ada_intransit"),t("hint_intransit_muncul")); return; }
   tbody.innerHTML="";
   hasil.forEach(function(r,i){
     let status=r.status||"InTransit";
-    let badgeSt=status==="Draft"?"<span class='badge-hold' style='background:#dbeafe;color:#1e40af'>📝 Draft</span>":
-                status==="InTransit"?"<span class='badge-intransit'>🚚 InTransit</span>":
-                "<span class='badge-complete'>✅ Complete</span>";
+    let badgeSt=status==="Draft"?"<span class='badge-hold' style='background:#dbeafe;color:#1e40af'>📝 "+t("badge_draft")+"</span>":
+                status==="InTransit"?"<span class='badge-intransit'>🚚 "+t("badge_intransit")+"</span>":
+                "<span class='badge-complete'>✅ "+t("badge_complete")+"</span>";
     let uom=hitungUOM(r.qty,r.isiKarton||0);
-    let whTxt=status==="Complete"?("<span class='badge badge-gudang'>"+(r.warehouse||"-")+"</span>"):"<span style='color:#a0aec0;font-size:10px'>Belum</span>";
+    let whTxt=status==="Complete"?("<span class='badge badge-gudang'>"+(r.warehouse||"-")+"</span>"):"<span style='color:#a0aec0;font-size:10px'>"+t("belum_dipilih")+"</span>";
     let tglComp=r.tglComplete||"-";
     tbody.innerHTML+="<tr>"+
       "<td>"+(i+1)+"</td>"+
@@ -759,15 +757,15 @@ function tampilkanIntransit(){
       "<td>"+whTxt+"</td>"+
       "<td>"+tglComp+"</td>"+
       "<td style='text-align:center;white-space:nowrap'>"+
-        "<button class='btn-action btn-edit' onclick='bukaModalIntransit(\""+r.id+"\")'>Edit</button> "+
-        (isAdmin()?"<button class='btn-action btn-hapus' onclick='hapusIntransit(\""+r.id+"\")'>Hapus</button>":"<span style='color:#a0aec0;font-size:10px'>-</span>")+
+        "<button class='btn-action btn-edit' onclick='bukaModalIntransit(\""+r.id+"\")'>"+t("btn_edit")+"</button> "+
+        (isAdmin()?"<button class='btn-action btn-hapus' onclick='hapusIntransit(\""+r.id+"\")'>"+t("btn_hapus")+"</button>":"<span style='color:#a0aec0;font-size:10px'>-</span>")+
       "</td>"+
     "</tr>";
   });
 }
 
 function hapusIntransit(id){
-  if(!isAdmin()){ alert("⛔ Akses ditolak. Fitur ini hanya untuk Admin."); return; }
+  if(!isAdmin()){ alert(t("access_denied_admin")); return; }
   if(!confirm(t("confirm_delete_row"))) return;
   let r=intransitLog.find(x=>String(x.id)===String(id));
   if(r&&r.status==="Complete"){
@@ -786,7 +784,7 @@ function hapusIntransit(id){
 }
 
 function hapusSemuaIntransit(){
-  if(!isAdmin()){ alert("⛔ Akses ditolak. Fitur ini hanya untuk Admin."); return; }
+  if(!isAdmin()){ alert(t("access_denied_admin")); return; }
   if(!confirm(t("confirm_delete_all"))) return;
   // Reverse all completed
   intransitLog.filter(r=>r.status==="Complete").forEach(r=>{
