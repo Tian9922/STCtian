@@ -120,7 +120,7 @@ function applyCompanyBranding(){
 function handleLogoUpload(e){
   let file = e.target.files[0];
   if(!file) return;
-  if(!canManageSettings()){ alert("⛔ Akses ditolak. Fitur ini hanya untuk Admin."); e.target.value=""; return; }
+  if(!canManageSettings()){ alert(t("access_denied_admin")); e.target.value=""; return; }
   let reader = new FileReader();
   reader.onload = function(ev){
     let img = new Image();
@@ -138,7 +138,7 @@ function handleLogoUpload(e){
       let preview = document.getElementById("settings-logo-preview");
       if(preview) preview.innerHTML = "<img src='"+base64+"'>";
       window._pendingLogoBase64 = base64;
-      showToast("🖼️ Logo siap, klik 'Simpan Profil Perusahaan' untuk menerapkan.", "info");
+      showToast(t("logo_siap"), "info");
     };
     img.src = ev.target.result;
   };
@@ -146,64 +146,64 @@ function handleLogoUpload(e){
 }
 
 function saveCompanyProfile(){
-  if(!canManageSettings()){ alert("⛔ Akses ditolak. Fitur ini hanya untuk Admin."); return; }
+  if(!canManageSettings()){ alert(t("access_denied_admin")); return; }
   let name = document.getElementById("settings-company-name").value.trim();
   let sub  = document.getElementById("settings-company-sub").value.trim();
-  if(!window._db){ alert("⚠️ Firebase belum siap."); return; }
+  if(!window._db){ alert(t("firebase_belum_siap")); return; }
   let updates = {};
   if(name) updates.companyName = name;
   if(sub)  updates.companySub  = sub;
   if(window._pendingLogoBase64) updates.logoBase64 = window._pendingLogoBase64;
   window._db.ref("appSettings").update(updates).then(()=>{
-    alert("✅ Profil perusahaan berhasil disimpan!");
+    alert(t("profil_disimpan"));
     window._pendingLogoBase64 = null;
-  }).catch(e=>{ alert("⛔ Gagal menyimpan: "+e.message); });
+  }).catch(e=>{ alert(t("gagal_menyimpan")+e.message); });
 }
 
 function savePreferences(){
-  if(!canManageSettings()){ alert("⛔ Akses ditolak. Fitur ini hanya untuk Admin."); return; }
+  if(!canManageSettings()){ alert(t("access_denied_admin")); return; }
   let wh = document.getElementById("settings-default-warehouse").value;
   let tab = document.getElementById("settings-default-tab").value;
-  if(!window._db){ alert("⚠️ Firebase belum siap."); return; }
+  if(!window._db){ alert(t("firebase_belum_siap")); return; }
   window._db.ref("appSettings").update({ defaultWarehouse: wh, defaultTab: tab }).then(()=>{
-    alert("✅ Preferensi disimpan!");
-  }).catch(e=>{ alert("⛔ Gagal menyimpan: "+e.message); });
+    alert(t("preferensi_disimpan"));
+  }).catch(e=>{ alert(t("gagal_menyimpan")+e.message); });
 }
 
 // -------------------------------------------------------------------------
 // SETTINGS — Manajemen User & Role
 // -------------------------------------------------------------------------
 function addNewUser(){
-  if(!canManageSettings()){ alert("⛔ Akses ditolak. Fitur ini hanya untuk Admin."); return; }
+  if(!canManageSettings()){ alert(t("access_denied_admin")); return; }
   let username = document.getElementById("nu-username").value.trim().toLowerCase();
   let password = document.getElementById("nu-password").value;
   let role = document.getElementById("nu-role").value;
-  if(!username || !password){ alert("⚠️ Lengkapi username & password!"); return; }
-  if(ACCOUNTS[username]){ alert("⚠️ Username ini sudah dipakai sebagai akun bawaan sistem!"); return; }
-  if(!window._db){ alert("⚠️ Firebase belum siap."); return; }
+  if(!username || !password){ alert(t("lengkapi_username_password")); return; }
+  if(ACCOUNTS[username]){ alert(t("username_sudah_dipakai")); return; }
+  if(!window._db){ alert(t("firebase_belum_siap")); return; }
   let custom = Object.assign({}, window._customAccounts || {});
   custom[username] = { password, role };
   window._db.ref("appSettings/customAccounts").set(custom).then(()=>{
-    alert("✅ User '"+username+"' berhasil ditambahkan sebagai "+role+"!");
+    alert(t("user_ditambahkan").replace("{u}",username).replace("{role}",role));
     document.getElementById("nu-username").value = "";
     document.getElementById("nu-password").value = "";
-  }).catch(e=>{ alert("⛔ Gagal menyimpan: "+e.message); });
+  }).catch(e=>{ alert(t("gagal_menyimpan")+e.message); });
 }
 
 function deleteCustomUser(username){
-  if(!canManageSettings()){ alert("⛔ Akses ditolak."); return; }
-  if(!confirm("Hapus user '"+username+"'?")) return;
+  if(!canManageSettings()){ alert(t("access_denied")); return; }
+  if(!confirm(t("konfirmasi_hapus_user").replace("{u}",username))) return;
   let custom = Object.assign({}, window._customAccounts || {});
   delete custom[username];
   window._db.ref("appSettings/customAccounts").set(custom).then(()=>{
-    alert("✅ User '"+username+"' dihapus.");
-  }).catch(e=>{ alert("⛔ Gagal menghapus: "+e.message); });
+    alert(t("user_dihapus").replace("{u}",username));
+  }).catch(e=>{ alert(t("gagal_menghapus")+e.message); });
 }
 
 function _roleLabel(role){
-  if(role==="admin") return "<span class='role-pill admin'>👑 Admin</span>";
-  if(role==="staff") return "<span class='role-pill staff'>📦 Staff Gudang</span>";
-  return "<span class='role-pill viewer'>👁 Viewer</span>";
+  if(role==="admin") return "<span class='role-pill admin'>"+t("role_admin")+"</span>";
+  if(role==="staff") return "<span class='role-pill staff'>"+t("role_staff")+"</span>";
+  return "<span class='role-pill viewer'>"+t("role_viewer")+"</span>";
 }
 
 function renderUserManagementTable(){
@@ -212,16 +212,16 @@ function renderUserManagementTable(){
   let rows = "";
   Object.keys(ACCOUNTS).forEach(u=>{
     rows += "<tr><td><b>"+u+"</b></td><td>"+_roleLabel(ACCOUNTS[u].role)+"</td>"+
-      "<td><span style='color:#a0aec0;font-size:10px'>Bawaan Sistem</span></td>"+
-      "<td style='text-align:right'><span style='color:#cbd5e0;font-size:11px'>Tidak bisa dihapus</span></td></tr>";
+      "<td><span style='color:#a0aec0;font-size:10px'>"+t("bawaan_sistem")+"</span></td>"+
+      "<td style='text-align:right'><span style='color:#cbd5e0;font-size:11px'>"+t("tidak_bisa_dihapus")+"</span></td></tr>";
   });
   let custom = window._customAccounts || {};
   Object.keys(custom).forEach(u=>{
     rows += "<tr><td><b>"+u+"</b></td><td>"+_roleLabel(custom[u].role)+"</td>"+
-      "<td><span style='color:#0d9488;font-size:10px'>Custom</span></td>"+
-      "<td style='text-align:right'><button class='btn btn-red' style='margin-top:0' onclick=\"deleteCustomUser('"+u+"')\">🗑️ Hapus</button></td></tr>";
+      "<td><span style='color:#0d9488;font-size:10px'>"+t("custom_label")+"</span></td>"+
+      "<td style='text-align:right'><button class='btn btn-red' style='margin-top:0' onclick=\"deleteCustomUser('"+u+"')\">🗑️ "+t("btn_hapus")+"</button></td></tr>";
   });
-  tbody.innerHTML = rows || emptyStateRow(4,"👥","Belum ada user tambahan");
+  tbody.innerHTML = rows || emptyStateRow(4,"👥",t("belum_ada_user_tambahan"));
 }
 
 // -------------------------------------------------------------------------
@@ -248,7 +248,7 @@ function renderLoginHistoryTable(){
   let tbody = document.getElementById("login-history-tbody");
   if(!tbody) return;
   let history = (window._loginHistory || []).slice().reverse();
-  if(history.length===0){ tbody.innerHTML = emptyStateRow(4,"🕒","Belum ada riwayat login"); return; }
+  if(history.length===0){ tbody.innerHTML = emptyStateRow(4,"🕒",t("belum_ada_riwayat_login")); return; }
   tbody.innerHTML = history.map(h=>{
     let d = new Date(h.time);
     let waktu = isNaN(d) ? h.time : d.toLocaleString("id-ID");
@@ -262,7 +262,7 @@ function renderLoginHistoryTable(){
 function renderSettingsPage(){
   if(!canManageSettings()){
     let el = document.getElementById("tab-settings");
-    if(el) el.innerHTML = "<div class='empty-state' style='margin:auto'><div class='empty-state-icon'>🔒</div><div class='empty-state-title'>Halaman ini khusus Admin</div></div>";
+    if(el) el.innerHTML = "<div class='empty-state' style='margin:auto'><div class='empty-state-icon'>🔒</div><div class='empty-state-title'>"+t("akses_khusus_admin")+"</div></div>";
     return;
   }
   let s = window._appSettings || {};
@@ -290,7 +290,7 @@ function renderSettingsPage(){
     tgSwitch.classList.toggle("on", on);
     tgSwitch.style.background = on ? "" : "#cbd5e0";
   }
-  if(tgLast) tgLast.textContent = s.lastTelegramAlertTime ? "Terakhir terkirim: "+new Date(s.lastTelegramAlertTime).toLocaleString("id-ID") : "Belum pernah terkirim otomatis.";
+  if(tgLast) tgLast.textContent = s.lastTelegramAlertTime ? t("terakhir_terkirim")+new Date(s.lastTelegramAlertTime).toLocaleString("id-ID") : t("belum_pernah_terkirim");
   renderUserManagementTable();
   renderLoginHistoryTable();
   if(typeof renderAuditLogTable==="function") renderAuditLogTable();
