@@ -12,6 +12,7 @@
   <!-- ===== FIREBASE SDK (Compat - lebih reliable) ===== -->
   <script src="https://www.gstatic.com/firebasejs/10.12.0/firebase-app-compat.js"></script>
   <script src="https://www.gstatic.com/firebasejs/10.12.0/firebase-database-compat.js"></script>
+  <script src="https://www.gstatic.com/firebasejs/10.12.0/firebase-auth-compat.js"></script>
   <script>
     const firebaseConfig = {
       apiKey:            "AIzaSyC8l7yQ3yCtqw4Cj3RMMlhb-fWdPaXmRSw",
@@ -58,7 +59,7 @@
     <button id="btn-login" onclick="doLogin()">🔐 Masuk</button>
     <div id="login-error">⚠️ Username atau password salah!</div>
     <div style="margin-top:16px;padding:10px;background:#fffbeb;border:1px solid #fcd34d;border-radius:6px;font-size:11px;color:#92400e;line-height:1.5">
-      💡 <strong>Info:</strong> Data tersimpan di browser masing-masing (localStorage). Untuk data terpusat antar device, hubungi admin untuk setup database online.
+      💡 <strong>Info:</strong> Data tersimpan online (Firebase) dan tersinkron otomatis antar device. Login memakai akun resmi — hubungi admin kalau butuh akses baru.
     </div>
   </div>
   <div style="color:#718096;font-size:11px;margin-top:18px">Inventory Christyan (IC) · v3</div>
