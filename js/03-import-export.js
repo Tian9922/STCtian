@@ -106,18 +106,18 @@ function downloadTemplateIntransit(){
 // UPLOAD EXCEL - MONITOR (STOCK IN)
 // =========================================================================
 function prosesUploadExcel(element){
-  if(!canInput()){ alert("⛔ Akses ditolak. Fitur ini hanya untuk Admin/Staff Gudang."); return; }
+  if(!canInput()){ alert(t("access_denied_staff")); return; }
   let file=element.files[0]; if(!file) return;
   let targetWarehouse=document.getElementById("uploadWarehouse").value;
   let uploadTgl=document.getElementById("uploadTanggal").value;
-  if(!uploadTgl){ alert("⚠️ Silakan pilih Tanggal Upload terlebih dahulu!"); element.value=""; return; }
+  if(!uploadTgl){ alert(t("pilih_tanggal_upload")); element.value=""; return; }
   let reader=new FileReader();
   reader.onload=function(e){
     let data=new Uint8Array(e.target.result);
     let workbook=XLSX.read(data,{type:"array"});
     let sheet=workbook.Sheets[workbook.SheetNames[0]];
     let dataJson=XLSX.utils.sheet_to_json(sheet);
-    if(dataJson.length===0){ alert("⚠️ File kosong!"); return; }
+    if(dataJson.length===0){ alert(t("file_kosong")); return; }
     let cMB=0,cMU=0,cS=0;
     dataJson.forEach(function(row){
       let rawSku=row["Item Code"], rawKat=row["Item Group"]||"General", rawNama=row["Item Name"];
@@ -184,7 +184,7 @@ function prosesUploadExcel(element){
     fbSave("transferLog", transferLog);
     markDirty("monitor","in","ledger","analisis");
     element.value="";
-    alert("✅ Proses Selesai!\n- "+cS+" item stok masuk ke gudang "+targetWarehouse+".\n- "+cMB+" SKU baru terdaftar.\n- "+cMU+" data master diperbarui (harga/isi propagated).");
+    alert(t("proses_selesai")+"\n- "+cS+" "+t("item_masuk_gudang")+" "+targetWarehouse+".\n- "+cMB+" "+t("sku_baru_terdaftar")+"\n- "+cMU+" "+t("data_master_diperbarui"));
   };
   reader.readAsArrayBuffer(file);
 }
@@ -194,17 +194,17 @@ function prosesUploadExcel(element){
 // Header: Item Code, Qty, Warehouse, Keterangan
 // =========================================================================
 function prosesUploadStockOut(element){
-  if(!canInput()){ alert("⛔ Akses ditolak. Fitur ini hanya untuk Admin/Staff Gudang."); return; }
+  if(!canInput()){ alert(t("access_denied_staff")); return; }
   let file=element.files[0]; if(!file) return;
   let uploadTgl=document.getElementById("out-upload-tanggal").value;
-  if(!uploadTgl){ alert("⚠️ Silakan pilih Tanggal Upload Stock Out terlebih dahulu!"); element.value=""; return; }
+  if(!uploadTgl){ alert(t("pilih_tanggal_upload_out")); element.value=""; return; }
   let reader=new FileReader();
   reader.onload=function(e){
     let data=new Uint8Array(e.target.result);
     let workbook=XLSX.read(data,{type:"array"});
     let sheet=workbook.Sheets[workbook.SheetNames[0]];
     let dataJson=XLSX.utils.sheet_to_json(sheet);
-    if(dataJson.length===0){ alert("⚠️ File kosong!"); return; }
+    if(dataJson.length===0){ alert(t("file_kosong")); return; }
     let today=uploadTgl;
     let cOK=0, cSkip=0, cWarn=[];
     let semuaMaster=dapatkanSemuaMasterData();
@@ -235,8 +235,8 @@ function prosesUploadStockOut(element){
     fbSave("barang", daftarBarang);
     markDirty("out","monitor","ledger","analisis");
     element.value="";
-    let msg="✅ Upload Stock Out Selesai!\n- "+cOK+" item berhasil diproses.\n- "+cSkip+" item dilewati.";
-    if(cWarn.length>0) msg+="\n\n⚠️ Peringatan Stok:\n"+cWarn.slice(0,10).join("\n");
+    let msg=t("upload_stockout_selesai")+"\n- "+cOK+" "+t("item_berhasil_diproses")+"\n- "+cSkip+" "+t("item_dilewati");
+    if(cWarn.length>0) msg+="\n\n"+t("peringatan_stok")+"\n"+cWarn.slice(0,10).join("\n");
     alert(msg);
   };
   reader.readAsArrayBuffer(file);
@@ -247,22 +247,22 @@ function prosesUploadStockOut(element){
 // Header: Item Code, Nama Barang, Item Group, Actual Qty, Isi/Ctn, Harga, Keterangan
 // =========================================================================
 function prosesUploadTransfer(element){
-  if(!canInput()){ alert("⛔ Akses ditolak. Fitur ini hanya untuk Admin/Staff Gudang."); return; }
+  if(!canInput()){ alert(t("access_denied_staff")); return; }
   let file=element.files[0]; if(!file) return;
   let fromWh=document.getElementById("tr-upload-from-wh").value;
   let toWh=document.getElementById("tr-upload-to-wh").value;
   let uploadTgl=document.getElementById("tr-upload-tanggal").value;
-  if(!uploadTgl){ alert("⚠️ Silakan pilih Tanggal Transfer terlebih dahulu!"); element.value=""; return; }
-  if(!fromWh){ alert("⚠️ Pilih Gudang Asal (Dari Gudang) terlebih dahulu!"); element.value=""; return; }
-  if(!toWh){ alert("⚠️ Pilih Gudang Tujuan (Ke Gudang) terlebih dahulu!"); element.value=""; return; }
-  if(fromWh===toWh){ alert("⚠️ Gudang asal dan tujuan tidak boleh sama!"); element.value=""; return; }
+  if(!uploadTgl){ alert(t("pilih_tanggal_transfer")); element.value=""; return; }
+  if(!fromWh){ alert(t("pilih_gudang_asal")); element.value=""; return; }
+  if(!toWh){ alert(t("pilih_gudang_tujuan")); element.value=""; return; }
+  if(fromWh===toWh){ alert(t("gudang_sama_error")); element.value=""; return; }
   let reader=new FileReader();
   reader.onload=function(e){
     let data=new Uint8Array(e.target.result);
     let workbook=XLSX.read(data,{type:"array"});
     let sheet=workbook.Sheets[workbook.SheetNames[0]];
     let dataJson=XLSX.utils.sheet_to_json(sheet);
-    if(dataJson.length===0){ alert("⚠️ File kosong!"); return; }
+    if(dataJson.length===0){ alert(t("file_kosong")); return; }
     let today=uploadTgl;
     let cOK=0, cSkip=0, cWarn=[], cMasterUpdate=0;
     let semuaMaster=dapatkanSemuaMasterData();
@@ -317,9 +317,9 @@ function prosesUploadTransfer(element){
     fbSave("barang", daftarBarang);
     markDirty("transfer","monitor","ledger","analisis");
     element.value="";
-    let msg="✅ Upload Transfer Selesai!\n- "+cOK+" item ditransfer dari "+fromWh+" → "+toWh+".\n- "+cSkip+" item dilewati.";
-    if(cMasterUpdate>0) msg+="\n- "+cMasterUpdate+" data master diperbarui.";
-    if(cWarn.length>0) msg+="\n\n⚠️ Peringatan Stok Kurang:\n"+cWarn.slice(0,10).join("\n");
+    let msg=t("upload_transfer_selesai")+"\n- "+cOK+" "+t("item_ditransfer_dari")+" "+fromWh+" → "+toWh+".\n- "+cSkip+" "+t("item_dilewati");
+    if(cMasterUpdate>0) msg+="\n- "+cMasterUpdate+" "+t("data_master_diperbarui");
+    if(cWarn.length>0) msg+="\n\n"+t("peringatan_stok_kurang")+"\n"+cWarn.slice(0,10).join("\n");
     alert(msg);
   };
   reader.readAsArrayBuffer(file);
@@ -331,16 +331,16 @@ function prosesUploadTransfer(element){
 // =========================================================================
 function prosesUploadIntransit(element){
   let file=element.files[0]; if(!file) return;
-  if(!canInput()){ alert("⛔ Akses ditolak. Fitur ini hanya untuk Admin/Staff Gudang."); element.value=""; return; }
+  if(!canInput()){ alert(t("access_denied_staff")); element.value=""; return; }
   let uploadTgl=document.getElementById("it-upload-tanggal").value;
-  if(!uploadTgl){ alert("⚠️ Silakan pilih Tanggal Intransit terlebih dahulu!"); element.value=""; return; }
+  if(!uploadTgl){ alert(t("pilih_tanggal_intransit")); element.value=""; return; }
   let reader=new FileReader();
   reader.onload=function(e){
     let data=new Uint8Array(e.target.result);
     let workbook=XLSX.read(data,{type:"array"});
     let sheet=workbook.Sheets[workbook.SheetNames[0]];
     let dataJson=XLSX.utils.sheet_to_json(sheet);
-    if(dataJson.length===0){ alert("⚠️ File kosong!"); return; }
+    if(dataJson.length===0){ alert(t("file_kosong")); return; }
     let today=uploadTgl;
     let cOK=0, cSkip=0, cUpdate=0, cMasterUpdate=0;
     let semuaMaster=dapatkanSemuaMasterData();
@@ -389,8 +389,8 @@ function prosesUploadIntransit(element){
     fbSave("intransitLog", intransitLog);
     markDirty("intransit","analisis");
     element.value="";
-    let msg="✅ Upload InTransit Selesai!\n- "+cOK+" item baru ditambahkan.\n- "+cUpdate+" item existing diperbarui.\n- "+cSkip+" item dilewati.";
-    if(cMasterUpdate>0) msg+="\n- "+cMasterUpdate+" data master diperbarui.";
+    let msg=t("upload_intransit_selesai")+"\n- "+cOK+" "+t("item_baru_ditambahkan")+"\n- "+cUpdate+" "+t("item_existing_diperbarui")+"\n- "+cSkip+" "+t("item_dilewati");
+    if(cMasterUpdate>0) msg+="\n- "+cMasterUpdate+" "+t("data_master_diperbarui");
     alert(msg);
   };
   reader.readAsArrayBuffer(file);
@@ -442,11 +442,11 @@ function cariSertaIsiOtomatis(){
     document.getElementById("harga").value=match.harga;
     document.getElementById("sku").setAttribute("data-full-sku",match.sku);
     if(Number(match.harga)===0||Number(match.qtyCtn)===0){
-      alertBox.innerHTML="💡 Lengkapi Harga / Qty Ctn.";alertBox.style.color="#3182ce";alertBox.style.display="block";kunciFields(false);
+      alertBox.innerHTML=t("lengkapi_harga_qty");alertBox.style.color="#3182ce";alertBox.style.display="block";kunciFields(false);
     } else { alertBox.style.display="none"; kunciFields(true); }
   } else {
     kosongkanAutoFields(); kunciFields(false);
-    alertBox.innerHTML="✨ SKU Baru Terdeteksi!";alertBox.style.color="#e67e22";alertBox.style.display="block";
+    alertBox.innerHTML=t("sku_baru_terdeteksi");alertBox.style.color="#e67e22";alertBox.style.display="block";
     document.getElementById("sku").removeAttribute("data-full-sku");
   }
 }
@@ -480,7 +480,7 @@ function cariSKUForTransaction(type){
     alertBox.style.display="none";
     if(type==="tr") updateTrStok();
   } else {
-    alertBox.innerHTML="⚠️ SKU tidak ditemukan di master.";alertBox.style.color="#e53e3e";alertBox.style.display="block";
+    alertBox.innerHTML=t("sku_tidak_ditemukan");alertBox.style.color="#e53e3e";alertBox.style.display="block";
     document.getElementById(type+"-sku").removeAttribute("data-full-sku");
   }
 }
