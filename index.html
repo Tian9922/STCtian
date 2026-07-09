@@ -89,6 +89,7 @@
     <button class="nav-tab" onclick="switchTab('analisis')" id="navbtn-analisis"><span class="tab-icon">📈</span><span data-i18n="tab_analisis">Analisa Stock</span></button>
     <button class="nav-tab" onclick="switchTab('sales')" id="navbtn-sales"><span class="tab-icon">🛒</span><span data-i18n="tab_sales">Sales Analytics</span></button>
     <button class="nav-tab" onclick="switchTab('reorder')" id="navbtn-reorder"><span class="tab-icon">🔮</span><span data-i18n="tab_reorder">Rekomendasi Reorder</span></button>
+    <button class="nav-tab" onclick="switchTab('erpsync')" id="navbtn-erpsync" style="display:none"><span class="tab-icon">🔗</span><span>ERP Sync</span></button>
     <div class="sb-section" data-i18n="sb_section_admin">Admin</div>
     <button class="nav-tab" onclick="switchTab('settings')" id="navbtn-settings" style="display:none"><span class="tab-icon">⚙️</span><span data-i18n="tab_settings">Pengaturan</span></button>
   </div>
@@ -865,10 +866,7 @@
     </div>
     <div class="fgrp">
       <label>Warehouse</label>
-      <select id="an-wh" onchange="tampilkanAnalisis()">
-        <option value="All">All Warehouse</option>
-        <option>Bintaro</option><option>Gunsin</option><option>MAJ</option><option>Bosco</option><option>K-Mart</option><option>Happy Wonder</option><option>Hero Supermarket</option><option>Consignment</option><option>K-Seafood</option><option>Event</option><option>Sample</option>
-      </select>
+      <div id="an-wh"></div>
     </div>
     <div class="fgrp">
       <label data-i18n="label_kategori">Kategori</label>
@@ -944,10 +942,7 @@
     </div>
     <div class="fgrp">
       <label>Warehouse</label>
-      <select id="sa-wh" onchange="tampilkanSales()">
-        <option value="All">All Warehouse</option>
-        <option>Bintaro</option><option>Gunsin</option><option>MAJ</option><option>Bosco</option><option>K-Mart</option><option>Happy Wonder</option><option>Hero Supermarket</option><option>Consignment</option><option>K-Seafood</option><option>Event</option><option>Sample</option>
-      </select>
+      <div id="sa-wh"></div>
     </div>
     <div class="fgrp">
       <label>Dari Tanggal</label>
@@ -1035,6 +1030,39 @@
 </div>
 
 <!-- ===================== TAB 8: SETTINGS (Admin only) ===================== -->
+<!-- ===================== TAB: ERP SYNC ===================== -->
+<div id="tab-erpsync" class="page-full">
+  <div style="background:white;border-radius:6px;padding:16px;box-shadow:0 1px 3px rgba(0,0,0,.06);margin-bottom:12px">
+    <h3 style="margin:0 0 10px 0">🔗 Sinkronisasi dengan ERPNext</h3>
+    <p style="color:#666;font-size:13px;margin-bottom:14px">
+      Ambil data Stock Ledger langsung dari ERPNext (satu arah, read-only). Isi dulu API Key & Secret di file <code>js/09-erpnext-sync.js</code> sebelum digunakan.
+    </p>
+    <div style="display:flex;gap:10px;flex-wrap:wrap;align-items:flex-end;margin-bottom:12px">
+      <div class="fgrp">
+        <label>Dari Tanggal</label>
+        <input type="date" id="erp-from">
+      </div>
+      <div class="fgrp">
+        <label>Sampai Tanggal</label>
+        <input type="date" id="erp-to">
+      </div>
+      <button class="btn btn-blue" onclick="testERPNextConnection()">🔌 Test Koneksi</button>
+      <button class="btn btn-export" onclick="syncFromERPNext()">⬇️ Tarik Data dari ERPNext</button>
+    </div>
+    <div id="erp-sync-status" class="erp-status">Belum ada aktivitas sync.</div>
+  </div>
+  <div style="flex:1;background:white;border-radius:6px;padding:10px;box-shadow:0 1px 3px rgba(0,0,0,.06);display:flex;flex-direction:column;overflow:hidden">
+    <div class="table-container" style="flex:1">
+      <table>
+        <thead>
+          <tr><th>No</th><th>Tanggal</th><th>Item Code</th><th>Item Name</th><th>UOM</th><th>Qty</th></tr>
+        </thead>
+        <tbody id="tabelErpLedger"><tr><td colspan="6" style="text-align:center;color:#999;padding:20px">Belum ada data. Klik "Tarik Data" di atas.</td></tr></tbody>
+      </table>
+    </div>
+  </div>
+</div>
+
 <div id="tab-settings" class="page-full">
   <div class="settings-grid">
     <!-- Company Profile -->
@@ -1164,6 +1192,8 @@
 <script src="js/06-analytics-dashboard.js"></script>
 <script src="js/07-ux-settings.js"></script>
 <script src="js/08-functional-features.js"></script>
+<script src="js/09-erpnext-sync.js"></script>
+<script src="js/10-multi-warehouse-filter.js"></script>
 <!-- MODAL EDIT BARANG (Monitor Stok) -->
 <div class="it-modal-overlay" id="edit-barang-modal" onclick="tutupModalEditBarang(event)">
   <div class="it-modal" onclick="event.stopPropagation()">
