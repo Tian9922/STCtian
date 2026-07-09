@@ -171,33 +171,58 @@ function savePreferences(){
 }
 
 // -------------------------------------------------------------------------
-// SETTINGS — Manajemen User & Role
+// SETTINGS — Manajemen User & Role (Firebase Authentication asli)
+// Membuat user Firebase Auth baru dari sisi client akan otomatis login
+// sebagai user itu di instance Firebase utama. Supaya admin yang sedang
+// login TIDAK ke-logout, kita pakai instance Firebase kedua ("Secondary")
+// khusus untuk membuat akun baru, lalu langsung sign-out dari situ.
 // -------------------------------------------------------------------------
+function _secondaryAuth(){
+  if(!window._secondaryFbApp){
+    window._secondaryFbApp = firebase.initializeApp(firebaseConfig, "Secondary");
+  }
+  return window._secondaryFbApp.auth();
+}
+
 function addNewUser(){
   if(!canManageSettings()){ alert(t("access_denied_admin")); return; }
   let username = document.getElementById("nu-username").value.trim().toLowerCase();
   let password = document.getElementById("nu-password").value;
   let role = document.getElementById("nu-role").value;
   if(!username || !password){ alert(t("lengkapi_username_password")); return; }
-  if(ACCOUNTS[username]){ alert(t("username_sudah_dipakai")); return; }
+  if(password.length < 6){ alert(t("weak_password")); return; }
   if(!window._db){ alert(t("firebase_belum_siap")); return; }
-  let custom = Object.assign({}, window._customAccounts || {});
-  custom[username] = { password, role };
-  window._db.ref("appSettings/customAccounts").set(custom).then(()=>{
-    alert(t("user_ditambahkan").replace("{u}",username).replace("{role}",role));
-    document.getElementById("nu-username").value = "";
-    document.getElementById("nu-password").value = "";
-  }).catch(e=>{ alert(t("gagal_menyimpan")+e.message); });
+  let sAuth = _secondaryAuth();
+  sAuth.createUserWithEmailAndPassword(_pseudoEmail(username), password).then(function(cred){
+    let uid = cred.user.uid;
+    return window._db.ref("users/"+uid).set({ username, role, createdAt: new Date().toISOString() }).then(function(){
+      sAuth.signOut();
+      alert(t("user_ditambahkan").replace("{u}",username).replace("{role}",role));
+      document.getElementById("nu-username").value = "";
+      document.getElementById("nu-password").value = "";
+      renderUserManagementTable();
+    });
+  }).catch(function(e){
+    if(e.code === "auth/email-already-in-use"){ alert(t("username_taken_auth")); }
+    else if(e.code === "auth/weak-password"){ alert(t("weak_password")); }
+    else { alert(t("gagal_menyimpan")+e.message); }
+  });
 }
 
-function deleteCustomUser(username){
+// "Hapus" di sini mencabut akses (menghapus role dari database), bukan
+// menghapus akun Firebase Auth-nya sepenuhnya — client-side app tidak
+// diizinkan menghapus akun user LAIN tanpa server/Admin SDK. Begitu entri
+// role-nya dicabut, user itu tidak bisa lagi baca/tulis data apapun.
+function deleteCustomUser(uid, username){
   if(!canManageSettings()){ alert(t("access_denied")); return; }
+  if(firebase.auth().currentUser && firebase.auth().currentUser.uid === uid){
+    alert(t("access_denied")); return; // jangan sampai admin nyabut akses diri sendiri
+  }
   if(!confirm(t("konfirmasi_hapus_user").replace("{u}",username))) return;
-  let custom = Object.assign({}, window._customAccounts || {});
-  delete custom[username];
-  window._db.ref("appSettings/customAccounts").set(custom).then(()=>{
+  window._db.ref("users/"+uid).remove().then(function(){
     alert(t("user_dihapus").replace("{u}",username));
-  }).catch(e=>{ alert(t("gagal_menghapus")+e.message); });
+    renderUserManagementTable();
+  }).catch(function(e){ alert(t("gagal_menghapus")+e.message); });
 }
 
 function _roleLabel(role){
@@ -208,20 +233,23 @@ function _roleLabel(role){
 
 function renderUserManagementTable(){
   let tbody = document.getElementById("user-mgmt-tbody");
-  if(!tbody) return;
-  let rows = "";
-  Object.keys(ACCOUNTS).forEach(u=>{
-    rows += "<tr><td><b>"+u+"</b></td><td>"+_roleLabel(ACCOUNTS[u].role)+"</td>"+
-      "<td><span style='color:#a0aec0;font-size:10px'>"+t("bawaan_sistem")+"</span></td>"+
-      "<td style='text-align:right'><span style='color:#cbd5e0;font-size:11px'>"+t("tidak_bisa_dihapus")+"</span></td></tr>";
+  if(!tbody || !window._db) return;
+  window._db.ref("users").once("value").then(function(snap){
+    let all = snap.val() || {};
+    let uids = Object.keys(all);
+    if(uids.length===0){ tbody.innerHTML = emptyStateRow(4,"👥",t("belum_ada_user_tambahan")); return; }
+    let myUid = firebase.auth().currentUser ? firebase.auth().currentUser.uid : null;
+    tbody.innerHTML = uids.map(function(uid){
+      let u = all[uid];
+      let isMe = uid === myUid;
+      let actionCell = isMe
+        ? "<span style='color:#cbd5e0;font-size:11px'>"+t("tidak_bisa_dihapus")+"</span>"
+        : "<button class='btn btn-red' style='margin-top:0' onclick=\"deleteCustomUser('"+uid+"','"+u.username+"')\">🗑️ "+t("btn_hapus")+"</button>";
+      return "<tr><td><b>"+u.username+"</b></td><td>"+_roleLabel(u.role)+"</td>"+
+        "<td><span style='color:#a0aec0;font-size:10px'>"+(u.createdAt ? new Date(u.createdAt).toLocaleDateString("id-ID") : "-")+"</span></td>"+
+        "<td style='text-align:right'>"+actionCell+"</td></tr>";
+    }).join("");
   });
-  let custom = window._customAccounts || {};
-  Object.keys(custom).forEach(u=>{
-    rows += "<tr><td><b>"+u+"</b></td><td>"+_roleLabel(custom[u].role)+"</td>"+
-      "<td><span style='color:#0d9488;font-size:10px'>"+t("custom_label")+"</span></td>"+
-      "<td style='text-align:right'><button class='btn btn-red' style='margin-top:0' onclick=\"deleteCustomUser('"+u+"')\">🗑️ "+t("btn_hapus")+"</button></td></tr>";
-  });
-  tbody.innerHTML = rows || emptyStateRow(4,"👥",t("belum_ada_user_tambahan"));
 }
 
 // -------------------------------------------------------------------------
