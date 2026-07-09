@@ -1,58 +1,35 @@
 // =========================================================================
-// AUTH - LOGIN & ROLE SYSTEM
-// Password bisa diganti langsung di sini
+// AUTH - LOGIN & ROLE SYSTEM (Firebase Authentication)
+// Password TIDAK lagi disimpan di kode. Setiap user punya akun Firebase Auth
+// asli (email/password), dan role-nya disimpan di Realtime Database node
+// "users/{uid}". Username ditulis apa adanya (mis. "admin"), lalu diubah
+// jadi pseudo-email "admin@inventoryic.local" di belakang layar supaya
+// Firebase Auth (yang mewajibkan format email) tetap bisa dipakai.
 // =========================================================================
-const ACCOUNTS = {
-  admin:  { password: "admin123",  role: "admin"  },
-  stc:    { password: "stc123",    role: "viewer" },
-  gudang: { password: "gudang123", role: "staff"  }
-};
-// Akun tambahan yang dibuat lewat halaman Settings (di-merge saat load dari Firebase)
-window._customAccounts = {};
-function _allAccounts(){ return Object.assign({}, ACCOUNTS, window._customAccounts||{}); }
-
 let currentRole = null; // null = belum login
+window._currentUsername = "";
+
+function _pseudoEmail(username){ return username.toLowerCase().trim()+"@inventoryic.local"; }
 
 function doLogin(){
   let user = document.getElementById("login-user").value.trim().toLowerCase();
   let pass = document.getElementById("login-pass").value;
   let errEl = document.getElementById("login-error");
-  let ACC = _allAccounts();
-  if(ACC[user] && ACC[user].password === pass){
-    currentRole = ACC[user].role;
-    sessionStorage.setItem("icRole", currentRole);
-    sessionStorage.setItem("icUser", user);
-    document.getElementById("login-overlay").style.display = "none";
-    applyRoleUI();
-    // Update sidebar user info
-    let sbAvatar = document.getElementById("sb-avatar");
-    let sbName = document.getElementById("sb-user-name");
-    if(sbAvatar) sbAvatar.textContent = user.substring(0,2).toUpperCase();
-    if(sbName) sbName.textContent = user.charAt(0).toUpperCase()+user.slice(1);
-    // Init Firebase listeners (load & sync data)
-    if(window._fbReady){
-      initFirebaseListeners();
-    } else {
-      window._fbInitCallback = initFirebaseListeners;
-    }
-    applyLang();
-    if(typeof recordLoginHistory==="function") recordLoginHistory(user, currentRole);
-    if(typeof showToast==="function") showToast(t("welcome_msg").replace("{name}", user.charAt(0).toUpperCase()+user.slice(1)),"success");
-  } else {
+  if(!user || !pass){
+    errEl.style.display = "block";
+    return;
+  }
+  firebase.auth().signInWithEmailAndPassword(_pseudoEmail(user), pass).catch(function(){
     errEl.style.display = "block";
     document.getElementById("login-pass").value = "";
     setTimeout(()=>{ errEl.style.display="none"; }, 3000);
-  }
+  });
+  // Kalau berhasil, onAuthStateChanged (di bawah) yang akan lanjutin proses masuknya
 }
 
 function doLogout(){
   if(!confirm(t("confirm_logout"))) return;
-  sessionStorage.removeItem("icRole");
-  sessionStorage.removeItem("icUser");
-  currentRole = null;
-  document.getElementById("login-user").value = "";
-  document.getElementById("login-pass").value = "";
-  document.getElementById("login-overlay").style.display = "flex";
+  firebase.auth().signOut();
 }
 
 function isAdmin(){ return currentRole === "admin"; }
@@ -65,7 +42,6 @@ function canManageSettings(){ return currentRole === "admin"; }
 
 function applyRoleUI(){
   let badge = document.getElementById("role-badge");
-  let user  = sessionStorage.getItem("icUser") || "";
   if(isAdmin()){
     badge.textContent = "👑 ADMIN";
     badge.className   = "badge-admin";
@@ -116,14 +92,51 @@ function _viewerHide(id, inputAllowedHides){
   if(el) el.style.display = "none";
 }
 
-// Cek session saat load (untuk refresh halaman)
-(function checkSession(){
-  let r = sessionStorage.getItem("icRole");
-  if(r){ currentRole = r; }
-  // Login overlay tetap tampil, user harus login lagi setelah refresh (keamanan)
-  // Kalau mau persist session, uncomment baris berikut:
-  // if(r){ document.getElementById("login-overlay").style.display="none"; applyRoleUI(); }
-})();
+// Dipanggil begitu Firebase Auth berhasil (baik dari doLogin() maupun sesi yang
+// otomatis dipulihkan Firebase saat halaman di-refresh).
+function _afterAuthSuccess(fbUser){
+  window._db.ref("users/"+fbUser.uid).once("value").then(function(snap){
+    let data = snap.val();
+    if(!data || !data.role){
+      // Akun Firebase valid tapi belum diberi role oleh admin -> tolak akses
+      firebase.auth().signOut();
+      alert(t("akun_belum_diberi_akses"));
+      return;
+    }
+    currentRole = data.role;
+    window._currentUsername = data.username || fbUser.email.split("@")[0];
+    document.getElementById("login-overlay").style.display = "none";
+    applyRoleUI();
+    let sbAvatar = document.getElementById("sb-avatar");
+    let sbName = document.getElementById("sb-user-name");
+    let disp = window._currentUsername;
+    if(sbAvatar) sbAvatar.textContent = disp.substring(0,2).toUpperCase();
+    if(sbName) sbName.textContent = disp.charAt(0).toUpperCase()+disp.slice(1);
+    if(window._fbReady){
+      initFirebaseListeners();
+    } else {
+      window._fbInitCallback = initFirebaseListeners;
+    }
+    applyLang();
+    if(typeof recordLoginHistory==="function") recordLoginHistory(disp, currentRole);
+    if(typeof showToast==="function") showToast(t("welcome_msg").replace("{name}", disp.charAt(0).toUpperCase()+disp.slice(1)),"success");
+  });
+}
+
+firebase.auth().onAuthStateChanged(function(fbUser){
+  if(fbUser){
+    _afterAuthSuccess(fbUser);
+  } else {
+    currentRole = null;
+    window._currentUsername = "";
+    let overlay = document.getElementById("login-overlay");
+    if(overlay) overlay.style.display = "flex";
+    let uEl = document.getElementById("login-user");
+    let pEl = document.getElementById("login-pass");
+    if(uEl) uEl.value = "";
+    if(pEl) pEl.value = "";
+  }
+});
 
 // =========================================================================
 // I18N - MULTI LANGUAGE
@@ -222,6 +235,7 @@ const LANG = {
     bawaan_sistem:"Bawaan Sistem",tidak_bisa_dihapus:"Tidak bisa dihapus",custom_label:"Custom",
     sa_th_total_transaksi:"Total Transaksi",sa_th_qty_ctn:"Qty Keluar (Karton)",sa_th_qty_pcs:"Qty Keluar (Pcs)",sa_th_total_qty_ctn:"Total Qty Keluar (Karton)",sa_th_total_qty_pcs:"Total Qty Keluar (Pcs)",sa_th_harga_satuan:"Harga Satuan",sa_th_tgl_pertama:"Tgl Pertama",sa_th_tgl_terakhir:"Tgl Terakhir",tidak_ada_data_penjualan:"Tidak ada data penjualan",belum_ada_stockout_3bln:"Belum ada data stock out 3 bulan terakhir",
     welcome_msg:"👋 Selamat datang, {name}!",
+    akun_belum_diberi_akses:"⛔ Akun ditemukan tapi belum diberi akses/role oleh admin. Hubungi admin untuk mengaktifkan akun ini.",username_taken_auth:"⚠️ Username ini sudah dipakai.",weak_password:"⚠️ Password terlalu pendek, minimal 6 karakter.",
     btn_save_expired:"✅ Simpan Expired",btn_save_damage:"✅ Simpan Damage",
   },
   en: {
@@ -317,6 +331,7 @@ const LANG = {
     tg_card_title:"Critical Stock Alert",tg_card_subtitle:"{n} items running low",tg_card_more:"+{n} more items, check the dashboard for full details",tg_card_footer:"Generated automatically by {company}",tg_card_none:"No critical stock right now (duration < {n} days).",tg_saran_po:"Suggested PO",tg_sisa:"Left",
     sa_th_total_transaksi:"Total Transactions",sa_th_qty_ctn:"Qty Out (Carton)",sa_th_qty_pcs:"Qty Out (Pcs)",sa_th_total_qty_ctn:"Total Qty Out (Carton)",sa_th_total_qty_pcs:"Total Qty Out (Pcs)",sa_th_harga_satuan:"Unit Price",sa_th_tgl_pertama:"First Date",sa_th_tgl_terakhir:"Last Date",tidak_ada_data_penjualan:"No sales data",belum_ada_stockout_3bln:"No stock out data for the last 3 months yet",
     welcome_msg:"👋 Welcome, {name}!",
+    akun_belum_diberi_akses:"⛔ Account found but has not been given access/role by the admin. Contact the admin to activate this account.",username_taken_auth:"⚠️ This username is already taken.",weak_password:"⚠️ Password is too short, minimum 6 characters.",
     btn_save_expired:"✅ Save Expired",btn_save_damage:"✅ Save Damage",
   },
   ko: {
@@ -412,6 +427,7 @@ const LANG = {
     tg_card_title:"위험 재고 알림",tg_card_subtitle:"재고 부족 품목 {n}건",tg_card_more:"+{n}건 더 있음, 대시보드에서 전체 내용을 확인하세요",tg_card_footer:"{company}에서 자동 생성됨",tg_card_none:"현재 위험 재고가 없습니다 (지속 기간 < {n}일).",tg_saran_po:"추천 PO",tg_sisa:"잔여",
     sa_th_total_transaksi:"총 거래",sa_th_qty_ctn:"출고 수량 (박스)",sa_th_qty_pcs:"출고 수량 (pcs)",sa_th_total_qty_ctn:"총 출고 수량 (박스)",sa_th_total_qty_pcs:"총 출고 수량 (pcs)",sa_th_harga_satuan:"단가",sa_th_tgl_pertama:"첫 거래일",sa_th_tgl_terakhir:"마지막 거래일",tidak_ada_data_penjualan:"판매 데이터가 없습니다",belum_ada_stockout_3bln:"최근 3개월간 출고 데이터가 없습니다",
     welcome_msg:"👋 환영합니다, {name}님!",
+    akun_belum_diberi_akses:"⛔ 계정은 있지만 관리자가 아직 역할을 부여하지 않았습니다. 관리자에게 계정 활성화를 요청하세요.",username_taken_auth:"⚠️ 이미 사용 중인 사용자명입니다.",weak_password:"⚠️ 비밀번호가 너무 짧습니다 (최소 6자).",
     btn_save_expired:"✅ 만료 저장",btn_save_damage:"✅ 파손 저장",
   }
 };
@@ -606,7 +622,7 @@ function _trackAudit(key, data){
 // Dipanggil generic dari mana saja (mutasi stok otomatis, atau aksi Settings manual)
 function logAudit(module, action, detail){
   if(!window._db) return;
-  let user = sessionStorage.getItem("icUser") || "system";
+  let user = window._currentUsername || "system";
   let entry = { time:new Date().toISOString(), user, role:currentRole||"-", module, action, detail:detail||"" };
   let log = (window._auditLog || []).slice(-49); // simpan maksimal 50 entri terakhir
   log.push(entry);
@@ -694,7 +710,6 @@ function initFirebaseListeners(){
   db.ref("appSettings").on("value", snap => {
     let s = snap.val() || {};
     window._appSettings = s;
-    window._customAccounts = s.customAccounts || {};
     window._loginHistory = s.loginHistory || [];
     if(typeof applyCompanyBranding==="function") applyCompanyBranding();
     if(activeTab==="settings" && typeof renderSettingsPage==="function") renderSettingsPage();
