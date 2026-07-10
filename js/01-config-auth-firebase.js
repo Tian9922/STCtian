@@ -713,7 +713,9 @@ function initFirebaseListeners(){
     window._loginHistory = s.loginHistory || [];
     if(typeof applyCompanyBranding==="function") applyCompanyBranding();
     if(activeTab==="settings" && typeof renderSettingsPage==="function") renderSettingsPage();
-    if(typeof maybeAutoSendTelegramAlert==="function") maybeAutoSendTelegramAlert();
+    // Auto-send saat web dibuka DIMATIKAN (2026-07-10) — notifikasi jam 19:00 sudah dihandle terpisah
+    // oleh Cloudflare Worker (inventory-ic-telegram-alert-worker.js) via cron trigger.
+    // if(typeof maybeAutoSendTelegramAlert==="function") maybeAutoSendTelegramAlert();
   });
 
   // ---- AUDIT LOG (riwayat aktivitas) ----
