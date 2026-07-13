@@ -284,9 +284,13 @@
         <option value="All" data-i18n="all_warehouse">🏢 All Warehouse</option>
         <option>Bintaro</option><option>Gunsin</option><option>MAJ</option><option>Bosco</option><option>K-Mart</option><option>Happy Wonder</option><option>Hero Supermarket</option><option>Consignment</option><option>K-Seafood</option><option>Event</option><option>Sample</option>
       </select>
+      <label style="display:flex;align-items:center;gap:4px;font-size:11px;font-weight:600;color:#4a5568;white-space:nowrap" data-i18n="label_stok_per_tanggal">📅 Stok per Tanggal:</label>
+      <input type="date" id="stokTanggal" onchange="tampilkanTabel()" style="padding:6px 8px;font-size:12px;border:1px solid #cbd5e0;border-radius:6px;outline:none">
+      <button id="btn-reset-tanggal-monitor" class="btn" style="background:#e2e8f0;color:#2d3748;display:none" onclick="document.getElementById('stokTanggal').value='';tampilkanTabel();"><span data-i18n="btn_lihat_live">🔴 Live</span></button>
       <button class="btn btn-export" onclick="exportMonitorStok()">⬇️ <span data-i18n="btn_export">Export</span></button>
       <button id="btn-hapus-semua-monitor" class="btn btn-danger" onclick="hapusSemuaBarang()">🗑️ <span data-i18n="btn_delete_all">Hapus Semua</span></button>
     </div>
+    <div id="monitorSnapshotInfo" style="display:none;background:#ebf8ff;border:1px solid #90cdf4;color:#2c5282;padding:8px 12px;border-radius:6px;font-size:12px;margin-bottom:8px"></div>
     <div class="table-container">
       <table>
         <thead><tr><th>No</th><th data-i18n="th_sku">SKU</th><th data-i18n="th_nama">Nama Barang</th><th data-i18n="th_kategori">Kategori</th>
