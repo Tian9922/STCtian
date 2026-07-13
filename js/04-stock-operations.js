@@ -160,22 +160,69 @@ function hapusSemuaBarang(){
   }
 }
 
+// Menghitung posisi stok historis (per SKU + Gudang) pada/atau sebelum tanggal tertentu,
+// dengan cara replay seluruh transaksi stockInLog + stockOutLog + transferLog.
+function getStockSnapshot(tanggal){
+  let inData    = stockInLog.filter(r=>r.tanggal<=tanggal).map(r=>({...r,tipe:"IN",warehouse:r.warehouse||"Bintaro"}));
+  let outData   = stockOutLog.filter(r=>r.tanggal<=tanggal).map(r=>({...r,tipe:"OUT",warehouse:r.warehouse||"Bintaro"}));
+  let trOutData = transferLog.filter(r=>r.tanggal<=tanggal).map(r=>({...r,tipe:"TRANSFER_OUT",warehouse:r.fromWh}));
+  let trInData  = transferLog.filter(r=>r.tanggal<=tanggal).map(r=>({...r,tipe:"TRANSFER_IN", warehouse:r.toWh}));
+  let semua=[...inData,...outData,...trOutData,...trInData];
+  // Urutkan ascending supaya metadata (nama/kategori/harga/isiKarton) yang terakhir dipakai adalah yang paling baru
+  semua.sort((a,b)=>{ let d=a.tanggal.localeCompare(b.tanggal); return d!==0?d:(Number(a.id)||0)-(Number(b.id)||0); });
+  let map={};
+  semua.forEach(r=>{
+    let key=(r.sku||"").toUpperCase()+"|||"+(r.warehouse||"").toUpperCase();
+    if(!map[key]){
+      map[key]={sku:r.sku,warehouse:r.warehouse,nama:r.nama,kategori:r.kategori,isiKarton:r.isiKarton||0,harga:r.harga||0,totalPcs:0};
+    }
+    let obj=map[key];
+    if(r.nama) obj.nama=r.nama;
+    if(r.kategori) obj.kategori=r.kategori;
+    if(r.isiKarton!=null && r.isiKarton!=="") obj.isiKarton=r.isiKarton;
+    if(r.harga!=null && r.harga!=="") obj.harga=r.harga;
+    if(r.tipe==="IN"||r.tipe==="TRANSFER_IN") obj.totalPcs += Number(r.qty)||0;
+    else obj.totalPcs -= Number(r.qty)||0;
+  });
+  return Object.values(map);
+}
+
 function tampilkanTabel(){
   let tabel=document.getElementById("tabelBarang");
   let keyword=document.getElementById("search").value.toLowerCase();
   let selWH=document.getElementById("filterWarehouse").value;
+  let tglSnapshot=document.getElementById("stokTanggal")?document.getElementById("stokTanggal").value:"";
+  let infoBox=document.getElementById("monitorSnapshotInfo");
+  let btnReset=document.getElementById("btn-reset-tanggal-monitor");
+  let btnHapusSemua=document.getElementById("btn-hapus-semua-monitor");
   tabel.innerHTML="";
-  document.getElementById("assetTitle").innerText=selWH==="All"?t("asset_title_all"):t("asset_title_wh").replace("{wh}",selWH);
+
+  let sumberData;
+  let isSnapshot=!!tglSnapshot;
+  if(isSnapshot){
+    sumberData=getStockSnapshot(tglSnapshot);
+    if(infoBox){ infoBox.style.display="block"; infoBox.innerText=t("info_snapshot_mode").replace("{tgl}",tglSnapshot); }
+    if(btnReset) btnReset.style.display="inline-block";
+    if(btnHapusSemua) btnHapusSemua.style.display="none";
+    document.getElementById("assetTitle").innerText=(selWH==="All"?t("asset_title_snapshot_all"):t("asset_title_snapshot_wh").replace("{wh}",selWH)).replace("{tgl}",tglSnapshot);
+  } else {
+    sumberData=daftarBarang;
+    if(infoBox) infoBox.style.display="none";
+    if(btnReset) btnReset.style.display="none";
+    if(btnHapusSemua) btnHapusSemua.style.display="inline-block";
+    document.getElementById("assetTitle").innerText=selWH==="All"?t("asset_title_all"):t("asset_title_wh").replace("{wh}",selWH);
+  }
+
   let total=0;
-  let hasil=daftarBarang.filter(b=>{
+  let hasil=sumberData.filter(b=>{
     let wh=(b.warehouse||"Bintaro");
-    return (selWH==="All"||wh.toUpperCase()===selWH.toUpperCase())&&(b.nama.toLowerCase().includes(keyword)||b.sku.toLowerCase().includes(keyword));
+    return (selWH==="All"||wh.toUpperCase()===selWH.toUpperCase())&&((b.nama||"").toLowerCase().includes(keyword)||(b.sku||"").toLowerCase().includes(keyword));
   });
   hasil.forEach(b=>{ total+=Number(b.totalPcs)*Number(b.harga); });
   document.getElementById("assetValue").innerText=rpFormat(total);
   if(hasil.length===0){ tabel.innerHTML=emptyStateRow(10,"📦",t("belum_ada_barang"),t("hint_tambah_barang")); return; }
   hasil.forEach(function(b,i){
-    let idx=daftarBarang.indexOf(b);
+    let idx=isSnapshot?-1:daftarBarang.indexOf(b);
     let pcs=Number(b.totalPcs);
     let uom=hitungUOM(pcs,Number(b.isiKarton));
     let nilaiB=pcs*Number(b.harga);
@@ -184,13 +231,16 @@ function tampilkanTabel(){
       ?"<span style='color:#c53030;font-weight:700;background:#fff5f5;padding:2px 6px;border-radius:4px;border:1px solid #fc8181'>⚠️ "+pcs+" pcs (selisih)</span>"
       :pcs+" pcs";
     let rowStyle=isNeg?"background:#fff5f5":"";
+    let aksiCell=isSnapshot
+      ?"<span style='color:#a0aec0;font-size:10px' title='"+t("info_snapshot_mode").replace("{tgl}",tglSnapshot).replace(/'/g,"")+"'>📅 -</span>"
+      :(isAdmin()?"<button class='btn-action btn-edit' onclick='editBarang("+idx+")'>"+t("btn_edit")+"</button> <button class='btn-action btn-hapus' onclick='hapusBarang("+idx+")'>"+t("btn_hapus")+"</button>":"<span style='color:#a0aec0;font-size:10px'>-</span>");
     tabel.innerHTML+="<tr style='"+rowStyle+"'>"+
       "<td>"+(i+1)+"</td><td title='"+b.sku+"'>"+b.sku+"</td><td title='"+b.nama+"'>"+b.nama+"</td>"+
       "<td title='"+b.kategori+"'>"+b.kategori+"</td>"+
       "<td><span class='badge badge-gudang'>"+(b.warehouse||"Bintaro")+"</span></td>"+
       "<td>"+stokCell+"</td><td><strong>"+uom+"</strong></td>"+
       "<td>"+rpFormat(b.harga)+"</td><td><strong>"+rpFormat(nilaiB)+"</strong></td>"+
-      "<td style='text-align:center'>"+(isAdmin()?"<button class='btn-action btn-edit' onclick='editBarang("+idx+")'>"+t("btn_edit")+"</button> <button class='btn-action btn-hapus' onclick='hapusBarang("+idx+")'>"+t("btn_hapus")+"</button>":"<span style='color:#a0aec0;font-size:10px'>-</span>")+"</td>"+
+      "<td style='text-align:center'>"+aksiCell+"</td>"+
     "</tr>";
   });
 }
@@ -201,10 +251,13 @@ function tampilkanTabel(){
 function exportMonitorStok(){
   let keyword=document.getElementById("search").value.toLowerCase();
   let selWH=document.getElementById("filterWarehouse").value;
-  let hasil=daftarBarang.filter(b=>{
+  let tglSnapshot=document.getElementById("stokTanggal")?document.getElementById("stokTanggal").value:"";
+  let isSnapshot=!!tglSnapshot;
+  let sumberData=isSnapshot?getStockSnapshot(tglSnapshot):daftarBarang;
+  let hasil=sumberData.filter(b=>{
     let wh=b.warehouse||"Bintaro";
     return (selWH==="All"||wh.toUpperCase()===selWH.toUpperCase())&&
-           (b.nama.toLowerCase().includes(keyword)||b.sku.toLowerCase().includes(keyword));
+           ((b.nama||"").toLowerCase().includes(keyword)||(b.sku||"").toLowerCase().includes(keyword));
   });
   if(hasil.length===0){ alert(t("no_data_export")); return; }
   let rows=[["SKU","Nama Barang","Kategori","Gudang","Qty (pcs)","Konversi","Harga Satuan","Total Nilai"]];
@@ -217,7 +270,7 @@ function exportMonitorStok(){
   let ws=XLSX.utils.aoa_to_sheet(rows);
   ws['!cols']=[{wch:30},{wch:38},{wch:22},{wch:12},{wch:10},{wch:14},{wch:14},{wch:16}];
   XLSX.utils.book_append_sheet(wb,ws,"Monitor Stok");
-  XLSX.writeFile(wb,"Monitor_Stok_Export.xlsx");
+  XLSX.writeFile(wb,isSnapshot?("Monitor_Stok_"+tglSnapshot+".xlsx"):"Monitor_Stok_Export.xlsx");
 }
 
 function exportIntransit(){
@@ -752,4 +805,3 @@ function exportTransfer(){
   let wb=XLSX.utils.book_new(); let ws=XLSX.utils.aoa_to_sheet(rows);
   XLSX.utils.book_append_sheet(wb,ws,"Transfer Stok"); XLSX.writeFile(wb,"Transfer_Stok_Export.xlsx");
 }
-
