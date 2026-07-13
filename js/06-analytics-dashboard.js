@@ -323,11 +323,29 @@ window.tampilkanTabel = function(){
   let tabel = document.getElementById("tabelBarang");
   let keyword = document.getElementById("search").value.toLowerCase();
   let selWH = document.getElementById("filterWarehouse").value;
-  document.getElementById("assetTitle").innerText = selWH==="All" ? t('asset_title_all') : t('asset_title_wh').replace('{wh}', selWH);
-  let hasil = daftarBarang.filter(b=>{
+  let tglSnapshot = document.getElementById("stokTanggal") ? document.getElementById("stokTanggal").value : "";
+  let isSnapshot = !!tglSnapshot;
+  let infoBox = document.getElementById("monitorSnapshotInfo");
+  let btnReset = document.getElementById("btn-reset-tanggal-monitor");
+  let btnHapusSemua = document.getElementById("btn-hapus-semua-monitor");
+
+  if(isSnapshot){
+    if(infoBox){ infoBox.style.display="block"; infoBox.innerText = t("info_snapshot_mode").replace("{tgl}",tglSnapshot); }
+    if(btnReset) btnReset.style.display="inline-block";
+    if(btnHapusSemua) btnHapusSemua.style.display="none";
+    document.getElementById("assetTitle").innerText = (selWH==="All" ? t("asset_title_snapshot_all") : t("asset_title_snapshot_wh").replace("{wh}", selWH)).replace("{tgl}", tglSnapshot);
+  } else {
+    if(infoBox) infoBox.style.display="none";
+    if(btnReset) btnReset.style.display="none";
+    if(btnHapusSemua) btnHapusSemua.style.display="inline-block";
+    document.getElementById("assetTitle").innerText = selWH==="All" ? t('asset_title_all') : t('asset_title_wh').replace('{wh}', selWH);
+  }
+
+  let sumberData = isSnapshot ? getStockSnapshot(tglSnapshot) : daftarBarang;
+  let hasil = sumberData.filter(b=>{
     let wh = b.warehouse||"Bintaro";
     return (selWH==="All"||wh.toUpperCase()===selWH.toUpperCase()) &&
-           (b.nama.toLowerCase().includes(keyword)||b.sku.toLowerCase().includes(keyword));
+           ((b.nama||"").toLowerCase().includes(keyword)||(b.sku||"").toLowerCase().includes(keyword));
   });
   let total = 0, totalPcsAll = 0, totalCtnAll = 0;
   hasil.forEach(b=>{
@@ -360,7 +378,7 @@ window.tampilkanTabel = function(){
   let sliced = hasil.slice((page-1)*PAGE_SIZE, page*PAGE_SIZE);
   let rows = sliced.map(function(b,ii){
     let i = (page-1)*PAGE_SIZE+ii;
-    let idx = daftarBarang.indexOf(b);
+    let idx = isSnapshot ? -1 : daftarBarang.indexOf(b);
     let pcs = Number(b.totalPcs);
     let uom = hitungUOM(pcs,Number(b.isiKarton));
     let nilaiB = pcs*Number(b.harga);
@@ -368,7 +386,10 @@ window.tampilkanTabel = function(){
     let stokCell = isNeg
       ? "<span style='color:#c53030;font-weight:700;background:#fff5f5;padding:2px 6px;border-radius:4px;border:1px solid #fc8181'>⚠️ "+pcs+" pcs (selisih)</span>"
       : pcs+" pcs";
-    return "<tr style='"+(isNeg?"background:#fff5f5":"")+"'><td>"+(i+1)+"</td><td title='"+b.sku+"'>"+b.sku+"</td><td title='"+b.nama+"'>"+b.nama+"</td><td title='"+b.kategori+"'>"+b.kategori+"</td><td><span class='badge badge-gudang'>"+(b.warehouse||"Bintaro")+"</span></td><td>"+stokCell+"</td><td><strong>"+uom+"</strong></td><td>"+rpFormat(b.harga)+"</td><td><strong>"+rpFormat(nilaiB)+"</strong></td><td style='text-align:center'>"+(isAdmin()?"<button class='btn-action btn-edit' onclick='editBarang("+idx+")'>"+t("btn_edit")+"</button> <button class='btn-action btn-hapus' onclick='hapusBarang("+idx+")'>"+t("btn_hapus")+"</button>":"<span style='color:#a0aec0;font-size:10px'>-</span>")+"</td></tr>";
+    let aksiCell = isSnapshot
+      ? "<span style='color:#a0aec0;font-size:10px'>📅 -</span>"
+      : (isAdmin()?"<button class='btn-action btn-edit' onclick='editBarang("+idx+")'>"+t("btn_edit")+"</button> <button class='btn-action btn-hapus' onclick='hapusBarang("+idx+")'>"+t("btn_hapus")+"</button>":"<span style='color:#a0aec0;font-size:10px'>-</span>");
+    return "<tr style='"+(isNeg?"background:#fff5f5":"")+"'><td>"+(i+1)+"</td><td title='"+b.sku+"'>"+b.sku+"</td><td title='"+b.nama+"'>"+b.nama+"</td><td title='"+b.kategori+"'>"+b.kategori+"</td><td><span class='badge badge-gudang'>"+(b.warehouse||"Bintaro")+"</span></td><td>"+stokCell+"</td><td><strong>"+uom+"</strong></td><td>"+rpFormat(b.harga)+"</td><td><strong>"+rpFormat(nilaiB)+"</strong></td><td style='text-align:center'>"+aksiCell+"</td></tr>";
   });
   tabel.innerHTML = "";
   tabel.appendChild(buildRows(rows));
@@ -1016,4 +1037,3 @@ function tampilkanDashboard() {
 }
 
 console.log("⚡ Performance optimizations loaded: debounce, pagination, DocumentFragment, throttled Firebase save");
-
