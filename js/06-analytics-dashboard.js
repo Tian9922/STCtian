@@ -869,20 +869,23 @@ function tampilkanDashboard() {
     });
   });
 
-  // ── TABLE: Low / Critical Stock ────────────────────────
+  // ── TABLE: Low / Critical Stock (AGREGAT SEMUA GUDANG per SKU) ──
   let lowItems = [];
-  let seen2 = {};
+  let aggSkuLow = {};
   daftarBarang.forEach(b => {
-    let key = b.sku.toUpperCase() + '__' + (b.warehouse || 'Bintaro').toUpperCase();
-    if (seen2[key]) return; seen2[key] = true;
-    let isi = Number(b.isiKarton) || 1;
-    let stokCtn = Number(b.totalPcs) / isi;
-    let avg30 = hitungAvgOutKarton(b.sku, b.warehouse || 'Bintaro', 30).avgPerHariCtn;
+    let key = b.sku.toUpperCase();
+    if (!aggSkuLow[key]) aggSkuLow[key] = { sku: b.sku, nama: b.nama, isiKarton: Number(b.isiKarton) || 1, totalPcs: 0 };
+    aggSkuLow[key].totalPcs += Number(b.totalPcs) || 0;
+  });
+  Object.values(aggSkuLow).forEach(agg => {
+    let isi = agg.isiKarton || 1;
+    let stokCtn = agg.totalPcs / isi;
+    let avg30 = hitungAvgOutKarton(agg.sku, "All", 30).avgPerHariCtn;
     if (avg30 <= 0) return; // skip no-data
     let hariTahan = stokCtn / avg30;
     if (hariTahan < 30) {
       let avgBln = avg30 * 22;
-      lowItems.push({ b, stokCtn, avgBln, hariTahan });
+      lowItems.push({ b: agg, stokCtn, avgBln, hariTahan });
     }
   });
   lowItems.sort((a, b) => a.hariTahan - b.hariTahan);
@@ -900,7 +903,7 @@ function tampilkanDashboard() {
       return `<tr>
         <td style="padding:6px 8px;border-bottom:1px solid #edf2f7;font-size:10px;color:#4a5568">${b.sku}</td>
         <td style="padding:6px 8px;border-bottom:1px solid #edf2f7;max-width:160px;overflow:hidden;text-overflow:ellipsis;white-space:nowrap">${b.nama}</td>
-        <td style="padding:6px 8px;border-bottom:1px solid #edf2f7"><span style="background:#4a5568;color:white;padding:2px 6px;border-radius:3px;font-size:10px">${b.warehouse || 'Bintaro'}</span></td>
+        <td style="padding:6px 8px;border-bottom:1px solid #edf2f7"><span style="background:#4a5568;color:white;padding:2px 6px;border-radius:3px;font-size:10px">🏢 All Warehouse</span></td>
         <td style="padding:6px 8px;border-bottom:1px solid #edf2f7;text-align:right;font-weight:700">${stokCtn.toFixed(1)}</td>
         <td style="padding:6px 8px;border-bottom:1px solid #edf2f7;text-align:right">${avgBln.toFixed(1)} ctn</td>
         <td style="padding:6px 8px;border-bottom:1px solid #edf2f7;text-align:right;font-weight:700;color:${warna}">${bln.toFixed(1)} ${t("dash_bln")} (${Math.round(hariTahan)} ${t("dash_hr")})</td>
@@ -909,14 +912,14 @@ function tampilkanDashboard() {
     }).join('');
   }
 
-  // ── HELPERS: tanggal transaksi terakhir per SKU+Gudang ─
+  // ── HELPERS: tanggal transaksi terakhir per SKU (gabungan semua gudang, kecuali warehouse spesifik diminta) ─
   function getLastOutDate(sku, warehouse) {
-    let recs = stockOutLog.filter(r => r.sku.toUpperCase() === sku.toUpperCase() && (r.warehouse || 'Bintaro').toUpperCase() === (warehouse || 'Bintaro').toUpperCase());
+    let recs = stockOutLog.filter(r => r.sku.toUpperCase() === sku.toUpperCase() && (warehouse === "All" || (r.warehouse || 'Bintaro').toUpperCase() === (warehouse || 'Bintaro').toUpperCase()));
     if (recs.length === 0) return null;
     return recs.map(r => r.tanggal).sort().pop();
   }
   function getLastInDate(sku, warehouse) {
-    let recs = stockInLog.filter(r => r.sku.toUpperCase() === sku.toUpperCase() && (r.warehouse || 'Bintaro').toUpperCase() === (warehouse || 'Bintaro').toUpperCase());
+    let recs = stockInLog.filter(r => r.sku.toUpperCase() === sku.toUpperCase() && (warehouse === "All" || (r.warehouse || 'Bintaro').toUpperCase() === (warehouse || 'Bintaro').toUpperCase()));
     if (recs.length === 0) return null;
     return recs.map(r => r.tanggal).sort().pop();
   }
@@ -925,6 +928,7 @@ function tampilkanDashboard() {
     let d1 = new Date(dateStr + 'T00:00:00'), d2 = new Date();
     return Math.floor((d2 - d1) / (1000 * 60 * 60 * 24));
   }
+
 
   // ── BEST SELLER — 3 BULAN TERAKHIR (90 hari) ───────────
   let cutoff90 = getDateStr(90);
@@ -960,19 +964,22 @@ function tampilkanDashboard() {
     }
   }
 
-  // ── DEAD STOCK — tidak terjual ≥ 60 hari (atau belum pernah) ─
+  // ── DEAD STOCK — tidak terjual ≥ 60 hari (atau belum pernah), AGREGAT SEMUA GUDANG per SKU ─
   let deadItems = [];
-  let seenDS = {};
+  let aggSkuDead = {};
   daftarBarang.forEach(b => {
-    let key = b.sku.toUpperCase() + '__' + (b.warehouse || 'Bintaro').toUpperCase();
-    if (seenDS[key]) return; seenDS[key] = true;
-    let pcs = Number(b.totalPcs) || 0;
+    let key = b.sku.toUpperCase();
+    if (!aggSkuDead[key]) aggSkuDead[key] = { sku: b.sku, nama: b.nama, isiKarton: Number(b.isiKarton) || 1, totalPcs: 0 };
+    aggSkuDead[key].totalPcs += Number(b.totalPcs) || 0;
+  });
+  Object.values(aggSkuDead).forEach(agg => {
+    let pcs = agg.totalPcs || 0;
     if (pcs <= 0) return;
-    let lastOut = getLastOutDate(b.sku, b.warehouse || 'Bintaro');
+    let lastOut = getLastOutDate(agg.sku, "All");
     let days = daysSince(lastOut);
     if (days >= 60) {
-      let isi = Number(b.isiKarton) || 1;
-      deadItems.push({ b, stokCtn: pcs / isi, lastOut, days });
+      let isi = agg.isiKarton || 1;
+      deadItems.push({ b: agg, stokCtn: pcs / isi, lastOut, days });
     }
   });
   deadItems.sort((a, b) => b.days - a.days);
@@ -987,7 +994,7 @@ function tampilkanDashboard() {
         return `<tr>
           <td style="padding:6px 8px;border-bottom:1px solid #edf2f7;font-size:10px;color:#4a5568">${b.sku}</td>
           <td style="padding:6px 8px;border-bottom:1px solid #edf2f7;max-width:160px;overflow:hidden;text-overflow:ellipsis;white-space:nowrap">${b.nama}</td>
-          <td style="padding:6px 8px;border-bottom:1px solid #edf2f7"><span style="background:#4a5568;color:white;padding:2px 6px;border-radius:3px;font-size:10px">${b.warehouse || 'Bintaro'}</span></td>
+          <td style="padding:6px 8px;border-bottom:1px solid #edf2f7"><span style="background:#4a5568;color:white;padding:2px 6px;border-radius:3px;font-size:10px">🏢 All Warehouse</span></td>
           <td style="padding:6px 8px;border-bottom:1px solid #edf2f7;text-align:right;font-weight:700">${stokCtn.toFixed(1)} ctn</td>
           <td style="padding:6px 8px;border-bottom:1px solid #edf2f7;font-size:10px">${lastTxt}</td>
           <td style="padding:6px 8px;border-bottom:1px solid #edf2f7;text-align:center;font-weight:700;color:#991b1b">${daysTxt}</td>
@@ -996,21 +1003,24 @@ function tampilkanDashboard() {
     }
   }
 
-  // ── OVERSTOCK / SLOW MOVING — SOH TERLAMA (aging inventory) ─
+  // ── OVERSTOCK / SLOW MOVING — SOH TERLAMA (aging inventory), AGREGAT SEMUA GUDANG per SKU ─
   let overItems = [];
-  let seenOV = {};
+  let aggSkuOver = {};
   daftarBarang.forEach(b => {
-    let key = b.sku.toUpperCase() + '__' + (b.warehouse || 'Bintaro').toUpperCase();
-    if (seenOV[key]) return; seenOV[key] = true;
-    let pcs = Number(b.totalPcs) || 0;
+    let key = b.sku.toUpperCase();
+    if (!aggSkuOver[key]) aggSkuOver[key] = { sku: b.sku, nama: b.nama, isiKarton: Number(b.isiKarton) || 1, totalPcs: 0 };
+    aggSkuOver[key].totalPcs += Number(b.totalPcs) || 0;
+  });
+  Object.values(aggSkuOver).forEach(agg => {
+    let pcs = agg.totalPcs || 0;
     if (pcs <= 0) return;
-    let avg = hitungAvgOutKarton(b.sku, b.warehouse || 'Bintaro', 30).avgPerHariCtn;
+    let avg = hitungAvgOutKarton(agg.sku, "All", 30).avgPerHariCtn;
     let cat = getMovingCategory(avg);
     if (cat !== 'Slow' && cat !== 'NoData') return;
-    let lastIn = getLastInDate(b.sku, b.warehouse || 'Bintaro');
+    let lastIn = getLastInDate(agg.sku, "All");
     let days = daysSince(lastIn);
-    let isi = Number(b.isiKarton) || 1;
-    overItems.push({ b, stokCtn: pcs / isi, lastIn, days, cat });
+    let isi = agg.isiKarton || 1;
+    overItems.push({ b: agg, stokCtn: pcs / isi, lastIn, days, cat });
   });
   overItems.sort((a, b) => b.days - a.days);
   let tbodyOver = document.getElementById('db-overstock-body');
@@ -1025,7 +1035,7 @@ function tampilkanDashboard() {
         return `<tr>
           <td style="padding:6px 8px;border-bottom:1px solid #edf2f7;font-size:10px;color:#4a5568">${b.sku}</td>
           <td style="padding:6px 8px;border-bottom:1px solid #edf2f7;max-width:160px;overflow:hidden;text-overflow:ellipsis;white-space:nowrap">${b.nama}</td>
-          <td style="padding:6px 8px;border-bottom:1px solid #edf2f7"><span style="background:#4a5568;color:white;padding:2px 6px;border-radius:3px;font-size:10px">${b.warehouse || 'Bintaro'}</span></td>
+          <td style="padding:6px 8px;border-bottom:1px solid #edf2f7"><span style="background:#4a5568;color:white;padding:2px 6px;border-radius:3px;font-size:10px">🏢 All Warehouse</span></td>
           <td style="padding:6px 8px;border-bottom:1px solid #edf2f7;text-align:right;font-weight:700">${stokCtn.toFixed(1)} ctn</td>
           <td style="padding:6px 8px;border-bottom:1px solid #edf2f7;font-size:10px">${lastTxt}</td>
           <td style="padding:6px 8px;border-bottom:1px solid #edf2f7;text-align:center;font-weight:700;color:#92400e">${daysTxt}</td>
