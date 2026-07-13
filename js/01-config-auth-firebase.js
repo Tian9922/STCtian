@@ -173,6 +173,8 @@ const LANG = {
     dark_mode:"Dark Mode",logout:"Logout",
     placeholder_search_monitor:"🔍 Cari nama / SKU...",all_warehouse:"🏢 Semua Gudang",btn_export:"Export",
     asset_title_all:"💰 Total Nilai Barang (Semua Gudang):",asset_title_wh:"🏢 Total Nilai Barang (Gudang {wh}):",
+    label_stok_per_tanggal:"📅 Stok per Tanggal:",btn_lihat_live:"🔴 Live",snapshot_badge:"Snapshot per {tgl}",info_snapshot_mode:"ℹ️ Menampilkan posisi stok historis per tanggal {tgl}. Data hanya untuk dilihat, tidak bisa diedit/dihapus. Klik \"Live\" untuk kembali ke stok terkini.",
+    asset_title_snapshot_all:"📅 Nilai Stok per {tgl} (Semua Gudang):",asset_title_snapshot_wh:"📅 Nilai Stok per {tgl} (Gudang {wh}):",
     monitor_total_keseluruhan:"🧮 Total Keseluruhan ({n} baris — {wh}):",monitor_semua_gudang:"Semua Gudang",monitor_gudang:"Gudang {wh}",
     tidak_ada_data:"Tidak ada data",
     dash_kpi_nilai_stok:"Nilai Stok",dash_kpi_sku_aktif:"SKU Aktif",dash_kpi_out_bulan:"Out Bulan Ini",dash_kpi_in_bulan:"In Bulan Ini",dash_kpi_moving:"Fast / Med / Slow",
@@ -269,6 +271,8 @@ const LANG = {
     dark_mode:"Dark Mode",logout:"Logout",
     placeholder_search_monitor:"🔍 Search name / SKU...",all_warehouse:"🏢 All Warehouse",btn_export:"Export",
     asset_title_all:"💰 Total Stock Value (All Warehouse):",asset_title_wh:"🏢 Total Stock Value (Warehouse {wh}):",
+    label_stok_per_tanggal:"📅 Stock as of Date:",btn_lihat_live:"🔴 Live",snapshot_badge:"Snapshot as of {tgl}",info_snapshot_mode:"ℹ️ Showing historical stock position as of {tgl}. View only, cannot be edited/deleted. Click \"Live\" to return to current stock.",
+    asset_title_snapshot_all:"📅 Stock Value as of {tgl} (All Warehouse):",asset_title_snapshot_wh:"📅 Stock Value as of {tgl} (Warehouse {wh}):",
     monitor_total_keseluruhan:"🧮 Grand Total ({n} rows — {wh}):",monitor_semua_gudang:"All Warehouses",monitor_gudang:"Warehouse {wh}",
     tidak_ada_data:"No data",
     dash_kpi_nilai_stok:"Stock Value",dash_kpi_sku_aktif:"Active SKU",dash_kpi_out_bulan:"Out This Month",dash_kpi_in_bulan:"In This Month",dash_kpi_moving:"Fast / Med / Slow",
@@ -365,6 +369,8 @@ const LANG = {
     dark_mode:"다크 모드",logout:"로그아웃",
     placeholder_search_monitor:"🔍 이름 / SKU 검색...",all_warehouse:"🏢 전체 창고",btn_export:"내보내기",
     asset_title_all:"💰 총 재고 금액 (전체 창고):",asset_title_wh:"🏢 총 재고 금액 (창고 {wh}):",
+    label_stok_per_tanggal:"📅 기준일 재고:",btn_lihat_live:"🔴 실시간",snapshot_badge:"{tgl} 기준 스냅샷",info_snapshot_mode:"ℹ️ {tgl} 기준 재고 현황입니다. 조회 전용이며 수정/삭제할 수 없습니다. 현재 재고로 돌아가려면 \"실시간\"을 클릭하세요.",
+    asset_title_snapshot_all:"📅 {tgl} 기준 재고 금액 (전체 창고):",asset_title_snapshot_wh:"📅 {tgl} 기준 재고 금액 (창고 {wh}):",
     monitor_total_keseluruhan:"🧮 총 합계 ({n}건 — {wh}):",monitor_semua_gudang:"전체 창고",monitor_gudang:"창고 {wh}",
     tidak_ada_data:"데이터 없음",
     dash_kpi_nilai_stok:"재고 금액",dash_kpi_sku_aktif:"활성 SKU",dash_kpi_out_bulan:"이번 달 출고",dash_kpi_in_bulan:"이번 달 입고",dash_kpi_moving:"Fast / Med / Slow",
@@ -748,4 +754,3 @@ document.querySelectorAll('.lang-btn').forEach(b=>{
   }
 });
 applyLang();
-
