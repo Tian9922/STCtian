@@ -742,6 +742,20 @@ function tampilkanDashboard() {
     animateCountUp(el, k.raw, { duration: 1000, formatter });
   });
 
+  // ── TICKER — ringkasan bergulir ala dashboard trading ──────
+  let tickerTrack = document.getElementById('dashTickerTrack');
+  if (tickerTrack) {
+    let tickerItems = [
+      '<span><b>💰</b>' + t('dash_kpi_nilai_stok') + ': ' + rpFormat(Math.round(totalNilaiStok)) + '</span>',
+      '<span><b>📦</b>' + t('dash_kpi_sku_aktif') + ': ' + totalSkuAktif + ' SKU</span>',
+      '<span><b>📤</b>' + t('dash_kpi_out_bulan') + ': ' + rpFormat(Math.round(nilaiOutBulanIni)) + '</span>',
+      '<span><b>📥</b>' + t('dash_kpi_in_bulan') + ': ' + rpFormat(Math.round(nilaiInBulanIni)) + '</span>',
+      '<span><b>🚀</b> Fast/Medium/Slow: ' + cF + ' / ' + cM + ' / ' + cS + ' &nbsp;•&nbsp; No Data: ' + cN + '</span>'
+    ].join('');
+    // digandakan supaya loop-nya mulus tanpa jeda
+    tickerTrack.innerHTML = tickerItems + tickerItems;
+  }
+
   // ── CHART 1: Stock Out — mengikuti filter tanggal dashboard ──
   destroyChart('out7');
   let { labels: labels7, data: data7 } = buildOut7ChartData(dashRange, getIsiKarton);
@@ -754,7 +768,8 @@ function tampilkanDashboard() {
   _dbCharts['out7'] = new ApexCharts(elOut7, {
     chart: {
       type: 'bar', height: '100%', fontFamily: 'inherit', toolbar: { show: false },
-      animations: { enabled: true, easing: 'easeout', speed: 700, animateGradually: { enabled: true, delay: 90 }, dynamicAnimation: { enabled: true, speed: 300 } }
+      animations: { enabled: true, easing: 'easeout', speed: 700, animateGradually: { enabled: true, delay: 90 }, dynamicAnimation: { enabled: true, speed: 300 } },
+      dropShadow: { enabled: true, top: 0, left: 0, blur: 6, color: '#3b82f6', opacity: 0.45 }
     },
     series: [{ name: 'Ctn Keluar', data: data7 }],
     xaxis: {
@@ -766,6 +781,7 @@ function tampilkanDashboard() {
     yaxis: { labels: { style: { colors: '#94a3b8', fontSize: '10px' } } },
     grid: { borderColor: '#f1f5f9', strokeDashArray: 0, padding: { left: 4, right: 4 } },
     plotOptions: { bar: { borderRadius: 7, borderRadiusApplication: 'end', columnWidth: '52%' } },
+    stroke: { show: true, width: 1.5, colors: ['#60a5fa'] },
     fill: {
       type: 'gradient',
       gradient: { shade: 'light', type: 'vertical', shadeIntensity: .3, gradientToColors: ['rgba(59,130,246,.3)'], inverseColors: false, opacityFrom: .95, opacityTo: .5, stops: [0, 100] }
@@ -838,7 +854,8 @@ function tampilkanDashboard() {
   _dbCharts['moving'] = new ApexCharts(elMoving, {
     chart: {
       type: 'donut', height: '100%', fontFamily: 'inherit',
-      animations: { enabled: true, easing: 'easeout', speed: 800, animateGradually: { enabled: true, delay: 100 } }
+      animations: { enabled: true, easing: 'easeout', speed: 800, animateGradually: { enabled: true, delay: 100 } },
+      dropShadow: { enabled: true, blur: 5, opacity: 0.4 }
     },
     series: movingLegendData.map(x => x.v),
     labels: movingLegendData.map(x => x.l),
@@ -1044,6 +1061,64 @@ function tampilkanDashboard() {
       }).join('');
     }
   }
+
+  // ── FEED AKTIVITAS TERBARU — kesan real-time monitoring ────
+  window._dashRenderTime = Date.now();
+  renderActivityFeed();
+  startDashboardClock();
+}
+
+function renderActivityFeed() {
+  let feedEl = document.getElementById('db-activity-feed');
+  if (!feedEl) return;
+  let items = [];
+  stockInLog.forEach(r => items.push({ type: 'in', icon: '📥', label: t('tab_in'), sku: r.sku, nama: r.nama, warehouse: r.warehouse || 'Bintaro', tanggal: r.tanggal, id: r.id }));
+  stockOutLog.forEach(r => items.push({ type: 'out', icon: '📤', label: t('tab_out'), sku: r.sku, nama: r.nama, warehouse: r.warehouse || 'Bintaro', tanggal: r.tanggal, id: r.id }));
+  transferLog.forEach(r => items.push({ type: 'transfer', icon: '🔁', label: t('tab_transfer'), sku: r.sku, nama: r.nama, warehouse: (r.fromWh || '?') + ' → ' + (r.toWh || '?'), tanggal: r.tanggal, id: r.id }));
+  items.sort((a, b) => {
+    let d = (b.tanggal || '').localeCompare(a.tanggal || '');
+    if (d !== 0) return d;
+    return (Number(b.id) || 0) - (Number(a.id) || 0);
+  });
+  items = items.slice(0, 20);
+  if (items.length === 0) {
+    feedEl.innerHTML = "<div style='text-align:center;color:#a0aec0;padding:16px;font-size:11.5px'>" + t('dash_activity_empty') + "</div>";
+    return;
+  }
+  let today = new Date(); today.setHours(0, 0, 0, 0);
+  function relTime(tgl) {
+    if (!tgl) return '-';
+    let d1 = new Date(tgl + 'T00:00:00');
+    let diffDays = Math.round((today - d1) / (1000 * 60 * 60 * 24));
+    if (diffDays <= 0) return t('dash_hari_ini');
+    if (diffDays === 1) return t('dash_kemarin');
+    return t('dash_n_hari_lalu').replace('{n}', diffDays);
+  }
+  feedEl.innerHTML = items.map(it => `
+    <div class="dash-activity-item">
+      <div class="dash-activity-icon ${it.type}">${it.icon}</div>
+      <div class="dash-activity-name" title="${it.nama || it.sku}"><strong>${it.label}</strong> — ${it.nama || it.sku}</div>
+      <div class="dash-activity-wh">${it.warehouse}</div>
+      <div class="dash-activity-time">${relTime(it.tanggal)}</div>
+    </div>`).join('');
+}
+
+// Jam berjalan + "diperbarui X detik/menit lalu" — interval dibuat sekali saja
+function startDashboardClock() {
+  if (window._dashClockInterval) return; // sudah jalan, jangan bikin interval dobel
+  function tick() {
+    let clockEl = document.getElementById('dashClockTime');
+    let lastEl = document.getElementById('dashLastUpdated');
+    if (!clockEl) return; // tab dashboard sedang tidak ditampilkan
+    clockEl.textContent = '🕐 ' + new Date().toLocaleTimeString('id-ID', { hour: '2-digit', minute: '2-digit', second: '2-digit', hour12: false });
+    if (lastEl && window._dashRenderTime) {
+      let elapsed = Math.round((Date.now() - window._dashRenderTime) / 1000);
+      let txt = elapsed < 5 ? t('dash_baru_saja') : elapsed < 60 ? t('dash_detik_lalu').replace('{n}', elapsed) : t('dash_menit_lalu').replace('{n}', Math.floor(elapsed / 60));
+      lastEl.textContent = '• ' + txt;
+    }
+  }
+  tick();
+  window._dashClockInterval = setInterval(tick, 1000);
 }
 
 console.log("⚡ Performance optimizations loaded: debounce, pagination, DocumentFragment, throttled Firebase save");
