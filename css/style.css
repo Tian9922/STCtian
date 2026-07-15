@@ -239,6 +239,25 @@
     .dash-daterange-custom span{color:#a3acbd;font-size:11px}
     .dash-daterange-custom button{padding:6px 12px;font-size:11px;border-radius:6px}
     .dash-period-badge{font-size:10.5px;font-weight:700;color:#3b82f6;background:#eff6ff;padding:5px 12px;border-radius:20px;letter-spacing:.2px}
+    .dash-live-clock{font-size:10.5px;font-weight:700;color:#0f172a;background:#f1f5f9;padding:5px 12px;border-radius:20px;letter-spacing:.2px;font-variant-numeric:tabular-nums}
+    .dash-live-clock #dashLastUpdated{color:#64748b;font-weight:600;margin-left:2px}
+    .dash-row-feed{grid-template-columns:1fr;min-height:150px}
+    .dash-activity-feed{max-height:150px;overflow-y:auto;display:flex;flex-direction:column;gap:2px}
+    .dash-activity-item{display:flex;align-items:center;gap:10px;padding:7px 6px;border-radius:7px;font-size:11.5px;border-bottom:1px solid #f4f6f9}
+    .dash-activity-item:last-child{border-bottom:none}
+    .dash-activity-item:first-child{animation:activityNewPulse 2.2s ease-in-out infinite}
+    @keyframes activityNewPulse{0%,100%{background:transparent}50%{background:rgba(16,185,129,.07)}}
+    .dash-activity-icon{width:24px;height:24px;border-radius:50%;display:flex;align-items:center;justify-content:center;font-size:12px;flex-shrink:0}
+    .dash-activity-icon.in{background:#f5f3ff}
+    .dash-activity-icon.out{background:#fef2f2}
+    .dash-activity-icon.transfer{background:#eff6ff}
+    .dash-activity-name{font-weight:600;color:#1e293b;flex:1;overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
+    .dash-activity-wh{font-size:9.5px;color:#94a3b8;background:#f1f5f9;padding:2px 7px;border-radius:10px;flex-shrink:0}
+    .dash-activity-time{font-size:10px;color:#94a3b8;flex-shrink:0;min-width:64px;text-align:right}
+    body.dark-mode .dash-live-clock{background:#0f1c30;color:#e2e8f0}
+    body.dark-mode .dash-activity-item{border-bottom-color:#1e293b}
+    body.dark-mode .dash-activity-name{color:#e2e8f0}
+    body.dark-mode .dash-activity-wh{background:#0f1c30;color:#93c5fd}
     @keyframes dashFadeUp{from{opacity:0;transform:translateY(8px)}to{opacity:1;transform:translateY(0)}}
     #tab-dashboard.active .dash-kpi-card{animation:dashFadeUp .45s ease both}
     #tab-dashboard.active .dash-kpi-card:nth-child(1){animation-delay:.02s}
@@ -246,11 +265,12 @@
     #tab-dashboard.active .dash-kpi-card:nth-child(3){animation-delay:.12s}
     #tab-dashboard.active .dash-kpi-card:nth-child(4){animation-delay:.17s}
     #tab-dashboard.active .dash-kpi-card:nth-child(5){animation-delay:.22s}
-    #tab-dashboard.active .dash-row .dash-panel{animation:dashFadeUp .45s ease both}
-    #tab-dashboard.active .dash-row:nth-of-type(2) .dash-panel{animation-delay:.1s}
-    #tab-dashboard.active .dash-row:nth-of-type(3) .dash-panel{animation-delay:.18s}
-    #tab-dashboard.active .dash-row:nth-of-type(4) .dash-panel{animation-delay:.26s}
-    #tab-dashboard.active .dash-row:nth-of-type(5) .dash-panel{animation-delay:.34s}
+    #tab-dashboard.active .dash-row .dash-panel{animation:dashFadeUp .45s ease both,panelBreathe 4s ease-in-out infinite}
+    #tab-dashboard.active .dash-row-feed .dash-panel{animation-delay:.1s,0s}
+    #tab-dashboard.active .dash-row-lists .dash-panel{animation-delay:.18s,0s}
+    #tab-dashboard.active .dash-row-tall .dash-panel{animation-delay:.26s,0s}
+    #tab-dashboard.active .dash-row .dash-panel:nth-child(1){animation-delay:0s,0s}
+    #tab-dashboard.active .dash-row .dash-panel:nth-child(2){animation-delay:0s,1.3s}
     .dash-kpi-grid{display:grid;grid-template-columns:repeat(5,1fr);gap:8px;margin-bottom:10px;flex-shrink:0}
     .dash-kpi-card{position:relative;overflow:hidden;background:#ffffff;border:1px solid #eef1f6;border-radius:9px;padding:8px 10px 7px;box-shadow:0 1px 2px rgba(15,23,42,.04);transition:transform .16s ease,box-shadow .16s ease}
     .dash-kpi-card:hover{transform:translateY(-2px);box-shadow:0 8px 20px rgba(15,23,42,.08)}
@@ -267,15 +287,47 @@
     .dash-row-bottom{grid-template-columns:230px 1fr;min-height:320px}
     .dash-row-tall{height:360px}
 
-    .dash-panel{position:relative;background:#ffffff;border:1px solid #eef1f6;border-radius:12px;padding:16px;box-shadow:0 1px 2px rgba(15,23,42,.04);display:flex;flex-direction:column;overflow:hidden;transition:transform .18s ease,box-shadow .18s ease}
-    .dash-panel:hover{box-shadow:0 6px 18px rgba(15,23,42,.07),0 0 0 1px rgba(59,130,246,.08),0 0 22px rgba(59,130,246,.10)}
+    .dash-panel{position:relative;background:#ffffff;border:1px solid #eef1f6;border-radius:12px;padding:16px;box-shadow:0 1px 2px rgba(15,23,42,.04);display:flex;flex-direction:column;overflow:hidden;transition:transform .18s ease,box-shadow .18s ease;animation:panelBreathe 4s ease-in-out infinite}
+    @keyframes panelBreathe{
+      0%,100%{box-shadow:0 1px 2px rgba(15,23,42,.04),0 0 0 1px rgba(99,102,241,.05),0 0 14px rgba(99,102,241,.08)}
+      50%{box-shadow:0 1px 2px rgba(15,23,42,.04),0 0 0 1px rgba(99,102,241,.14),0 0 26px rgba(99,102,241,.22)}
+    }
+    .dash-panel:hover{box-shadow:0 6px 18px rgba(15,23,42,.07),0 0 0 1px rgba(59,130,246,.16),0 0 30px rgba(59,130,246,.2);animation-play-state:paused}
     .dash-panel-head{display:flex;align-items:center;justify-content:space-between;margin-bottom:12px;padding-bottom:11px;border-bottom:1px solid #f1f4f8}
-    .dash-panel::before{content:'';position:absolute;top:0;left:0;right:0;height:2px;background:linear-gradient(90deg,#3b82f6,#8b5cf6,#06b6d4,#3b82f6);background-size:300% 100%;animation:glowShift 7s ease-in-out infinite;opacity:.5}
+    .dash-panel::before{content:'';position:absolute;top:0;left:0;right:0;height:3px;background:linear-gradient(90deg,#3b82f6,#8b5cf6,#06b6d4,#3b82f6);background-size:300% 100%;animation:glowShift 6s ease-in-out infinite;opacity:.9;filter:drop-shadow(0 0 6px rgba(99,102,241,.65))}
     @keyframes glowShift{0%{background-position:0% 50%}50%{background-position:100% 50%}100%{background-position:0% 50%}}
-    @media (prefers-reduced-motion: reduce){.dash-panel::before,.dash-kpi-card::before,#sync-status{animation:none!important}}
+    @media (prefers-reduced-motion: reduce){.dash-panel,.dash-panel::before,.dash-panel::after,.dash-kpi-card::before,#sync-status,.dash-ticker-track,.dash-kpi-value{animation:none!important}}
+
+    /* ===== Ticker bergulir ala dashboard trading ===== */
+    .dash-ticker{background:#0f172a;border-radius:8px;overflow:hidden;white-space:nowrap;margin-bottom:10px;padding:6px 0;flex-shrink:0}
+    .dash-ticker-track{display:inline-block;padding-left:100%;animation:tickerScroll 32s linear infinite;font-size:11.5px;font-weight:600;color:#e2e8f0;letter-spacing:.2px}
+    .dash-ticker-track span{margin-right:36px;color:#e2e8f0}
+    .dash-ticker-track b{color:#38bdf8;margin-right:4px}
+    @keyframes tickerScroll{from{transform:translateX(0)}to{transform:translateX(-100%)}}
+
+    /* ===== Scanning line / sweep — melintas periodik di tiap panel ===== */
+    .dash-panel::after{content:'';position:absolute;top:0;left:-60%;width:35%;height:100%;pointer-events:none;
+      background:linear-gradient(100deg,transparent,rgba(59,130,246,.10),rgba(139,92,246,.16),rgba(59,130,246,.10),transparent);
+      animation:sweepScan 9s ease-in-out infinite}
+    @keyframes sweepScan{0%{left:-60%}18%{left:130%}100%{left:130%}}
+    #tab-dashboard.active .dash-row-feed .dash-panel::after{animation-delay:1.2s}
+    #tab-dashboard.active .dash-row-lists .dash-panel::after{animation-delay:2.4s}
+    #tab-dashboard.active .dash-row-tall .dash-panel::after{animation-delay:3.6s}
+    #tab-dashboard.active .dash-panel-donut::after{animation-delay:.6s}
+
+    /* ===== Angka KPI berkedip halus (flash hijau untuk stok masuk, merah untuk stok keluar) ===== */
+    .dash-kpi-value{animation:kpiGlowAccent 5s ease-in-out infinite}
+    @keyframes kpiGlowAccent{0%,100%{text-shadow:none}50%{text-shadow:0 0 10px color-mix(in srgb, var(--dk-accent,#3b82f6) 55%, transparent)}}
+    #db-kpi-row .dash-kpi-card:nth-child(3) .dash-kpi-value{animation:kpiFlashRed 5s ease-in-out infinite}
+    #db-kpi-row .dash-kpi-card:nth-child(4) .dash-kpi-value{animation:kpiFlashGreen 5s ease-in-out infinite}
+    @keyframes kpiFlashRed{0%,100%{color:inherit;text-shadow:none}50%{color:#ef4444;text-shadow:0 0 10px rgba(239,68,68,.55)}}
+    @keyframes kpiFlashGreen{0%,100%{color:inherit;text-shadow:none}50%{color:#10b981;text-shadow:0 0 10px rgba(16,185,129,.55)}}
+    body.dark-mode .dash-ticker{background:#000814}
     #sync-status{animation:syncGlow 2.8s ease-in-out infinite}
     @keyframes syncGlow{0%,100%{box-shadow:0 0 0 0 rgba(16,185,129,.4)}50%{box-shadow:0 0 0 6px rgba(16,185,129,0)}}
     .dash-panel-title{font-size:12.5px;font-weight:700;color:#1e293b;display:flex;align-items:center;gap:7px}
+    .dash-panel-title::after{content:'';width:6px;height:6px;border-radius:50%;background:#10b981;flex-shrink:0;animation:liveDotPulse 2.4s ease-in-out infinite}
+    @keyframes liveDotPulse{0%{box-shadow:0 0 0 0 rgba(16,185,129,.55)}70%{box-shadow:0 0 0 6px rgba(16,185,129,0)}100%{box-shadow:0 0 0 0 rgba(16,185,129,0)}}
     .dash-panel-badge{font-size:9.5px;font-weight:700;color:#64748b;background:#f1f5f9;padding:3px 8px;border-radius:20px;letter-spacing:.3px}
     .dash-month-select{font-size:9.5px;font-weight:700;color:#3b82f6;background:#eff6ff;padding:3px 8px;border-radius:20px;letter-spacing:.3px;border:1px solid #dbeafe;cursor:pointer;outline:none}
     .dash-month-select:hover{background:#dbeafe}
@@ -391,7 +443,7 @@ body.dark-mode .card h2,
 body.dark-mode .po-card h2{color:#e2e8f0;border-bottom-color:#1e293b}
 body.dark-mode label{color:#aab8cc}
 body.dark-mode input,
-body.dark-mode select{background:#0f1c30;border-color:#2b3a52;color:#e2e8f0}
+body.dark-mode select{background:#0f1c30;border-color:#2b3a52;color:#e2e8f0;color-scheme:dark}
 body.dark-mode input[readonly]{background:#1a2740;color:#aab8cc}
 body.dark-mode input::placeholder{color:#7e8da6}
 body.dark-mode table{color:#cbd5e1}
