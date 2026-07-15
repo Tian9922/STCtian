@@ -124,6 +124,7 @@ function _afterAuthSuccess(fbUser){
 }
 
 firebase.auth().onAuthStateChanged(function(fbUser){
+  if(window._DEMO_MODE) return; // mode demo punya alur login sendiri (lihat initDemoMode)
   if(fbUser){
     _afterAuthSuccess(fbUser);
   } else {
@@ -188,6 +189,7 @@ const LANG = {
     dash_deadstock_title:"Dead Stock — Tidak Terjual",dash_badge_60hari:"≥ 60 HARI",dash_th_terakhir_terjual:"Terakhir Terjual",dash_th_umur:"Umur",
     dash_deadstock_ok:"✅ Tidak ada dead stock (semua item pernah terjual dlm 60 hari terakhir)",dash_belum_pernah_terjual:"Belum pernah terjual",
     dash_overstock_title:"Overstock / Slow Moving — SOH Terlama",dash_badge_aging:"AGING STOCK",dash_th_terakhir_stockin:"Terakhir Stock In",dash_th_umur_soh:"Umur SOH",dash_th_kategori:"Kategori",
+    dash_activity_title:"Aktivitas Terbaru",dash_badge_live:"LIVE",dash_activity_empty:"Belum ada aktivitas tercatat.",dash_hari_ini:"Hari ini",dash_kemarin:"Kemarin",dash_n_hari_lalu:"{n} hari lalu",dash_baru_saja:"baru saja",dash_detik_lalu:"{n} detik lalu",dash_menit_lalu:"{n} menit lalu",
     dash_overstock_ok:"✅ Tidak ada overstock/slow moving saat ini",dash_tidak_ada_stockin:"Tidak ada data stock in",
     dash_hari:"hari",dash_bln:"bln",dash_hr:"hr",
     access_denied_admin:"⛔ Akses ditolak. Fitur ini hanya untuk Admin.",access_denied_staff:"⛔ Akses ditolak. Fitur ini hanya untuk Admin/Staff Gudang.",
@@ -286,6 +288,7 @@ const LANG = {
     dash_deadstock_title:"Dead Stock — Not Sold",dash_badge_60hari:"≥ 60 DAYS",dash_th_terakhir_terjual:"Last Sold",dash_th_umur:"Age",
     dash_deadstock_ok:"✅ No dead stock (every item sold within the last 60 days)",dash_belum_pernah_terjual:"Never sold",
     dash_overstock_title:"Overstock / Slow Moving — Oldest On Hand",dash_badge_aging:"AGING STOCK",dash_th_terakhir_stockin:"Last Stock In",dash_th_umur_soh:"Aging",dash_th_kategori:"Category",
+    dash_activity_title:"Recent Activity",dash_badge_live:"LIVE",dash_activity_empty:"No activity recorded yet.",dash_hari_ini:"Today",dash_kemarin:"Yesterday",dash_n_hari_lalu:"{n} days ago",dash_baru_saja:"just now",dash_detik_lalu:"{n} sec ago",dash_menit_lalu:"{n} min ago",
     dash_overstock_ok:"✅ No overstock/slow-moving items right now",dash_tidak_ada_stockin:"No stock-in data",
     dash_hari:"days",dash_bln:"mo",dash_hr:"d",
     access_denied_admin:"⛔ Access denied. This feature is Admin only.",access_denied_staff:"⛔ Access denied. This feature is for Admin/Staff Gudang only.",
@@ -384,6 +387,7 @@ const LANG = {
     dash_deadstock_title:"데드스톡 — 미판매",dash_badge_60hari:"≥ 60일",dash_th_terakhir_terjual:"마지막 판매일",dash_th_umur:"경과일",
     dash_deadstock_ok:"✅ 데드스톡 없음 (모든 품목이 최근 60일 내 판매됨)",dash_belum_pernah_terjual:"판매 이력 없음",
     dash_overstock_title:"과잉재고 / 저회전 — 최장 보유 재고",dash_badge_aging:"에이징 재고",dash_th_terakhir_stockin:"마지막 입고일",dash_th_umur_soh:"보유 기간",dash_th_kategori:"분류",
+    dash_activity_title:"최근 활동",dash_badge_live:"실시간",dash_activity_empty:"기록된 활동이 없습니다.",dash_hari_ini:"오늘",dash_kemarin:"어제",dash_n_hari_lalu:"{n}일 전",dash_baru_saja:"방금",dash_detik_lalu:"{n}초 전",dash_menit_lalu:"{n}분 전",
     dash_overstock_ok:"✅ 현재 과잉재고/저회전 품목 없음",dash_tidak_ada_stockin:"입고 데이터 없음",
     dash_hari:"일",dash_bln:"개월",dash_hr:"일",
     access_denied_admin:"⛔ 접근이 거부되었습니다. 관리자 전용 기능입니다.",access_denied_staff:"⛔ 접근이 거부되었습니다. 관리자/창고 직원 전용 기능입니다.",
@@ -596,6 +600,135 @@ let indexEdit = -1;
 let editingInId = null;
 let editingOutId = null;
 let editingTrId = null;
+
+// =========================================================================
+// MODE DEMO — data contoh untuk keperluan portofolio/demo publik.
+// Aktif kalau URL diakses dengan ?demo=1 (lihat index.html). Data ini seluruhnya
+// FIKTIF (bukan data bisnis Tian) dan hanya hidup di memori browser, hilang
+// begitu halaman di-refresh. Tidak pernah membaca/menulis ke Firebase asli.
+// =========================================================================
+function _demoDateAgo(daysAgo){
+  let dt = new Date();
+  dt.setDate(dt.getDate() - daysAgo);
+  return dt.toISOString().split("T")[0];
+}
+
+function buildDemoData(){
+  let idc = 1;
+  let stockIn = [], stockOut = [], transferL = [];
+  let stok = {};
+  function addIn(sku,nama,kategori,isi,harga,wh,daysAgo,qty){
+    stockIn.push({id:idc++,tanggal:_demoDateAgo(daysAgo),sku,kategori,nama,isiKarton:isi,warehouse:wh,qty,harga,ref:"Demo PO",keterangan:"-"});
+    let k=sku+"|||"+wh; stok[k]=(stok[k]||0)+qty;
+  }
+  function addOut(sku,nama,kategori,isi,harga,wh,daysAgo,qty){
+    stockOut.push({id:idc++,tanggal:_demoDateAgo(daysAgo),tipe:"Stock Out",sku,kategori,nama,isiKarton:isi,warehouse:wh,qty,harga,ref:"Demo Sales"});
+    let k=sku+"|||"+wh; stok[k]=(stok[k]||0)-qty;
+  }
+  function addTransfer(sku,nama,kategori,isi,harga,fromWh,toWh,daysAgo,qty){
+    transferL.push({id:idc++,tanggal:_demoDateAgo(daysAgo),sku,kategori,nama,isiKarton:isi,harga,fromWh,toWh,qty,ref:"Demo Transfer"});
+    let kf=sku+"|||"+fromWh, kt=sku+"|||"+toWh;
+    stok[kf]=(stok[kf]||0)-qty; stok[kt]=(stok[kt]||0)+qty;
+  }
+
+  // Fast mover, hampir habis (juga muncul di Critical Stock)
+  addIn("DEMO-001","Kimchi Sauce Premium 1KG","Sauce",12,45000,"Bintaro",40,2400);
+  addOut("DEMO-001","Kimchi Sauce Premium 1KG","Sauce",12,45000,"Bintaro",25,900);
+  addOut("DEMO-001","Kimchi Sauce Premium 1KG","Sauce",12,45000,"Bintaro",10,900);
+  addOut("DEMO-001","Kimchi Sauce Premium 1KG","Sauce",12,45000,"Bintaro",3,300);
+
+  // Critical stock (stok tipis, ketahanan pendek)
+  addIn("DEMO-002","Frozen Dumpling Original 500G","Frozen",20,32000,"Gunsin",50,400);
+  addOut("DEMO-002","Frozen Dumpling Original 500G","Frozen",20,32000,"Gunsin",20,300);
+
+  // Dead stock (terakhir terjual > 60 hari lalu)
+  addIn("DEMO-004","Rice Cake Tteokbokki 1KG","Chiller",15,26000,"MAJ",90,300);
+  addOut("DEMO-004","Rice Cake Tteokbokki 1KG","Chiller",15,26000,"MAJ",65,45);
+
+  // Overstock / slow moving (stock-in lama, jarang keluar)
+  addIn("DEMO-005","Soy Sauce Premium 2L","Sauce",8,55000,"Bintaro",95,800);
+  addOut("DEMO-005","Soy Sauce Premium 2L","Sauce",8,55000,"Bintaro",80,40);
+  addOut("DEMO-005","Soy Sauce Premium 2L","Sauce",8,55000,"Bintaro",45,40);
+  addOut("DEMO-005","Soy Sauce Premium 2L","Sauce",8,55000,"Bintaro",10,40);
+
+  // Belum pernah terjual sama sekali (No Data)
+  addIn("DEMO-007","Fish Cake Busan Style 900G","Frozen - Fish cake",10,38000,"Bintaro",70,150);
+
+  // Demo fitur Transfer antar gudang
+  addIn("DEMO-003","Instant Ramen Spicy 5-Pack","Dry",24,28000,"Bintaro",30,480);
+  addTransfer("DEMO-003","Instant Ramen Spicy 5-Pack","Dry",24,28000,"Bintaro","Bosco",20,120);
+  addOut("DEMO-003","Instant Ramen Spicy 5-Pack","Dry",24,28000,"Bosco",8,48);
+
+  // Mover biasa
+  addIn("DEMO-006","Seaweed Snack Roasted 50G","Dry - Snack",40,12000,"Bosco",45,800);
+  addOut("DEMO-006","Seaweed Snack Roasted 50G","Dry - Snack",40,12000,"Bosco",30,160);
+  addOut("DEMO-006","Seaweed Snack Roasted 50G","Dry - Snack",40,12000,"Bosco",15,160);
+  addOut("DEMO-006","Seaweed Snack Roasted 50G","Dry - Snack",40,12000,"Bosco",5,160);
+
+  addIn("DEMO-008","Corn Tea Bag 900G","Drink",12,27000,"Gunsin",60,600);
+  addOut("DEMO-008","Corn Tea Bag 900G","Drink",12,27000,"Gunsin",50,120);
+  addOut("DEMO-008","Corn Tea Bag 900G","Drink",12,27000,"Gunsin",35,120);
+  addOut("DEMO-008","Corn Tea Bag 900G","Drink",12,27000,"Gunsin",20,120);
+  addOut("DEMO-008","Corn Tea Bag 900G","Drink",12,27000,"Gunsin",5,120);
+
+  let metaBySku = {};
+  stockIn.forEach(r=>{ metaBySku[r.sku+"|||"+r.warehouse]=r; });
+  stockOut.forEach(r=>{ metaBySku[r.sku+"|||"+r.warehouse]=r; });
+  transferL.forEach(r=>{ metaBySku[r.sku+"|||"+r.fromWh]=r; metaBySku[r.sku+"|||"+r.toWh]=r; });
+
+  let barang = Object.keys(stok).map(k=>{
+    let idx = k.lastIndexOf("|||");
+    let sku = k.slice(0,idx), wh = k.slice(idx+3);
+    let m = metaBySku[k];
+    return { sku, kategori:m.kategori, nama:m.nama, isiKarton:m.isiKarton, warehouse:wh, totalPcs:stok[k], harga:m.harga };
+  });
+
+  let master = [];
+  let seenSku = {};
+  [...stockIn, ...stockOut].forEach(r=>{
+    if(seenSku[r.sku]) return; seenSku[r.sku]=true;
+    master.push({sku:r.sku, kategori:r.kategori, bintaro:r.nama, qtyCtn:r.isiKarton, harga:r.harga});
+  });
+
+  return { barang, stockIn, stockOut, transfer: transferL, master };
+}
+
+function initDemoMode(){
+  let demo = buildDemoData();
+  daftarBarang      = demo.barang;
+  stockInLog        = demo.stockIn;
+  stockOutLog       = demo.stockOut;
+  transferLog       = demo.transfer;
+  intransitLog      = [];
+  customMasterData  = demo.master;
+
+  currentRole = "admin";
+  window._currentUsername = "demo";
+
+  let overlay = document.getElementById("login-overlay");
+  if(overlay) overlay.style.display = "none";
+
+  if(typeof applyRoleUI === "function") applyRoleUI();
+  let sbAvatar = document.getElementById("sb-avatar");
+  let sbName = document.getElementById("sb-user-name");
+  if(sbAvatar) sbAvatar.textContent = "DM";
+  if(sbName) sbName.textContent = "Demo User";
+
+  if(typeof applyLang === "function") applyLang();
+  if(typeof markDirty === "function") markDirty("monitor","in","out","transfer","intransit","ledger","analisis","dashboard");
+  if(typeof renderTab === "function" && typeof activeTab !== "undefined") renderTab(activeTab);
+
+  let banner = document.createElement("div");
+  banner.id = "demo-mode-banner";
+  banner.style.cssText = "position:fixed;top:0;left:0;right:0;z-index:99999;background:linear-gradient(90deg,#f59e0b,#d97706);color:#1a1a1a;text-align:center;padding:8px 12px;font-size:13px;font-weight:700;box-shadow:0 2px 8px rgba(0,0,0,.2)";
+  banner.innerHTML = "🧪 MODE DEMO — Data contoh untuk portofolio. Tidak terhubung ke database asli, dan semua perubahan akan hilang saat halaman di-refresh.";
+  document.body.prepend(banner);
+  document.body.style.paddingTop = "38px";
+}
+
+if(window._DEMO_MODE){
+  window.addEventListener("load", initDemoMode);
+}
 
 // =========================================================================
 // FIREBASE — SAVE & REALTIME SYNC
