@@ -14,6 +14,12 @@
   <script src="https://www.gstatic.com/firebasejs/10.12.0/firebase-database-compat.js"></script>
   <script src="https://www.gstatic.com/firebasejs/10.12.0/firebase-auth-compat.js"></script>
   <script>
+    // Mode Demo: aktif kalau halaman dibuka dengan ?demo=1 di URL (dipakai untuk
+    // link demo di portofolio). Saat aktif, TIDAK PERNAH connect ke database
+    // Firebase asli — supaya data bisnis asli tidak pernah terekspos ke publik
+    // dan tidak ada risiko tertulis oleh pengunjung. Data demo hanya hidup di
+    // memori browser (lihat initDemoMode() di js/01-config-auth-firebase.js).
+    window._DEMO_MODE = new URLSearchParams(location.search).get("demo") === "1";
     const firebaseConfig = {
       apiKey:            "AIzaSyC8l7yQ3yCtqw4Cj3RMMlhb-fWdPaXmRSw",
       authDomain:        "inventory-tian.firebaseapp.com",
@@ -24,9 +30,29 @@
       appId:             "1:705890526810:web:d2b9cd65801f32f60f9a63"
     };
     firebase.initializeApp(firebaseConfig);
-    window._db = firebase.database();
-    window._fbReady = true;
-    console.log("✅ Firebase siap");
+    if(window._DEMO_MODE){
+      // Stub aman: meniru bentuk Firebase Database tapi semua operasi baca/tulis
+      // adalah no-op. Ini mencegah error di kode yang memanggil window._db.ref(...)
+      // langsung tanpa pengecekan (mis. halaman Settings), sekaligus memastikan
+      // TIDAK ADA data yang benar-benar terkirim/terbaca dari database asli.
+      function _demoRefStub(){
+        return {
+          set:    () => Promise.resolve(),
+          update: () => Promise.resolve(),
+          remove: () => Promise.resolve(),
+          once:   () => Promise.resolve({ val: () => null }),
+          on:     () => {},
+          off:    () => {}
+        };
+      }
+      window._db = { ref: _demoRefStub };
+      window._fbReady = false;
+      console.log("🧪 DEMO MODE aktif — tidak terhubung ke database asli");
+    } else {
+      window._db = firebase.database();
+      window._fbReady = true;
+      console.log("✅ Firebase siap");
+    }
   </script>
   <link rel="stylesheet" href="css/style.css">
 </head>
@@ -142,6 +168,12 @@
       <button class="btn btn-blue" onclick="applyDashCustomRange()">Terapkan</button>
     </div>
     <div class="dash-period-badge" id="dash-period-badge"></div>
+    <div class="dash-live-clock" id="dashLiveClock"><span id="dashClockTime">🕐 --:--:--</span> <span id="dashLastUpdated">• baru saja</span></div>
+  </div>
+
+  <!-- Ticker bergulir — kesan "live monitoring" seperti dashboard trading -->
+  <div class="dash-ticker">
+    <div class="dash-ticker-track" id="dashTickerTrack"></div>
   </div>
 
   <!-- Row 1: KPI Cards -->
@@ -174,6 +206,17 @@
         </div>
         <div id="db-moving-legend" class="dash-legend dash-legend-inline"></div>
       </div>
+    </div>
+  </div>
+
+  <!-- Row 2.5: Activity Feed — kesan real-time monitoring -->
+  <div class="dash-row dash-row-feed">
+    <div class="dash-panel">
+      <div class="dash-panel-head">
+        <div class="dash-panel-title">🔴 <span data-i18n="dash_activity_title">Aktivitas Terbaru</span></div>
+        <div class="dash-panel-badge" data-i18n="dash_badge_live">LIVE</div>
+      </div>
+      <div id="db-activity-feed" class="dash-activity-feed"></div>
     </div>
   </div>
 
